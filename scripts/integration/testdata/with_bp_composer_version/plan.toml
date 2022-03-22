@@ -1,0 +1,7 @@
+[[requires]]
+name = "composer"
+
+  [requires.metadata]
+    launch = true
+    version = "9.9.9"
+    version-source = "BP_COMPOSER_VERSION"

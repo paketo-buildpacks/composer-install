@@ -1,0 +1,49 @@
+api = "0.7"
+
+[buildpack]
+  description = "A buildpack for installing Composer, a dependency manager for PHP"
+  homepage = "https://github.com/paketo-buildpacks/composer-dist"
+  id = "paketo-buildpacks/composer-dist"
+  keywords = ["php", "composer"]
+  name = "Paketo Composer Distribution Buildpack"
+
+  [[buildpack.licenses]]
+    type = "Apache-2.0"
+    uri = "https://github.com/paketo-buildpacks/composer/blob/main/LICENSE"
+
+  [metadata]
+    include-files = ["bin/build", "bin/detect", "bin/run", "buildpack.toml"]
+    pre-package = "./scripts/build.sh"
+    [metadata.default-versions]
+      composer = "*"
+
+  [[metadata.dependencies]]
+    id = "composer"
+    purl = "pkg:generic/composer@2.2.7?checksum=10040ded663541990eef8ce1f6fa44cb3b4a47e145efb8e9e59907a15068033d&download_url=https://getcomposer.org/download/2.2.7/composer.phar"
+    sha256 = "10040ded663541990eef8ce1f6fa44cb3b4a47e145efb8e9e59907a15068033d"
+    source = "https://getcomposer.org/download/2.2.7/composer.phar"
+    source_sha256 = "10040ded663541990eef8ce1f6fa44cb3b4a47e145efb8e9e59907a15068033d"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/composer/composer_2.2.7_linux_noarch_any-stack_10040ded.phar"
+    version = "2.2.7"
+
+  [[metadata.dependencies]]
+    id = "composer"
+    purl = "pkg:generic/composer@2.2.8?checksum=e1e1c580a237c739ecc1be57cf512e6b741faaa566439257d19ecd739ddfefaf&download_url=https://getcomposer.org/download/2.2.8/composer.phar"
+    sha256 = "e1e1c580a237c739ecc1be57cf512e6b741faaa566439257d19ecd739ddfefaf"
+    source = "https://getcomposer.org/download/2.2.8/composer.phar"
+    source_sha256 = "e1e1c580a237c739ecc1be57cf512e6b741faaa566439257d19ecd739ddfefaf"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/composer/composer_2.2.8_linux_noarch_any-stack_e1e1c580.phar"
+    version = "2.2.8"
+
+  [[metadata.dependency-constraints]]
+    constraint = "2.*"
+    id = "composer"
+    patches = 2
+
+[[stacks]]
+  id = "io.buildpacks.stacks.bionic"
+
+[[stacks]]
+  id = "org.cloudfoundry.stacks.cflinuxfs3"

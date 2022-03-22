@@ -1,0 +1,6 @@
+[[requires]]
+name = "composer"
+
+  [requires.metadata]
+    launch = true
+    build = true
