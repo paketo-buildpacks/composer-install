@@ -1,0 +1,12 @@
+{
+    "name": "paketo/composer_app",
+    "require": {
+        "vlucas/phpdotenv": "5.3.0",
+        "php": "8.*"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "php-cs-fixer -h"
+        ]
+    }
+}
