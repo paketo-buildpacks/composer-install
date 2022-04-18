@@ -22,13 +22,15 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect = NewWithT(t).Expect
 
-		buffer                    *bytes.Buffer
-		installOptions            *fakes.DetermineComposerInstallOptions
-		composerInstallExecutable *fakes.Executable
-		composerGlobalExecutable  *fakes.Executable
-		composerInstallExecution  pexec.Execution
-		composerGlobalExecution   pexec.Execution
-		calculator                *fakes.Calculator
+		buffer                                  *bytes.Buffer
+		installOptions                          *fakes.DetermineComposerInstallOptions
+		composerInstallExecutable               *fakes.Executable
+		composerGlobalExecutable                *fakes.Executable
+		composerCheckPlatformReqsExecExecutable *fakes.Executable
+		composerInstallExecution                pexec.Execution
+		composerGlobalExecution                 pexec.Execution
+		composerCheckPlatformReqsExecExecution  pexec.Execution
+		calculator                              *fakes.Calculator
 
 		layersDir  string
 		workingDir string
@@ -43,6 +45,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		installOptions = &fakes.DetermineComposerInstallOptions{}
 		composerInstallExecutable = &fakes.Executable{}
 		composerGlobalExecutable = &fakes.Executable{}
+		composerCheckPlatformReqsExecExecutable = &fakes.Executable{}
 
 		composerInstallExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
 			composerInstallExecution = temp
@@ -51,6 +54,20 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		composerGlobalExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
 			composerGlobalExecution = temp
+			return nil
+		}
+
+		composerCheckPlatformReqsExecExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+			composerCheckPlatformReqsExecExecution = temp
+
+			_, err := temp.Stdout.Write([]byte(`ext-hello  8.1.4    missing
+ext-foo   8.1.4    success
+ext-bar   8.1.4    missing
+php       8.1.4    success
+`))
+
+			Expect(err).NotTo(HaveOccurred())
+
 			return nil
 		}
 
@@ -72,13 +89,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			"fake",
 		}
 
-		build = composer.Build(
-			scribe.NewEmitter(buffer),
-			installOptions,
-			composerInstallExecutable,
-			composerGlobalExecutable,
-			"fake-path-from-tests",
-			calculator)
+		build = composer.Build(scribe.NewEmitter(buffer), installOptions, composerInstallExecutable, composerGlobalExecutable, composerCheckPlatformReqsExecExecutable, "fake-path-from-tests", calculator)
 
 		buildpackPlan = packit.BuildpackPlan{
 			Entries: []packit.BuildpackPlanEntry{
@@ -316,6 +327,36 @@ composer-lock-sha = "sha-from-composer-lock"
 					},
 				},
 			}))
+		})
+	})
+
+	context("invokes 'composer check-platform-reqs'", func() {
+		it("generates 'php.ini.d/composer-extensions.ini'", func() {
+			_, err := build(packit.BuildContext{
+				WorkingDir: workingDir,
+				Layers:     packit.Layers{Path: layersDir},
+				Plan:       buildpackPlan,
+			})
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(composerCheckPlatformReqsExecExecution.Args[0]).To(Equal("check-platform-reqs"))
+			Expect(composerCheckPlatformReqsExecExecution.Dir).To(Equal(workingDir))
+			Expect(len(composerCheckPlatformReqsExecExecution.Env)).To(Equal(len(os.Environ()) + 4))
+
+			Expect(composerCheckPlatformReqsExecExecution.Env).To(ContainElements(
+				"COMPOSER_NO_INTERACTION=1",
+				fmt.Sprintf("COMPOSER_HOME=%s", filepath.Join(layersDir, composer.ComposerPackagesLayerName, ".composer")),
+				fmt.Sprintf("PHPRC=%s", filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")),
+				fmt.Sprintf("PATH=fake-path-from-tests")))
+
+			Expect(filepath.Join(workingDir, "php.ini.d", "composer-extensions.ini")).To(BeARegularFile())
+
+			contents, err := os.ReadFile(filepath.Join(workingDir, "php.ini.d", "composer-extensions.ini"))
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(string(contents)).To(Equal(`extension = hello.so
+extension = bar.so
+`))
 		})
 	})
 

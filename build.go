@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -39,6 +40,7 @@ func Build(
 	composerInstallOptions DetermineComposerInstallOptions,
 	composerInstallExec Executable,
 	composerGlobalExec Executable,
+	checkPlatformReqsExec Executable,
 	path string,
 	calculator Calculator) packit.BuildFunc {
 	return func(context packit.BuildContext) (packit.BuildResult, error) {
@@ -96,6 +98,11 @@ func Build(
 			for _, f := range files {
 				logger.Debug.Detail(fmt.Sprintf("- %s", f.Name()))
 			}
+		}
+
+		err = runCheckPlatformReqs(logger, checkPlatformReqsExec, context.WorkingDir, composerPhpIniPath, composerPackagesLayer.Path, path)
+		if err != nil {
+			return packit.BuildResult{}, err
 		}
 
 		return packit.BuildResult{
@@ -292,4 +299,57 @@ extension = openssl.so`, os.Getenv(PhpExtensionDir))
 	logger.Debug.Subprocess("Writing php.ini contents: '%s'", phpIni)
 
 	return composerPhpIniPath, os.WriteFile(composerPhpIniPath, []byte(phpIni), os.ModePerm)
+}
+
+// This code has been largely borrowed from the original PHP buildpack `php-composer`
+// https://github.com/paketo-buildpacks/php-composer/blob/5e2604b74cbeb30090bf7eadb1cfc158b374efc0/composer/composer.go#L76-L100
+func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executable, workingDir, composerPhpIniPath, composerPackagesLayerPath, path string) error {
+	buffer := bytes.NewBuffer(nil)
+
+	execution := pexec.Execution{
+		Args: []string{"check-platform-reqs"},
+		Dir:  workingDir,
+		Env: append(os.Environ(),
+			"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
+			fmt.Sprintf("COMPOSER_HOME=%s", filepath.Join(composerPackagesLayerPath, ".composer")),
+			fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
+			fmt.Sprintf("PATH=%s", path),
+		),
+		Stdout: buffer,
+		Stderr: buffer,
+	}
+
+	err := checkPlatformReqsExec.Execute(execution)
+	if err != nil {
+		logger.Subprocess(buffer.String())
+		exitError, ok := err.(*exec.ExitError)
+		if !ok || exitError.ExitCode() != 2 {
+			return err
+		}
+	}
+
+	var extensions []string
+	for _, line := range strings.Split(buffer.String(), "\n") {
+		chunks := strings.Split(strings.TrimSpace(line), " ")
+		extensionName := strings.TrimPrefix(strings.TrimSpace(chunks[0]), "ext-")
+		extensionStatus := strings.TrimSpace(chunks[len(chunks)-1])
+		if extensionName != "php" && extensionName != "php-64bit" && extensionStatus == "missing" {
+			extensions = append(extensions, extensionName)
+		}
+	}
+
+	buf := bytes.Buffer{}
+
+	for _, extension := range extensions {
+		buf.WriteString(fmt.Sprintf("extension = %s.so\n", extension))
+	}
+
+	iniDir := filepath.Join(workingDir, "php.ini.d")
+
+	err = os.Mkdir(iniDir, os.ModeDir|os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(filepath.Join(iniDir, "composer-extensions.ini"), buf.Bytes(), 0666)
 }

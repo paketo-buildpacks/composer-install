@@ -15,13 +15,18 @@ func main() {
 	phpVersionResolver := composer.NewPhpVersionResolver()
 	options := composer.NewComposerInstallOptions()
 
+	installExec := pexec.NewExecutable("composer")
+	globalExec := pexec.NewExecutable("composer")
+	checkPlatformReqsExec := pexec.NewExecutable("composer")
+
 	packit.Run(
 		composer.Detect(logEmitter, phpVersionResolver),
 		composer.Build(
 			logEmitter,
 			options,
-			pexec.NewExecutable("composer"),
-			pexec.NewExecutable("composer"),
+			installExec,
+			globalExec,
+			checkPlatformReqsExec,
 			os.Getenv("PATH"),
 			fs.NewChecksumCalculator()),
 	)

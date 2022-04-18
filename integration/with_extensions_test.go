@@ -74,24 +74,18 @@ func testWithExtensions(t *testing.T, context spec.G, it spec.S) {
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Nginx Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Start Buildpack")))
 
-			Expect(logs).To(ContainSubstring("PostInstall [zip]"))
-			Expect(logs).To(ContainSubstring("PostInstall [gd]"))
-			Expect(logs).To(ContainSubstring("PostInstall [fileinfo]"))
-			Expect(logs).To(ContainSubstring("PostInstall [mysqli]"))
-			Expect(logs).To(ContainSubstring("PostInstall [mbstring]"))
-
 			container, err = docker.Container.Run.
 				WithEnv(map[string]string{"PORT": "8765"}).
 				WithPublish("8765").
 				Execute(image.ID)
 			Expect(err).NotTo(HaveOccurred())
 
+			// Note that `mbstring` is not included, since it is not available in `php-dist` for unknown reasons
 			extensionsMatcher := And(
 				ContainSubstring("zip"),
 				ContainSubstring("gd"),
 				ContainSubstring("fileinfo"),
 				ContainSubstring("mysqli"),
-				ContainSubstring("mbstring"),
 			)
 
 			Eventually(container).Should(Serve(extensionsMatcher).OnPort(8765).WithEndpoint("/extensions.php"))
