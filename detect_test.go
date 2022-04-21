@@ -3,7 +3,6 @@ package composer_test
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -52,7 +51,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 	context("when composer.json is present", func() {
 		it.Before(func() {
-			Expect(ioutil.WriteFile(filepath.Join(workingDir, "composer.json"), []byte("{}"), 0644)).NotTo(HaveOccurred())
+			Expect(os.WriteFile(filepath.Join(workingDir, "composer.json"), []byte("{}"), 0644)).NotTo(HaveOccurred())
 		})
 
 		it(`requires "composer" and "php" and provides "composer-packages"`, func() {
@@ -165,7 +164,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 			it.Before(func() {
 				Expect(os.Mkdir(filepath.Join(workingDir, "other"), os.ModeDir|os.ModePerm)).NotTo(HaveOccurred())
 				Expect(os.Mkdir(filepath.Join(workingDir, "other", "location"), os.ModeDir|os.ModePerm)).NotTo(HaveOccurred())
-				Expect(ioutil.WriteFile(filepath.Join(workingDir, "other", "location", "composer.json"), []byte("{}"), os.ModePerm)).NotTo(HaveOccurred())
+				Expect(os.WriteFile(filepath.Join(workingDir, "other", "location", "composer.json"), []byte("{}"), os.ModePerm)).NotTo(HaveOccurred())
 			})
 
 			it(`requires "composer" and "php" and provides "composer-packages"`, func() {
@@ -200,7 +199,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 			context("when composer.lock is not present as a sibling of composer.json", func() {
 				it.Before(func() {
-					Expect(ioutil.WriteFile(filepath.Join(workingDir, "composer.lock"), []byte("{}"), 0644)).NotTo(HaveOccurred())
+					Expect(os.WriteFile(filepath.Join(workingDir, "composer.lock"), []byte("{}"), 0644)).NotTo(HaveOccurred())
 				})
 
 				it("will log a warning", func() {

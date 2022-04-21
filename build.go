@@ -3,7 +3,6 @@ package composer
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -91,7 +90,7 @@ func Build(
 
 		if os.Getenv(BpLogLevel) == "DEBUG" {
 			logger.Debug.Action("listing files in %s:", layerVendorDir)
-			files, err := ioutil.ReadDir(layerVendorDir)
+			files, err := os.ReadDir(layerVendorDir)
 			if err != nil {
 				return packit.BuildResult{}, err
 			}
@@ -166,7 +165,7 @@ func runComposerGlobalIfRequired(
 	if os.Getenv(BpLogLevel) == "DEBUG" {
 		logger.Debug.Subprocess(composerGlobalBuffer.String())
 		logger.Debug.Action("Adding global Composer packages to PATH:")
-		files, err := ioutil.ReadDir(composerGlobalBin)
+		files, err := os.ReadDir(composerGlobalBin)
 		if err != nil {
 			return "", err
 		}
@@ -351,5 +350,5 @@ func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executabl
 		return err
 	}
 
-	return ioutil.WriteFile(filepath.Join(iniDir, "composer-extensions.ini"), buf.Bytes(), 0666)
+	return os.WriteFile(filepath.Join(iniDir, "composer-extensions.ini"), buf.Bytes(), 0666)
 }

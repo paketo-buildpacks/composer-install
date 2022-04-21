@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -158,7 +157,7 @@ php       8.1.4    success
 
 			composerPhpIni := filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")
 			Expect(composerPhpIni).To(BeARegularFile())
-			contentsBytes, err := ioutil.ReadFile(composerPhpIni)
+			contentsBytes, err := os.ReadFile(composerPhpIni)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(string(contentsBytes)).To(Equal(`[PHP]
 extension_dir = "php-extension-dir"
@@ -289,7 +288,7 @@ extension = openssl.so`))
 			buildpackPlan.Entries[0].Metadata["build"] = true
 			calculator.SumCall.Returns.String = "sha-from-composer-lock"
 
-			err := ioutil.WriteFile(filepath.Join(layersDir, fmt.Sprintf("%s.toml", composer.ComposerPackagesLayerName)),
+			err := os.WriteFile(filepath.Join(layersDir, fmt.Sprintf("%s.toml", composer.ComposerPackagesLayerName)),
 				[]byte(`[metadata]
 composer-lock-sha = "sha-from-composer-lock"
 `), os.ModePerm)
