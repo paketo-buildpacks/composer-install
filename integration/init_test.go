@@ -48,42 +48,42 @@ func TestIntegration(t *testing.T) {
 	Expect := NewWithT(t).Expect
 
 	file, err := os.Open("../integration.json")
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).To(Succeed())
 
 	Expect(json.NewDecoder(file).Decode(&buildpacks)).To(Succeed())
 	Expect(file.Close()).To(Succeed())
 
 	file, err = os.Open("../buildpack.toml")
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).To(Succeed())
 
 	_, err = toml.NewDecoder(file).Decode(&buildpackInfo)
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).To(Succeed())
 
 	buildpackStore := occam.NewBuildpackStore()
 
 	buildpacks.PhpDist, err = buildpackStore.Get.
 		Execute(buildpacks.PhpDist)
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).To(Succeed())
 
 	buildpacks.Composer, err = buildpackStore.Get.
 		Execute(buildpacks.Composer)
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).To(Succeed())
 
 	buildpacks.PhpStart, err = buildpackStore.Get.
 		Execute(buildpacks.PhpStart)
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).To(Succeed())
 
 	buildpacks.PhpFpm, err = buildpackStore.Get.
 		Execute(buildpacks.PhpFpm)
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).To(Succeed())
 
 	buildpacks.Nginx, err = buildpackStore.Get.
 		Execute(buildpacks.Nginx)
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).To(Succeed())
 
 	buildpacks.PhpNginx, err = buildpackStore.Get.
 		Execute(buildpacks.PhpNginx)
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).To(Succeed())
 
 	root, err := filepath.Abs("./..")
 	Expect(err).ToNot(HaveOccurred())
@@ -91,7 +91,7 @@ func TestIntegration(t *testing.T) {
 	buildpacks.ComposerInstall, err = buildpackStore.Get.
 		WithVersion("1.2.3").
 		Execute(root)
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).To(Succeed())
 
 	buildpacksArray = []string{
 		buildpacks.PhpDist,

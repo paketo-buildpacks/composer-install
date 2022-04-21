@@ -23,7 +23,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		var err error
 		workingDir, err = os.MkdirTemp("", "working-dir")
-		Expect(err).NotTo(HaveOccurred())
+		Expect(err).To(Succeed())
 
 		phpVersionResolver = composer.NewPhpVersionResolver()
 	})
@@ -39,7 +39,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 	   "php-64bit": "php-64bit.version.from-composer-json",
 	   "php": "php-32bit.version.from-composer-json"
    }
-}`), os.ModePerm)).NotTo(HaveOccurred())
+}`), os.ModePerm)).To(Succeed())
 		})
 
 		context("when composer.lock contains the 64bit php version", func() {
@@ -48,14 +48,14 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
  "platform": {
    "php-64bit": "php-64bit.version.from-composer-lock"
  }
-}`), os.ModePerm)).NotTo(HaveOccurred())
+}`), os.ModePerm)).To(Succeed())
 			})
 
 			it(`requires "php" with version metadata`, func() {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).NotTo(HaveOccurred())
+				Expect(err).To(Succeed())
 				Expect(version).To(Equal("php-64bit.version.from-composer-lock"))
 				Expect(versionSource).To(Equal("composer.lock"))
 			})
@@ -67,14 +67,14 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
  "platform": {
    "php": "php.version.from-composer-lock"
  }
-}`), os.ModePerm)).NotTo(HaveOccurred())
+}`), os.ModePerm)).To(Succeed())
 			})
 
 			it(`requires "php" with version metadata`, func() {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).NotTo(HaveOccurred())
+				Expect(err).To(Succeed())
 				Expect(version).To(Equal("php.version.from-composer-lock"))
 				Expect(versionSource).To(Equal("composer.lock"))
 			})
@@ -87,14 +87,14 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
    "php-64bit": "php-64bit.version.from-composer-lock",
    "php": "php.version.from-composer-lock"
  }
-}`), os.ModePerm)).NotTo(HaveOccurred())
+}`), os.ModePerm)).To(Succeed())
 			})
 
 			it(`requires "php" with 64bit version metadata`, func() {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).NotTo(HaveOccurred())
+				Expect(err).To(Succeed())
 				Expect(version).To(Equal("php-64bit.version.from-composer-lock"))
 				Expect(versionSource).To(Equal("composer.lock"))
 			})
@@ -105,14 +105,14 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 		it.Before(func() {
 			Expect(os.WriteFile(filepath.Join(workingDir, "composer.lock"), []byte(`{
  "platform": []
-}`), os.ModePerm)).NotTo(HaveOccurred())
+}`), os.ModePerm)).To(Succeed())
 		})
 
 		it(`returns empty versions`, func() {
 			version, versionSource, err := phpVersionResolver.Resolve(
 				filepath.Join(workingDir, "composer.json"),
 				filepath.Join(workingDir, "composer.lock"))
-			Expect(err).NotTo(HaveOccurred())
+			Expect(err).To(Succeed())
 			Expect(version).To(Equal(""))
 			Expect(versionSource).To(Equal(""))
 		})
@@ -125,14 +125,14 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 	   "require": {
 	       "php-64bit": "php-64bit.version.from-composer-json"
 	   }
-	}`), os.ModePerm)).NotTo(HaveOccurred())
+	}`), os.ModePerm)).To(Succeed())
 			})
 
 			it(`requires "php" with version metadata`, func() {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).NotTo(HaveOccurred())
+				Expect(err).To(Succeed())
 				Expect(version).To(Equal("php-64bit.version.from-composer-json"))
 				Expect(versionSource).To(Equal("composer.json"))
 			})
@@ -144,14 +144,14 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 	   "require": {
 	       "php": "php-32bit.version.from-composer-json"
 	   }
-	}`), os.ModePerm)).NotTo(HaveOccurred())
+	}`), os.ModePerm)).To(Succeed())
 			})
 
 			it(`requires "php" with version metadata`, func() {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).NotTo(HaveOccurred())
+				Expect(err).To(Succeed())
 				Expect(version).To(Equal("php-32bit.version.from-composer-json"))
 				Expect(versionSource).To(Equal("composer.json"))
 			})
@@ -164,14 +164,14 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 	       "php-64bit": "php-64bit.version.from-composer-json",
 	       "php": "php-32bit.version.from-composer-json"
 	   }
-	}`), os.ModePerm)).NotTo(HaveOccurred())
+	}`), os.ModePerm)).To(Succeed())
 			})
 
 			it(`requires "php" with version metadata`, func() {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).NotTo(HaveOccurred())
+				Expect(err).To(Succeed())
 				Expect(version).To(Equal("php-64bit.version.from-composer-json"))
 				Expect(versionSource).To(Equal("composer.json"))
 			})

@@ -39,7 +39,7 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 		it.Before(func() {
 			var err error
 			name, err = occam.RandomName()
-			Expect(err).NotTo(HaveOccurred())
+			Expect(err).To(Succeed())
 		})
 
 		it.After(func() {
@@ -54,7 +54,7 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 			var logs fmt.Stringer
 
 			source, err = occam.Source(filepath.Join("testdata", "default_app"))
-			Expect(err).NotTo(HaveOccurred())
+			Expect(err).To(Succeed())
 
 			image, logs, err = pack.Build.
 				WithPullPolicy("never").
@@ -77,7 +77,7 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 				WithEnv(map[string]string{"PORT": "8765"}).
 				WithPublish("8765").
 				Execute(image.ID)
-			Expect(err).NotTo(HaveOccurred())
+			Expect(err).To(Succeed())
 
 			Eventually(container).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
 		})

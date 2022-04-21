@@ -33,7 +33,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		var err error
 		workingDir, err = os.MkdirTemp("", "working-dir")
-		Expect(err).NotTo(HaveOccurred())
+		Expect(err).To(Succeed())
 
 		buffer = bytes.NewBuffer(nil)
 		logEmitter := scribe.NewEmitter(buffer)
@@ -51,12 +51,12 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 	context("when composer.json is present", func() {
 		it.Before(func() {
-			Expect(os.WriteFile(filepath.Join(workingDir, "composer.json"), []byte("{}"), 0644)).NotTo(HaveOccurred())
+			Expect(os.WriteFile(filepath.Join(workingDir, "composer.json"), []byte("{}"), 0644)).To(Succeed())
 		})
 
 		it(`requires "composer" and "php" and provides "composer-packages"`, func() {
 			detectResult, err := detect(packit.DetectContext{WorkingDir: workingDir})
-			Expect(err).NotTo(HaveOccurred())
+			Expect(err).To(Succeed())
 
 			Expect(detectResult.Plan).To(Equal(packit.BuildPlan{
 				Provides: []packit.BuildPlanProvision{
@@ -92,7 +92,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 			it(`requires "php" with version and version-source metadata`, func() {
 				detectResult, err := detect(packit.DetectContext{WorkingDir: workingDir})
-				Expect(err).NotTo(HaveOccurred())
+				Expect(err).To(Succeed())
 
 				Expect(detectResult.Plan).To(Equal(packit.BuildPlan{
 					Provides: []packit.BuildPlanProvision{
@@ -123,7 +123,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		context("when composer.lock is not present", func() {
 			it("will log a warning", func() {
 				_, err := detect(packit.DetectContext{WorkingDir: workingDir})
-				Expect(err).NotTo(HaveOccurred())
+				Expect(err).To(Succeed())
 
 				Expect(buffer).To(ContainLines("WARNING: Include a 'composer.lock' file with your application! This will make sure the exact same version of dependencies are used when you build. It will also enable caching of your dependency layer."))
 			})
@@ -162,14 +162,14 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 		context("when $COMPOSER points to an existing file", func() {
 			it.Before(func() {
-				Expect(os.Mkdir(filepath.Join(workingDir, "other"), os.ModeDir|os.ModePerm)).NotTo(HaveOccurred())
-				Expect(os.Mkdir(filepath.Join(workingDir, "other", "location"), os.ModeDir|os.ModePerm)).NotTo(HaveOccurred())
-				Expect(os.WriteFile(filepath.Join(workingDir, "other", "location", "composer.json"), []byte("{}"), os.ModePerm)).NotTo(HaveOccurred())
+				Expect(os.Mkdir(filepath.Join(workingDir, "other"), os.ModeDir|os.ModePerm)).To(Succeed())
+				Expect(os.Mkdir(filepath.Join(workingDir, "other", "location"), os.ModeDir|os.ModePerm)).To(Succeed())
+				Expect(os.WriteFile(filepath.Join(workingDir, "other", "location", "composer.json"), []byte("{}"), os.ModePerm)).To(Succeed())
 			})
 
 			it(`requires "composer" and "php" and provides "composer-packages"`, func() {
 				detectResult, err := detect(packit.DetectContext{WorkingDir: workingDir})
-				Expect(err).NotTo(HaveOccurred())
+				Expect(err).To(Succeed())
 
 				Expect(detectResult.Plan).To(Equal(packit.BuildPlan{
 					Provides: []packit.BuildPlanProvision{
@@ -199,12 +199,12 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 			context("when composer.lock is not present as a sibling of composer.json", func() {
 				it.Before(func() {
-					Expect(os.WriteFile(filepath.Join(workingDir, "composer.lock"), []byte("{}"), 0644)).NotTo(HaveOccurred())
+					Expect(os.WriteFile(filepath.Join(workingDir, "composer.lock"), []byte("{}"), 0644)).To(Succeed())
 				})
 
 				it("will log a warning", func() {
 					_, err := detect(packit.DetectContext{WorkingDir: workingDir})
-					Expect(err).NotTo(HaveOccurred())
+					Expect(err).To(Succeed())
 
 					Expect(buffer).To(ContainLines("WARNING: Include a 'composer.lock' file with your application! This will make sure the exact same version of dependencies are used when you build. It will also enable caching of your dependency layer."))
 				})
