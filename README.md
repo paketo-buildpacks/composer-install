@@ -1,6 +1,6 @@
-# PHP Composer Distribution Cloud Native Buildpack
+# PHP Composer Install Cloud Native Buildpack
 
-This buildpack runs the `composer install` command [composer](https://getcomposer.org/) to download project dependencies.
+This buildpack runs the [composer](https://getcomposer.org/) command `composer install`  to download project dependencies.
 It requires both `composer` and `php` on the path (see [requires](#requires)).
 
 A usage example can be found in the
@@ -27,6 +27,9 @@ location specified by `COMPOSER_VENDOR_DIR`, which defaults to `vendor`.
 
 If dependencies are needed for Composer install scripts, use `BP_COMPOSER_INSTALL_GLOBAL`
 to specify which dependencies to install. 
+
+Use of a `composer.lock` file will enable caching of the downloaded dependencies, such that
+subsequent builds with the same `composer.lock` file will not need to run `composer install` again.
 
 ## Integration
 
@@ -111,6 +114,16 @@ BP_COMPOSER_INSTALL_OPTIONS= # Note that this is set to empty
 # will result in an installation command of `composer install --no-progress`
 unset BP_COMPOSER_INSTALL_OPTIONS
 # will result in an installation command of `composer install --no-progress --no-dev`
+```
+
+### `BP_COMPOSER_INSTALL_GLOBAL`
+
+Use `BP_COMPOSER_INSTALL_GLOBAL` to specify packages required by Composer scripts.
+These will be installed using `composer global require`.
+These packages will not be available to the application.
+
+```shell
+BP_COMPOSER_INSTALL_GLOBAL="friendsofphp/php-cs-fixer squizlabs/php_codesniffer=*"
 ```
 
 ### Other environment variables
