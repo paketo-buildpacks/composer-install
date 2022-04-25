@@ -330,7 +330,7 @@ composer-lock-sha = "sha-from-composer-lock"
 	})
 
 	context("invokes 'composer check-platform-reqs'", func() {
-		it("generates 'php.ini.d/composer-extensions.ini'", func() {
+		it("generates '.php.ini.d/composer-extensions.ini'", func() {
 			_, err := build(packit.BuildContext{
 				WorkingDir: workingDir,
 				Layers:     packit.Layers{Path: layersDir},
@@ -348,9 +348,9 @@ composer-lock-sha = "sha-from-composer-lock"
 				fmt.Sprintf("PHPRC=%s", filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")),
 				fmt.Sprintf("PATH=fake-path-from-tests")))
 
-			Expect(filepath.Join(workingDir, "php.ini.d", "composer-extensions.ini")).To(BeARegularFile())
+			Expect(filepath.Join(workingDir, ".php.ini.d", "composer-extensions.ini")).To(BeARegularFile())
 
-			contents, err := os.ReadFile(filepath.Join(workingDir, "php.ini.d", "composer-extensions.ini"))
+			contents, err := os.ReadFile(filepath.Join(workingDir, ".php.ini.d", "composer-extensions.ini"))
 			Expect(err).To(Succeed())
 
 			Expect(string(contents)).To(Equal(`extension = hello.so
