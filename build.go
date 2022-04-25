@@ -112,12 +112,21 @@ func Build(
 	}
 }
 
+// runComposerGlobalIfRequired will check for existence of env var "BP_COMPOSER_INSTALL_GLOBAL".
+// If that exists, will run `composer global require` with the contents of BP_COMPOSER_INSTALL_GLOBAL
+// to ensure that those packages are available for Composer scripts.
+//
+// It will return the location to which the packages have been installed, so that they can be made available
+// on the path when running `composer install`.
+//
+// `composer global require`: https://getcomposer.org/doc/03-cli.md#global
+// Composer scripts: https://getcomposer.org/doc/articles/scripts.md
 func runComposerGlobalIfRequired(
 	logger scribe.Emitter,
 	context packit.BuildContext,
 	composerGlobalExec Executable,
 	path string,
-	composerPhpIniPath string) (string, error) {
+	composerPhpIniPath string) (composerGlobalBin string, err error) {
 	composerInstallGlobal, found := os.LookupEnv(BpComposerInstallGlobal)
 
 	if !found {
@@ -160,7 +169,7 @@ func runComposerGlobalIfRequired(
 		return "", err
 	}
 
-	composerGlobalBin := filepath.Join(composerGlobalLayer.Path, "vendor", "bin")
+	composerGlobalBin = filepath.Join(composerGlobalLayer.Path, "vendor", "bin")
 
 	if os.Getenv(BpLogLevel) == "DEBUG" {
 		logger.Debug.Subprocess(composerGlobalBuffer.String())
@@ -174,7 +183,7 @@ func runComposerGlobalIfRequired(
 		}
 	}
 
-	return composerGlobalBin, nil
+	return
 }
 
 func runComposerInstall(
