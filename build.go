@@ -186,6 +186,14 @@ func runComposerGlobalIfRequired(
 	return
 }
 
+// runComposerInstall will run `composer install` to download dependencies into a new layer
+//
+// Returns:
+// - composerPackagesLayer: a new layer into which the dependencies will be installed
+// - layerVendorDir: the absolute file path inside the layer where the dependencies are installed
+// - err: any error
+//
+// https://getcomposer.org/doc/03-cli.md#install-i
 func runComposerInstall(
 	logger scribe.Emitter,
 	context packit.BuildContext,
@@ -194,18 +202,18 @@ func runComposerInstall(
 	path string,
 	composerInstallExec Executable,
 	workspaceVendorDir string,
-	calculator Calculator) (packit.Layer, string, error) {
+	calculator Calculator) (composerPackagesLayer packit.Layer, layerVendorDir string, err error) {
 
 	launch, build := draft.NewPlanner().MergeLayerTypes(ComposerPackagesDependency, context.Plan.Entries)
 
-	composerPackagesLayer, err := context.Layers.Get(ComposerPackagesLayerName)
+	composerPackagesLayer, err = context.Layers.Get(ComposerPackagesLayerName)
 	if err != nil {
 		return packit.Layer{}, "", err
 	}
 
 	composerJsonPath, composerLockPath, _, _ := FindComposerFiles(context.WorkingDir)
 
-	layerVendorDir := filepath.Join(composerPackagesLayer.Path, "vendor")
+	layerVendorDir = filepath.Join(composerPackagesLayer.Path, "vendor")
 
 	composerLockChecksum, err := calculator.Sum(composerLockPath)
 	if err != nil {
@@ -285,7 +293,10 @@ func runComposerInstall(
 	return composerPackagesLayer, layerVendorDir, nil
 }
 
-func writeComposerPhpIni(logger scribe.Emitter, context packit.BuildContext) (string, error) {
+// writeComposerPhpIni will create a PHP INI file used by Composer itself,
+// such as when running `composer global` and `composer install.
+// This is created in a new ignored layer.
+func writeComposerPhpIni(logger scribe.Emitter, context packit.BuildContext) (composerPhpIniPath string, err error) {
 	composerPhpIniLayer, err := context.Layers.Get(ComposerPhpIniLayerName)
 	if err != nil {
 		return "", err
@@ -296,7 +307,7 @@ func writeComposerPhpIni(logger scribe.Emitter, context packit.BuildContext) (st
 		return "", err
 	}
 
-	composerPhpIniPath := filepath.Join(composerPhpIniLayer.Path, "composer-php.ini")
+	composerPhpIniPath = filepath.Join(composerPhpIniLayer.Path, "composer-php.ini")
 
 	logger.Debug.Process("Writing php.ini for composer")
 	logger.Debug.Subprocess("Writing %s to %s", filepath.Base(composerPhpIniPath), composerPhpIniPath)
@@ -321,6 +332,8 @@ extension = openssl.so`, os.Getenv(PhpExtensionDir))
 //
 // This code has been largely borrowed from the original `php-composer` buildpack
 // https://github.com/paketo-buildpacks/php-composer/blob/5e2604b74cbeb30090bf7eadb1cfc158b374efc0/composer/composer.go#L76-L100
+//
+// In case you are curious about exit code 2: https://getcomposer.org/doc/03-cli.md#process-exit-codes
 func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executable, workingDir, composerPhpIniPath, composerPackagesLayerPath, path string) error {
 	buffer := bytes.NewBuffer(nil)
 
