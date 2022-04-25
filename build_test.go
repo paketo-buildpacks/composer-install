@@ -296,7 +296,7 @@ composer-lock-sha = "sha-from-composer-lock"
 
 		})
 
-		it("reuses the cached version of the SDK dependency", func() {
+		it("reuses the cached version of the composer packages", func() {
 			result, err := build(packit.BuildContext{
 				WorkingDir: workingDir,
 				Layers:     packit.Layers{Path: layersDir},
