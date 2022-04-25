@@ -13,6 +13,16 @@ func NewPhpVersionResolver() PhpVersionResolver {
 	return PhpVersionResolver{}
 }
 
+// Resolve will inspect the `composer.lock` and `composer.json` files for the desired PHP version
+// Composer itself does not install PHP (it actually requires PHP to run) but you can specify
+// desired version ranges for "platform packages" which include 32- and 64-bit PHP.
+// https://getcomposer.org/doc/01-basic-usage.md#platform-packages
+// The priority order is shown below, where #1 has the highest priority:
+// #1 composer.lock "platform.php-64bit"
+// #2 composer.lock "platform.php" (this is 32-bit)
+// #3 composer.json "require.php-64bit"
+// #4 composer.json "require.php" (this is 32-bit)
+// Specifying the version for PHP is entirely optional, this function will return ("", "", nil) if no version is specified
 func (_ PhpVersionResolver) Resolve(composerJsonPath, composerLockPath string) (version, versionSource string, err error) {
 	if exists, err := fs.Exists(composerLockPath); err != nil {
 		return "", "", err
@@ -40,12 +50,8 @@ func (_ PhpVersionResolver) Resolve(composerJsonPath, composerLockPath string) (
 						return php, DefaultComposerLockPath, nil
 					}
 				}
-
-				return "", "", nil
 			}
 		}
-
-		return "", "", nil
 	} else {
 		file, err := os.Open(composerJsonPath)
 		if err != nil {
@@ -61,11 +67,6 @@ func (_ PhpVersionResolver) Resolve(composerJsonPath, composerLockPath string) (
 		}
 
 		err = json.NewDecoder(file).Decode(&composerJson)
-		if err != nil {
-			return "", "", err
-		}
-
-		err = file.Close()
 		if err != nil {
 			return "", "", err
 		}
