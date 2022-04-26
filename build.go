@@ -95,7 +95,7 @@ func Build(
 				return packit.BuildResult{}, err
 			}
 			for _, f := range files {
-				logger.Debug.Action(fmt.Sprintf("- %s", f.Name()))
+				logger.Debug.Subprocess(fmt.Sprintf("- %s", f.Name()))
 			}
 		}
 
@@ -175,14 +175,13 @@ func runComposerGlobalIfRequired(
 	composerGlobalBin = filepath.Join(composerGlobalLayer.Path, "vendor", "bin")
 
 	if os.Getenv(BpLogLevel) == "DEBUG" {
-		logger.Debug.Subprocess(composerGlobalBuffer.String())
-		logger.Debug.Action("Adding global Composer packages to PATH:")
+		logger.Debug.Subprocess("Adding global Composer packages to PATH:")
 		files, err := os.ReadDir(composerGlobalBin)
 		if err != nil {
 			return "", err
 		}
 		for _, f := range files {
-			logger.Debug.Detail(fmt.Sprintf("- %s", f.Name()))
+			logger.Debug.Subprocess(fmt.Sprintf("- %s", f.Name()))
 		}
 	}
 

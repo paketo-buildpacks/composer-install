@@ -3,6 +3,7 @@ package composer_test
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -130,9 +131,11 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		context("failure cases", func() {
-			it("will return an error from PhpVersionResolver", func() {
+			it.Before(func() {
 				phpVersionResolver.ResolveCall.Returns.Err = errors.New("some error")
+			})
 
+			it("will return an error from PhpVersionResolver", func() {
 				_, err := detect(packit.DetectContext{WorkingDir: workingDir})
 				Expect(err).To(MatchError(errors.New("some error")))
 			})
@@ -147,7 +150,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 			it("does not require or provide anything for invalidPath", func() {
 				for _, invalidPath := range invalidPaths {
-					Expect(os.Setenv("COMPOSER_VENDOR_DIR", invalidPath))
+					Expect(os.Setenv("COMPOSER_VENDOR_DIR", invalidPath)).To(Succeed())
 					_, err := detect(packit.DetectContext{WorkingDir: workingDir})
 					Expect(err).To(MatchError(packit.Fail.WithMessage("COMPOSER_VENDOR_DIR must be a relative path underneath the project root")))
 				}
@@ -227,6 +230,20 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		it(`does not require or provide anything`, func() {
 			_, err := detect(packit.DetectContext{WorkingDir: workingDir})
 			Expect(err).To(MatchError(packit.Fail.WithMessage("no composer.json found")))
+		})
+	})
+
+	context("failure cases", func() {
+		context("when composer.json cannot be STAT'ed", func() {
+			it.Before(func() {
+				Expect(os.Chmod(workingDir, 0000)).To(Succeed())
+			})
+
+			it("returns an error", func() {
+				_, err := detect(packit.DetectContext{WorkingDir: workingDir})
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal(fmt.Sprintf("stat %s: permission denied", filepath.Join(workingDir, "composer.json"))))
+			})
 		})
 	})
 }

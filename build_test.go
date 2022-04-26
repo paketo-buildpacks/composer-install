@@ -47,11 +47,17 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		composerCheckPlatformReqsExecExecutable = &fakes.Executable{}
 
 		composerInstallExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+			Expect(os.MkdirAll(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor", "local-package-name"), os.ModeDir|os.ModePerm)).To(Succeed())
+			Expect(fmt.Fprint(temp.Stdout, "stdout from composer install\n")).To(Equal(29))
+			Expect(fmt.Fprint(temp.Stderr, "stderr from composer install\n")).To(Equal(29))
 			composerInstallExecution = temp
 			return nil
 		}
 
 		composerGlobalExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+			Expect(os.MkdirAll(filepath.Join(layersDir, composer.ComposerGlobalLayerName, "vendor", "bin", "global-package-name"), os.ModeDir|os.ModePerm)).To(Succeed())
+			Expect(fmt.Fprint(temp.Stdout, "stdout from composer global\n")).To(Equal(28))
+			Expect(fmt.Fprint(temp.Stderr, "stderr from composer global\n")).To(Equal(28))
 			composerGlobalExecution = temp
 			return nil
 		}
@@ -88,7 +94,14 @@ php       8.1.4    success
 			"fake",
 		}
 
-		build = composer.Build(scribe.NewEmitter(buffer), installOptions, composerInstallExecutable, composerGlobalExecutable, composerCheckPlatformReqsExecExecutable, "fake-path-from-tests", calculator)
+		build = composer.Build(
+			scribe.NewEmitter(buffer).WithLevel("DEBUG"),
+			installOptions,
+			composerInstallExecutable,
+			composerGlobalExecutable,
+			composerCheckPlatformReqsExecExecutable,
+			"fake-path-from-tests",
+			calculator)
 
 		buildpackPlan = packit.BuildpackPlan{
 			Entries: []packit.BuildpackPlanEntry{
@@ -356,6 +369,63 @@ composer-lock-sha = "sha-from-composer-lock"
 			Expect(string(contents)).To(Equal(`extension = hello.so
 extension = bar.so
 `))
+		})
+	})
+
+	context("with debug logs", func() {
+		it.Before(func() {
+			Expect(os.Setenv(composer.BpLogLevel, "DEBUG")).To(Succeed())
+			Expect(os.Setenv(composer.BpComposerInstallGlobal, "package")).To(Succeed())
+		})
+
+		it.After(func() {
+			Expect(os.Unsetenv(composer.BpLogLevel)).To(Succeed())
+			Expect(os.Unsetenv(composer.BpComposerInstallGlobal)).To(Succeed())
+		})
+
+		it("prints additional information", func() {
+			_, err := build(packit.BuildContext{
+				BuildpackInfo: packit.BuildpackInfo{
+					Name:    "buildpack-name",
+					Version: "buildpack-version"},
+				WorkingDir: workingDir,
+				Layers:     packit.Layers{Path: layersDir},
+				Plan:       buildpackPlan,
+			})
+			Expect(err).To(Succeed())
+			output := buffer.String()
+			t.Log(output)
+			Expect(output).To(Equal(fmt.Sprintf(`buildpack-name buildpack-version
+  Writing php.ini for composer
+    Writing composer-php.ini to %s
+    Writing php.ini contents:
+    '[PHP]
+    extension_dir = "php-extension-dir"
+    extension = openssl.so'
+  Running 'composer global require'
+    stdout from composer global
+    stderr from composer global
+  Ran 'composer global require --no-progress package'
+    Adding global Composer packages to PATH:
+    - global-package-name
+  Calculated checksum of default-checksum for composer.lock
+  Building new layer %s
+    Setting layer types: launch=[true], build=[false], cache=[true]
+  Running 'composer install'
+    stdout from composer install
+    stderr from composer install
+  Ran 'composer install options from fake'
+  Writing symlink %s => %s
+    Listing files in %s:
+    - local-package-name
+  Running 'composer check-platform-reqs'
+  Ran 'composer check-platform-reqs', found extensions 'hello, bar'
+`,
+				filepath.Join(layersDir, composer.ComposerPhpIniLayerName, "composer-php.ini"),
+				filepath.Join(layersDir, composer.ComposerPackagesLayerName),
+				filepath.Join(workingDir, "vendor"),
+				filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor"),
+				filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor"))))
 		})
 	})
 
