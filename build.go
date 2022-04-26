@@ -81,7 +81,7 @@ func Build(
 			return packit.BuildResult{}, err
 		}
 
-		logger.Process("Writing symlink to %s", workspaceVendorDir)
+		logger.Process("Writing symlink %s => %s", workspaceVendorDir, layerVendorDir)
 
 		err = os.Symlink(layerVendorDir, workspaceVendorDir)
 		if err != nil {
@@ -89,13 +89,13 @@ func Build(
 		}
 
 		if os.Getenv(BpLogLevel) == "DEBUG" {
-			logger.Debug.Action("listing files in %s:", layerVendorDir)
+			logger.Debug.Subprocess("Listing files in %s:", layerVendorDir)
 			files, err := os.ReadDir(layerVendorDir)
 			if err != nil {
 				return packit.BuildResult{}, err
 			}
 			for _, f := range files {
-				logger.Debug.Detail(fmt.Sprintf("- %s", f.Name()))
+				logger.Debug.Action(fmt.Sprintf("- %s", f.Name()))
 			}
 		}
 
@@ -169,6 +169,9 @@ func runComposerGlobalIfRequired(
 		return "", err
 	}
 
+	logger.Debug.Subprocess(composerGlobalBuffer.String())
+	logger.Process("Ran 'composer %s'", strings.Join(execution.Args, " "))
+
 	composerGlobalBin = filepath.Join(composerGlobalLayer.Path, "vendor", "bin")
 
 	if os.Getenv(BpLogLevel) == "DEBUG" {
@@ -220,7 +223,7 @@ func runComposerInstall(
 		return packit.Layer{}, "", err
 	}
 
-	logger.Debug.Subprocess("Calculated checksum of %s for composer.lock", composerLockChecksum)
+	logger.Debug.Process("Calculated checksum of %s for composer.lock", composerLockChecksum)
 
 	if cachedSHA, ok := composerPackagesLayer.Metadata["composer-lock-sha"].(string); ok && cachedSHA == composerLockChecksum {
 		logger.Process("Reusing cached layer %s", composerPackagesLayer.Path)
@@ -235,6 +238,8 @@ func runComposerInstall(
 
 		return composerPackagesLayer, layerVendorDir, nil
 	}
+
+	logger.Process("Building new layer %s", composerPackagesLayer.Path)
 
 	composerPackagesLayer, err = composerPackagesLayer.Reset()
 	if err != nil {
@@ -255,6 +260,7 @@ func runComposerInstall(
 	if exists, err := fs.Exists(workspaceVendorDir); err != nil {
 		return packit.Layer{}, "", err
 	} else if exists {
+		logger.Process("Detected existing vendored packages, will run 'composer install' with those packages")
 		if err := fs.Copy(workspaceVendorDir, layerVendorDir); err != nil {
 			return packit.Layer{}, "", err
 		}
@@ -289,6 +295,7 @@ func runComposerInstall(
 	}
 
 	logger.Debug.Subprocess(composerInstallBuffer.String())
+	logger.Process("Ran 'composer %s'", strings.Join(execution.Args, " "))
 
 	return composerPackagesLayer, layerVendorDir, nil
 }
@@ -315,7 +322,7 @@ func writeComposerPhpIni(logger scribe.Emitter, context packit.BuildContext) (co
 	phpIni := fmt.Sprintf(`[PHP]
 extension_dir = "%s"
 extension = openssl.so`, os.Getenv(PhpExtensionDir))
-	logger.Debug.Subprocess("Writing php.ini contents: '%s'", phpIni)
+	logger.Debug.Subprocess("Writing php.ini contents:\n'%s'", phpIni)
 
 	return composerPhpIniPath, os.WriteFile(composerPhpIniPath, []byte(phpIni), os.ModePerm)
 }
@@ -337,6 +344,8 @@ extension = openssl.so`, os.Getenv(PhpExtensionDir))
 func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executable, workingDir, composerPhpIniPath, composerPackagesLayerPath, path string) error {
 	buffer := bytes.NewBuffer(nil)
 
+	logger.Process("Running 'composer check-platform-reqs'")
+
 	execution := pexec.Execution{
 		Args: []string{"check-platform-reqs"},
 		Dir:  workingDir,
@@ -349,7 +358,6 @@ func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executabl
 		Stdout: buffer,
 		Stderr: buffer,
 	}
-
 	err := checkPlatformReqsExec.Execute(execution)
 	if err != nil {
 		logger.Subprocess(buffer.String())
@@ -368,6 +376,8 @@ func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executabl
 			extensions = append(extensions, extensionName)
 		}
 	}
+
+	logger.Process("Ran 'composer check-platform-reqs', found extensions '%s'", strings.Join(extensions, ", "))
 
 	buf := bytes.Buffer{}
 

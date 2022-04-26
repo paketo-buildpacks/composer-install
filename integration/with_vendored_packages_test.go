@@ -65,6 +65,8 @@ func testWithVendoredPackages(t *testing.T, context spec.G, it spec.S) {
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
+			Expect(logs).To(ContainSubstring("Detected existing vendored packages, will run 'composer install' with those packages"))
+
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Distribution Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo Composer Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo Composer Install Buildpack")))

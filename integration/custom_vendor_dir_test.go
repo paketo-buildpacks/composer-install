@@ -67,6 +67,8 @@ func testCustomVendorDir(t *testing.T, context spec.G, it spec.S) {
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
+			Expect(logs).To(ContainSubstring("Writing symlink /workspace/custom_vendor_dir => /layers/paketo-buildpacks_composer-install/composer-packages/vendor"))
+
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Distribution Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo Composer Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo Composer Install Buildpack")))

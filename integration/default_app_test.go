@@ -65,6 +65,8 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
+			Expect(logs).To(ContainSubstring("Ran 'composer install --no-progress --no-dev'"))
+
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Distribution Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo Composer Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo Composer Install Buildpack")))
