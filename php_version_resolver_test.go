@@ -23,7 +23,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		var err error
 		workingDir, err = os.MkdirTemp("", "working-dir")
-		Expect(err).To(Succeed())
+		Expect(err).NotTo(HaveOccurred())
 
 		phpVersionResolver = composer.NewPhpVersionResolver()
 	})
@@ -55,7 +55,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 				Expect(version).To(Equal("php-64bit.version.from-composer-lock"))
 				Expect(versionSource).To(Equal("composer.lock"))
 			})
@@ -74,7 +74,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 				Expect(version).To(Equal("php.version.from-composer-lock"))
 				Expect(versionSource).To(Equal("composer.lock"))
 			})
@@ -94,7 +94,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 				Expect(version).To(Equal("php-64bit.version.from-composer-lock"))
 				Expect(versionSource).To(Equal("composer.lock"))
 			})
@@ -112,7 +112,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 			version, versionSource, err := phpVersionResolver.Resolve(
 				filepath.Join(workingDir, "composer.json"),
 				filepath.Join(workingDir, "composer.lock"))
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 			Expect(version).To(Equal(""))
 			Expect(versionSource).To(Equal(""))
 		})
@@ -132,7 +132,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 				Expect(version).To(Equal("php-64bit.version.from-composer-json"))
 				Expect(versionSource).To(Equal("composer.json"))
 			})
@@ -151,7 +151,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 				Expect(version).To(Equal("php-32bit.version.from-composer-json"))
 				Expect(versionSource).To(Equal("composer.json"))
 			})
@@ -171,7 +171,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 				version, versionSource, err := phpVersionResolver.Resolve(
 					filepath.Join(workingDir, "composer.json"),
 					filepath.Join(workingDir, "composer.lock"))
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 				Expect(version).To(Equal("php-64bit.version.from-composer-json"))
 				Expect(versionSource).To(Equal("composer.json"))
 			})
@@ -187,7 +187,7 @@ func testPhpVersionResolver(t *testing.T, context spec.G, it spec.S) {
 			version, versionSource, err := phpVersionResolver.Resolve(
 				filepath.Join(workingDir, "composer.json"),
 				filepath.Join(workingDir, "composer.lock"))
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 			Expect(version).To(Equal(""))
 			Expect(versionSource).To(Equal(""))
 		})

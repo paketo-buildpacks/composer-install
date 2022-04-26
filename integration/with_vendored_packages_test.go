@@ -39,7 +39,7 @@ func testWithVendoredPackages(t *testing.T, context spec.G, it spec.S) {
 		it.Before(func() {
 			var err error
 			name, err = occam.RandomName()
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 		})
 
 		it.After(func() {
@@ -54,7 +54,7 @@ func testWithVendoredPackages(t *testing.T, context spec.G, it spec.S) {
 			var logs fmt.Stringer
 
 			source, err = occam.Source(filepath.Join("testdata", "with_vendored_packages"))
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			image, logs, err = pack.Build.
 				WithPullPolicy("never").
@@ -79,7 +79,7 @@ func testWithVendoredPackages(t *testing.T, context spec.G, it spec.S) {
 				WithEnv(map[string]string{"PORT": "8765"}).
 				WithPublish("8765").
 				Execute(image.ID)
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(container).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
 		})

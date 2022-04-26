@@ -39,7 +39,7 @@ func testWithExtensions(t *testing.T, context spec.G, it spec.S) {
 		it.Before(func() {
 			var err error
 			name, err = occam.RandomName()
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 		})
 
 		it.After(func() {
@@ -54,7 +54,7 @@ func testWithExtensions(t *testing.T, context spec.G, it spec.S) {
 			var logs fmt.Stringer
 
 			source, err = occam.Source(filepath.Join("testdata", "with_extensions"))
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			image, logs, err = pack.Build.
 				WithPullPolicy("never").
@@ -80,7 +80,7 @@ func testWithExtensions(t *testing.T, context spec.G, it spec.S) {
 				WithEnv(map[string]string{"PORT": "8765"}).
 				WithPublish("8765").
 				Execute(image.ID)
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			// Note that `mbstring` is not included, since it is not available in `php-dist` for unknown reasons
 			extensionsMatcher := And(

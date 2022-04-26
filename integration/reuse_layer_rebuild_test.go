@@ -30,7 +30,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		var err error
 		name, err = occam.RandomName()
-		Expect(err).To(Succeed())
+		Expect(err).NotTo(HaveOccurred())
 
 		docker = occam.NewDocker()
 		pack = occam.NewPack()
@@ -61,7 +61,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			)
 
 			source, err = occam.Source(filepath.Join("testdata", "default_app"))
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			build := pack.WithNoColor().Build.
 				WithPullPolicy("never").
@@ -71,7 +71,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				})
 
 			firstImage, logs, err = build.Execute(name, source)
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs = append(imageIDs, firstImage.ID)
 
@@ -84,7 +84,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			// Second pack build
 			secondImage, logs, err = build.Execute(name, source)
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs = append(imageIDs, secondImage.ID)
 
@@ -110,7 +110,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			)
 
 			source, err = occam.Source(filepath.Join("testdata", "default_app"))
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			build := pack.WithNoColor().Build.
 				WithPullPolicy("never").
@@ -120,7 +120,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				})
 
 			firstImage, logs, err = build.Execute(name, source)
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs = append(imageIDs, firstImage.ID)
 
@@ -137,7 +137,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			secondImage, logs, err = build.
 				Execute(name, source)
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs = append(imageIDs, secondImage.ID)
 

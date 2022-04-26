@@ -71,7 +71,7 @@ ext-bar   8.1.4    missing
 php       8.1.4    success
 `))
 
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			return nil
 		}
@@ -81,10 +81,10 @@ php       8.1.4    success
 
 		var err error
 		layersDir, err = os.MkdirTemp("", "layers")
-		Expect(err).To(Succeed())
+		Expect(err).NotTo(HaveOccurred())
 
 		workingDir, err = os.MkdirTemp("", "working-dir")
-		Expect(err).To(Succeed())
+		Expect(err).NotTo(HaveOccurred())
 
 		Expect(os.Setenv("PHP_EXTENSION_DIR", "php-extension-dir"))
 
@@ -130,7 +130,7 @@ php       8.1.4    success
 				Layers:     packit.Layers{Path: layersDir},
 				Plan:       buildpackPlan,
 			})
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(Equal(packit.BuildResult{
 				Layers: []packit.Layer{
 					{
@@ -171,13 +171,13 @@ php       8.1.4    success
 			composerPhpIni := filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")
 			Expect(composerPhpIni).To(BeARegularFile())
 			contentsBytes, err := os.ReadFile(composerPhpIni)
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 			Expect(string(contentsBytes)).To(Equal(`[PHP]
 extension_dir = "php-extension-dir"
 extension = openssl.so`))
 
 			vendorLink, err := os.Readlink(filepath.Join(workingDir, "vendor"))
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 			Expect(vendorLink).To(Equal(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor")))
 		})
 
@@ -193,7 +193,7 @@ extension = openssl.so`))
 					Layers:     packit.Layers{Path: layersDir},
 					Plan:       buildpackPlan,
 				})
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 				Expect(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor", "existing-file.text")).To(BeARegularFile())
 			})
 		})
@@ -210,7 +210,7 @@ extension = openssl.so`))
 				Layers:     packit.Layers{Path: layersDir},
 				Plan:       buildpackPlan,
 			})
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 			Expect(composerInstallExecution.Env).To(ContainElements(
 				fmt.Sprintf("COMPOSER=%s", filepath.Join(workingDir, "foo", "bar.file"))))
 			Expect(calculator.SumCall.Receives.Paths).To(Equal([]string{filepath.Join(workingDir, "foo", "composer.lock")}))
@@ -232,10 +232,10 @@ extension = openssl.so`))
 				Layers:     packit.Layers{Path: layersDir},
 				Plan:       buildpackPlan,
 			})
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			vendorLink, err := os.Readlink(filepath.Join(workingDir, "some-custom-dir"))
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 			Expect(vendorLink).To(Equal(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor")))
 		})
 
@@ -251,9 +251,9 @@ extension = openssl.so`))
 					Layers:     packit.Layers{Path: layersDir},
 					Plan:       buildpackPlan,
 				})
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 				existingFile, err := filepath.EvalSymlinks(filepath.Join(workingDir, "some-custom-dir", "existing-file.text"))
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 				Expect(existingFile).To(BeARegularFile())
 				Expect(existingFile).To(HaveSuffix(filepath.Join(composer.ComposerPackagesLayerName, "vendor", "existing-file.text")))
 			})
@@ -275,7 +275,7 @@ extension = openssl.so`))
 				Layers:     packit.Layers{Path: layersDir},
 				Plan:       buildpackPlan,
 			})
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			Expect(composerGlobalExecution.Args).To(Equal([]string{"global", "require", "--no-progress", "friendsofphp/php-cs-fixer", "squizlabs/php_codesniffer=*"}))
 			Expect(composerGlobalExecution.Dir).To(Equal(filepath.Join(layersDir, "composer-global")))
@@ -305,7 +305,7 @@ extension = openssl.so`))
 				[]byte(`[metadata]
 composer-lock-sha = "sha-from-composer-lock"
 `), os.ModePerm)
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 		})
 
@@ -315,7 +315,7 @@ composer-lock-sha = "sha-from-composer-lock"
 				Layers:     packit.Layers{Path: layersDir},
 				Plan:       buildpackPlan,
 			})
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			Expect(buffer).NotTo(ContainSubstring("Running 'composer install'"))
 
@@ -349,7 +349,7 @@ composer-lock-sha = "sha-from-composer-lock"
 				Layers:     packit.Layers{Path: layersDir},
 				Plan:       buildpackPlan,
 			})
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			Expect(composerCheckPlatformReqsExecExecution.Args[0]).To(Equal("check-platform-reqs"))
 			Expect(composerCheckPlatformReqsExecExecution.Dir).To(Equal(workingDir))
@@ -364,7 +364,7 @@ composer-lock-sha = "sha-from-composer-lock"
 			Expect(filepath.Join(workingDir, ".php.ini.d", "composer-extensions.ini")).To(BeARegularFile())
 
 			contents, err := os.ReadFile(filepath.Join(workingDir, ".php.ini.d", "composer-extensions.ini"))
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(contents)).To(Equal(`extension = hello.so
 extension = bar.so
@@ -392,7 +392,7 @@ extension = bar.so
 				Layers:     packit.Layers{Path: layersDir},
 				Plan:       buildpackPlan,
 			})
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 			output := buffer.String()
 			t.Log(output)
 			Expect(output).To(Equal(fmt.Sprintf(`buildpack-name buildpack-version

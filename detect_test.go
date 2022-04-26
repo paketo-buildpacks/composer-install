@@ -34,7 +34,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		var err error
 		workingDir, err = os.MkdirTemp("", "working-dir")
-		Expect(err).To(Succeed())
+		Expect(err).NotTo(HaveOccurred())
 
 		buffer = bytes.NewBuffer(nil)
 		logEmitter := scribe.NewEmitter(buffer)
@@ -57,7 +57,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 		it(`requires "composer" and "php" and provides "composer-packages"`, func() {
 			detectResult, err := detect(packit.DetectContext{WorkingDir: workingDir})
-			Expect(err).To(Succeed())
+			Expect(err).NotTo(HaveOccurred())
 
 			Expect(detectResult.Plan).To(Equal(packit.BuildPlan{
 				Provides: []packit.BuildPlanProvision{
@@ -93,7 +93,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 			it(`requires "php" with version and version-source metadata`, func() {
 				detectResult, err := detect(packit.DetectContext{WorkingDir: workingDir})
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 
 				Expect(detectResult.Plan).To(Equal(packit.BuildPlan{
 					Provides: []packit.BuildPlanProvision{
@@ -124,7 +124,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		context("when composer.lock is not present", func() {
 			it("will log a warning", func() {
 				_, err := detect(packit.DetectContext{WorkingDir: workingDir})
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 
 				Expect(buffer).To(ContainLines("WARNING: Include a 'composer.lock' file with your application! This will make sure the exact same version of dependencies are used when you build. It will also enable caching of your dependency layer."))
 			})
@@ -172,7 +172,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 			it(`requires "composer" and "php" and provides "composer-packages"`, func() {
 				detectResult, err := detect(packit.DetectContext{WorkingDir: workingDir})
-				Expect(err).To(Succeed())
+				Expect(err).NotTo(HaveOccurred())
 
 				Expect(detectResult.Plan).To(Equal(packit.BuildPlan{
 					Provides: []packit.BuildPlanProvision{
@@ -207,7 +207,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 				it("will log a warning", func() {
 					_, err := detect(packit.DetectContext{WorkingDir: workingDir})
-					Expect(err).To(Succeed())
+					Expect(err).NotTo(HaveOccurred())
 
 					Expect(buffer).To(ContainLines("WARNING: Include a 'composer.lock' file with your application! This will make sure the exact same version of dependencies are used when you build. It will also enable caching of your dependency layer."))
 				})
