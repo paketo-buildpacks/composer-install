@@ -139,7 +139,3 @@ This value must be underneath the project root.
 - `COMPOSER_AUTH`:
 Used to set up authentication, for example to add a GitHub OAuth token to increase the 
 default rate limit.
-
-## TODO:
-- Add SBOM support
-- Add support for PHP extensions
