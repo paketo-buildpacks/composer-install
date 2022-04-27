@@ -28,6 +28,10 @@ func (_ PhpVersionResolver) Resolve(composerJsonPath, composerLockPath string) (
 		return "", "", err
 	} else if exists {
 		file, err := os.Open(composerLockPath)
+		if err != nil {
+			return "", "", err
+		}
+
 		defer file.Close()
 
 		var unknownJson map[string]interface{}
