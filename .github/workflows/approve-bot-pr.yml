@@ -1,4 +1,4 @@
-name: Approve Bot PRs
+name: Approve Bot PRs and Enable Auto-Merge
 
 on:
   workflow_run:
@@ -52,11 +52,18 @@ jobs:
 
     - name: Checkout
       if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
-      uses: actions/checkout@v2
-
+      uses: actions/checkout@v3
+      
     - name: Approve
       if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
       uses: paketo-buildpacks/github-config/actions/pull-request/approve@main
       with:
         token: ${{ secrets.PAKETO_BOT_REVIEWER_GITHUB_TOKEN }}
         number: ${{ needs.download.outputs.pr-number }}
+
+    - name: Enable Auto-Merge
+      if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
+      run: |
+        gh pr merge ${{ needs.download.outputs.pr-number }} --auto --rebase
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
