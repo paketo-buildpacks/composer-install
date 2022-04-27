@@ -46,12 +46,12 @@ func Build(
 		logger.Title("%s %s", context.BuildpackInfo.Name, context.BuildpackInfo.Version)
 
 		composerPhpIniPath, err := writeComposerPhpIni(logger, context)
-		if err != nil {
+		if err != nil { // untested
 			return packit.BuildResult{}, err
 		}
 
 		composerGlobalBin, err := runComposerGlobalIfRequired(logger, context, composerGlobalExec, path, composerPhpIniPath)
-		if err != nil {
+		if err != nil { // untested
 			return packit.BuildResult{}, err
 		}
 
@@ -84,14 +84,14 @@ func Build(
 		logger.Process("Writing symlink %s => %s", workspaceVendorDir, layerVendorDir)
 
 		err = os.Symlink(layerVendorDir, workspaceVendorDir)
-		if err != nil {
+		if err != nil { // untested
 			return packit.BuildResult{}, err
 		}
 
 		if os.Getenv(BpLogLevel) == "DEBUG" {
 			logger.Debug.Subprocess("Listing files in %s:", layerVendorDir)
 			files, err := os.ReadDir(layerVendorDir)
-			if err != nil {
+			if err != nil { // untested
 				return packit.BuildResult{}, err
 			}
 			for _, f := range files {
@@ -136,12 +136,12 @@ func runComposerGlobalIfRequired(
 	logger.Process("Running 'composer global require'")
 
 	composerGlobalLayer, err := context.Layers.Get(ComposerGlobalLayerName)
-	if err != nil {
+	if err != nil { // untested
 		return "", err
 	}
 
 	composerGlobalLayer, err = composerGlobalLayer.Reset()
-	if err != nil {
+	if err != nil { // untested
 		return "", err
 	}
 
@@ -177,7 +177,7 @@ func runComposerGlobalIfRequired(
 	if os.Getenv(BpLogLevel) == "DEBUG" {
 		logger.Debug.Subprocess("Adding global Composer packages to PATH:")
 		files, err := os.ReadDir(composerGlobalBin)
-		if err != nil {
+		if err != nil { // untested
 			return "", err
 		}
 		for _, f := range files {
@@ -209,7 +209,7 @@ func runComposerInstall(
 	launch, build := draft.NewPlanner().MergeLayerTypes(ComposerPackagesDependency, context.Plan.Entries)
 
 	composerPackagesLayer, err = context.Layers.Get(ComposerPackagesLayerName)
-	if err != nil {
+	if err != nil { // untested
 		return packit.Layer{}, "", err
 	}
 
@@ -218,7 +218,7 @@ func runComposerInstall(
 	layerVendorDir = filepath.Join(composerPackagesLayer.Path, "vendor")
 
 	composerLockChecksum, err := calculator.Sum(composerLockPath)
-	if err != nil {
+	if err != nil { // untested
 		return packit.Layer{}, "", err
 	}
 
@@ -241,7 +241,7 @@ func runComposerInstall(
 	logger.Process("Building new layer %s", composerPackagesLayer.Path)
 
 	composerPackagesLayer, err = composerPackagesLayer.Reset()
-	if err != nil {
+	if err != nil { // untested
 		return packit.Layer{}, "", err
 	}
 
@@ -260,10 +260,10 @@ func runComposerInstall(
 		return packit.Layer{}, "", err
 	} else if exists {
 		logger.Process("Detected existing vendored packages, will run 'composer install' with those packages")
-		if err := fs.Copy(workspaceVendorDir, layerVendorDir); err != nil {
+		if err := fs.Copy(workspaceVendorDir, layerVendorDir); err != nil { // untested
 			return packit.Layer{}, "", err
 		}
-		if err := os.RemoveAll(workspaceVendorDir); err != nil {
+		if err := os.RemoveAll(workspaceVendorDir); err != nil { // untested
 			return packit.Layer{}, "", err
 		}
 	}
@@ -304,12 +304,12 @@ func runComposerInstall(
 // This is created in a new ignored layer.
 func writeComposerPhpIni(logger scribe.Emitter, context packit.BuildContext) (composerPhpIniPath string, err error) {
 	composerPhpIniLayer, err := context.Layers.Get(ComposerPhpIniLayerName)
-	if err != nil {
+	if err != nil { // untested
 		return "", err
 	}
 
 	composerPhpIniLayer, err = composerPhpIniLayer.Reset()
-	if err != nil {
+	if err != nil { // untested
 		return "", err
 	}
 
@@ -387,7 +387,7 @@ func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executabl
 	iniDir := filepath.Join(workingDir, ".php.ini.d")
 
 	err = os.Mkdir(iniDir, os.ModeDir|os.ModePerm)
-	if err != nil {
+	if err != nil { // untested
 		return err
 	}
 

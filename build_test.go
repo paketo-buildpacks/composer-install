@@ -430,12 +430,39 @@ extension = bar.so
 	})
 
 	context("failure cases", func() {
-		context("when composerInstallExecution fails", func() {
+		context("when composerGlobalExecution fails", func() {
 			it.Before(func() {
-				composerInstallExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
-					composerInstallExecution = temp
-					_, _ = fmt.Fprint(composerInstallExecution.Stderr, "error message")
-					return errors.New("some error")
+				Expect(os.Setenv(composer.BpComposerInstallGlobal, "anything")).To(Succeed())
+				composerGlobalExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+					composerGlobalExecution = temp
+					_, _ = fmt.Fprint(composerGlobalExecution.Stderr, "error message from global")
+					return errors.New("some error from global")
+				}
+			})
+
+			it.After(func() {
+				Expect(os.Unsetenv(composer.BpComposerInstallGlobal)).To(Succeed())
+			})
+
+			it("logs the output", func() {
+				result, err := build(packit.BuildContext{
+					WorkingDir: workingDir,
+					Layers:     packit.Layers{Path: layersDir},
+					Plan:       buildpackPlan,
+				})
+				Expect(err).To(Equal(errors.New("some error from global")))
+				Expect(result).To(Equal(packit.BuildResult{}))
+
+				Expect(buffer.String()).To(ContainSubstring("error message from global"))
+			})
+		})
+
+		context("when composerCheckPlatformReqsExecution fails", func() {
+			it.Before(func() {
+				composerCheckPlatformReqsExecExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+					composerCheckPlatformReqsExecExecution = temp
+					_, _ = fmt.Fprint(composerCheckPlatformReqsExecExecution.Stderr, "error message from check-platform-reqs")
+					return errors.New("some error from check-platform-reqs")
 				}
 			})
 
@@ -445,10 +472,32 @@ extension = bar.so
 					Layers:     packit.Layers{Path: layersDir},
 					Plan:       buildpackPlan,
 				})
-				Expect(err).To(Equal(errors.New("some error")))
+				Expect(err).To(Equal(errors.New("some error from check-platform-reqs")))
 				Expect(result).To(Equal(packit.BuildResult{}))
 
-				Expect(buffer.String()).To(ContainSubstring("error message"))
+				Expect(buffer.String()).To(ContainSubstring("error message from check-platform-reqs"))
+			})
+		})
+
+		context("when composerInstallExecution fails", func() {
+			it.Before(func() {
+				composerInstallExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+					composerInstallExecution = temp
+					_, _ = fmt.Fprint(composerInstallExecution.Stderr, "error message from install")
+					return errors.New("some error from install")
+				}
+			})
+
+			it("logs the output", func() {
+				result, err := build(packit.BuildContext{
+					WorkingDir: workingDir,
+					Layers:     packit.Layers{Path: layersDir},
+					Plan:       buildpackPlan,
+				})
+				Expect(err).To(Equal(errors.New("some error from install")))
+				Expect(result).To(Equal(packit.BuildResult{}))
+
+				Expect(buffer.String()).To(ContainSubstring("error message from install"))
 			})
 		})
 	})
