@@ -1,0 +1,19 @@
+api = "0.7"
+
+[buildpack]
+  description = "A buildpack for running 'composer install' to vendor in PHP dependencies"
+  homepage = "https://github.com/paketo-buildpacks/composer-install"
+  id = "paketo-buildpacks/composer-install"
+  keywords = ["php", "composer"]
+  name = "Paketo Composer Install Buildpack"
+
+  [[buildpack.licenses]]
+    type = "Apache-2.0"
+    uri = "https://github.com/paketo-buildpacks/composer-install/blob/main/LICENSE"
+
+[metadata]
+  include-files = ["bin/build", "bin/detect", "bin/run", "buildpack.toml"]
+  pre-package = "./scripts/build.sh"
+
+[[stacks]]
+  id = "io.buildpacks.stacks.bionic"
