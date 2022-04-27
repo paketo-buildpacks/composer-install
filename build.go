@@ -99,7 +99,7 @@ func Build(
 			}
 		}
 
-		err = runCheckPlatformReqs(logger, checkPlatformReqsExec, context.WorkingDir, composerPhpIniPath, composerPackagesLayer.Path, path)
+		err = runCheckPlatformReqs(logger, checkPlatformReqsExec, context.WorkingDir, composerPhpIniPath, path)
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
@@ -228,7 +228,7 @@ func runComposerInstall(
 		logger.Process("Reusing cached layer %s", composerPackagesLayer.Path)
 		logger.Break()
 
-		composerPackagesLayer.Launch, composerPackagesLayer.Build, composerPackagesLayer.Cache = launch, build, launch
+		composerPackagesLayer.Launch, composerPackagesLayer.Build, composerPackagesLayer.Cache = launch, build, build
 
 		logger.Debug.Subprocess("Setting cached layer types: launch=[%t], build=[%t], cache=[%t]",
 			composerPackagesLayer.Launch,
@@ -245,7 +245,7 @@ func runComposerInstall(
 		return packit.Layer{}, "", err
 	}
 
-	composerPackagesLayer.Launch, composerPackagesLayer.Build, composerPackagesLayer.Cache = launch, build, launch
+	composerPackagesLayer.Launch, composerPackagesLayer.Build, composerPackagesLayer.Cache = launch, build, build
 
 	logger.Debug.Subprocess("Setting layer types: launch=[%t], build=[%t], cache=[%t]",
 		composerPackagesLayer.Launch,
@@ -340,7 +340,7 @@ extension = openssl.so`, os.Getenv(PhpExtensionDir))
 // https://github.com/paketo-buildpacks/php-composer/blob/5e2604b74cbeb30090bf7eadb1cfc158b374efc0/composer/composer.go#L76-L100
 //
 // In case you are curious about exit code 2: https://getcomposer.org/doc/03-cli.md#process-exit-codes
-func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executable, workingDir, composerPhpIniPath, composerPackagesLayerPath, path string) error {
+func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executable, workingDir, composerPhpIniPath, path string) error {
 	buffer := bytes.NewBuffer(nil)
 
 	logger.Process("Running 'composer check-platform-reqs'")
@@ -350,7 +350,6 @@ func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executabl
 		Dir:  workingDir,
 		Env: append(os.Environ(),
 			"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
-			fmt.Sprintf("COMPOSER_HOME=%s", filepath.Join(composerPackagesLayerPath, ".composer")),
 			fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
 			fmt.Sprintf("PATH=%s", path),
 		),

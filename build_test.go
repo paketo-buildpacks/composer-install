@@ -142,7 +142,7 @@ php       8.1.4    success
 						ProcessLaunchEnv: map[string]packit.Environment{},
 						Build:            false,
 						Launch:           true,
-						Cache:            true,
+						Cache:            false,
 						Metadata: map[string]interface{}{
 							"composer-lock-sha": "default-checksum",
 						},
@@ -353,11 +353,10 @@ composer-lock-sha = "sha-from-composer-lock"
 
 			Expect(composerCheckPlatformReqsExecExecution.Args[0]).To(Equal("check-platform-reqs"))
 			Expect(composerCheckPlatformReqsExecExecution.Dir).To(Equal(workingDir))
-			Expect(len(composerCheckPlatformReqsExecExecution.Env)).To(Equal(len(os.Environ()) + 4))
+			Expect(len(composerCheckPlatformReqsExecExecution.Env)).To(Equal(len(os.Environ()) + 3))
 
 			Expect(composerCheckPlatformReqsExecExecution.Env).To(ContainElements(
 				"COMPOSER_NO_INTERACTION=1",
-				fmt.Sprintf("COMPOSER_HOME=%s", filepath.Join(layersDir, composer.ComposerPackagesLayerName, ".composer")),
 				fmt.Sprintf("PHPRC=%s", filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")),
 				fmt.Sprintf("PATH=fake-path-from-tests")))
 
@@ -394,7 +393,6 @@ extension = bar.so
 			})
 			Expect(err).NotTo(HaveOccurred())
 			output := buffer.String()
-			t.Log(output)
 			Expect(output).To(Equal(fmt.Sprintf(`buildpack-name buildpack-version
   Writing php.ini for composer
     Writing composer-php.ini to %s
@@ -410,7 +408,7 @@ extension = bar.so
     - global-package-name
   Calculated checksum of default-checksum for composer.lock
   Building new layer %s
-    Setting layer types: launch=[true], build=[false], cache=[true]
+    Setting layer types: launch=[true], build=[false], cache=[false]
   Running 'composer install'
     stdout from composer install
     stderr from composer install
