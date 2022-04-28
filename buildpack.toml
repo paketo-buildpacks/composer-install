@@ -6,6 +6,7 @@ api = "0.7"
   id = "paketo-buildpacks/composer-install"
   keywords = ["php", "composer"]
   name = "Paketo Composer Install Buildpack"
+  sbom-formats = ["application/vnd.cyclonedx+json", "application/spdx+json", "application/vnd.syft+json"]
 
   [[buildpack.licenses]]
     type = "Apache-2.0"

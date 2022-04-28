@@ -7,11 +7,14 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/paketo-buildpacks/packit/v2"
+	"github.com/paketo-buildpacks/packit/v2/chronos"
 	"github.com/paketo-buildpacks/packit/v2/draft"
 	"github.com/paketo-buildpacks/packit/v2/fs"
 	"github.com/paketo-buildpacks/packit/v2/pexec"
+	"github.com/paketo-buildpacks/packit/v2/sbom"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
 )
 
@@ -27,6 +30,11 @@ type Executable interface {
 	Execute(pexec.Execution) (err error)
 }
 
+//go:generate faux --interface SBOMGenerator --output fakes/sbom_generator.go
+type SBOMGenerator interface {
+	Generate(dir string) (sbom.SBOM, error)
+}
+
 // Calculator defines the interface for calculating a checksum of the given set
 // of file paths.
 //go:generate faux --interface Calculator --output fakes/calculator.go
@@ -40,8 +48,10 @@ func Build(
 	composerInstallExec Executable,
 	composerGlobalExec Executable,
 	checkPlatformReqsExec Executable,
+	sbomGenerator SBOMGenerator,
 	path string,
-	calculator Calculator) packit.BuildFunc {
+	calculator Calculator,
+	clock chronos.Clock) packit.BuildFunc {
 	return func(context packit.BuildContext) (packit.BuildResult, error) {
 		logger.Title("%s %s", context.BuildpackInfo.Name, context.BuildpackInfo.Version)
 
@@ -68,15 +78,43 @@ func Build(
 			workspaceVendorDir = filepath.Join(context.WorkingDir, value)
 		}
 
-		composerPackagesLayer, layerVendorDir, err := runComposerInstall(
-			logger,
-			context,
-			composerInstallOptions,
-			composerPhpIniPath,
-			path,
-			composerInstallExec,
-			workspaceVendorDir,
-			calculator)
+		var composerPackagesLayer packit.Layer
+		var layerVendorDir string
+		logger.Process("Executing build process")
+		duration, err := clock.Measure(func() error {
+			composerPackagesLayer, layerVendorDir, err = runComposerInstall(
+				logger,
+				context,
+				composerInstallOptions,
+				composerPhpIniPath,
+				path,
+				composerInstallExec,
+				workspaceVendorDir,
+				calculator)
+			return err
+		})
+		if err != nil {
+			return packit.BuildResult{}, err
+		}
+		logger.Action("Completed in %s", duration.Round(time.Millisecond))
+		logger.Break()
+
+		logger.GeneratingSBOM(composerPackagesLayer.Path)
+
+		var sbomContent sbom.SBOM
+		duration, err = clock.Measure(func() error {
+			sbomContent, err = sbomGenerator.Generate(context.WorkingDir)
+			return err
+		})
+		if err != nil {
+			return packit.BuildResult{}, err
+		}
+		logger.Action("Completed in %s", duration.Round(time.Millisecond))
+		logger.Break()
+
+		logger.FormattingSBOM(context.BuildpackInfo.SBOMFormats...)
+
+		composerPackagesLayer.SBOM, err = sbomContent.InFormats(context.BuildpackInfo.SBOMFormats...)
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
@@ -299,7 +337,7 @@ func runComposerInstall(
 	return composerPackagesLayer, layerVendorDir, nil
 }
 
-// writeComposerPhpIni will create a PHP INI file used by Composer itself,
+// riteComposerPhpIni will create a PHP INI file used by Composer itself,
 // such as when running `composer global` and `composer install.
 // This is created in a new ignored layer.
 func writeComposerPhpIni(logger scribe.Emitter, context packit.BuildContext) (composerPhpIniPath string, err error) {
