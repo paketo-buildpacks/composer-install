@@ -5,10 +5,18 @@ import (
 
 	"github.com/paketo-buildpacks/composer"
 	"github.com/paketo-buildpacks/packit/v2"
+	"github.com/paketo-buildpacks/packit/v2/chronos"
 	"github.com/paketo-buildpacks/packit/v2/fs"
 	"github.com/paketo-buildpacks/packit/v2/pexec"
+	"github.com/paketo-buildpacks/packit/v2/sbom"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
 )
+
+type Generator struct{}
+
+func (f Generator) Generate(dir string) (sbom.SBOM, error) {
+	return sbom.Generate(dir)
+}
 
 func main() {
 	logEmitter := scribe.NewEmitter(os.Stdout).WithLevel(os.Getenv(composer.BpLogLevel))
@@ -27,7 +35,9 @@ func main() {
 			installExec,
 			globalExec,
 			checkPlatformReqsExec,
+			Generator{},
 			os.Getenv("PATH"),
-			fs.NewChecksumCalculator()),
+			fs.NewChecksumCalculator(),
+			chronos.DefaultClock),
 	)
 }

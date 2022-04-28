@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/paketo-buildpacks/occam"
@@ -40,6 +41,8 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 			var err error
 			name, err = occam.RandomName()
 			Expect(err).NotTo(HaveOccurred())
+			source, err = occam.Source(filepath.Join("testdata", "default_app"))
+			Expect(err).NotTo(HaveOccurred())
 		})
 
 		it.After(func() {
@@ -52,9 +55,6 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 		it("builds and runs", func() {
 			var err error
 			var logs fmt.Stringer
-
-			source, err = occam.Source(filepath.Join("testdata", "default_app"))
-			Expect(err).NotTo(HaveOccurred())
 
 			image, logs, err = pack.Build.
 				WithPullPolicy("never").
@@ -82,6 +82,67 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(container).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
+		})
+
+		context("validating SBOM", func() {
+			var (
+				sbomDir string
+			)
+
+			it.Before(func() {
+				var err error
+				sbomDir, err = os.MkdirTemp("", "sbom")
+				Expect(err).NotTo(HaveOccurred())
+				Expect(os.Chmod(sbomDir, os.ModePerm)).To(Succeed())
+			})
+
+			it.After(func() {
+				Expect(os.RemoveAll(sbomDir)).To(Succeed())
+			})
+
+			it("writes SBOM files to the layer and label metadata", func() {
+				var err error
+				var logs fmt.Stringer
+				image, logs, err = pack.WithNoColor().Build.
+					WithPullPolicy("never").
+					WithBuildpacks(buildpacksArray...).
+					WithEnv(map[string]string{
+						"BP_LOG_LEVEL":  "DEBUG",
+						"BP_PHP_SERVER": "nginx",
+					}).
+					WithSBOMOutputDir(sbomDir).
+					Execute(name, source)
+				Expect(err).ToNot(HaveOccurred(), logs.String)
+
+				container, err = docker.Container.Run.
+					WithEnv(map[string]string{"PORT": "8765"}).
+					WithPublish("8765").
+					Execute(image.ID)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(container).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
+
+				Expect(logs).To(ContainLines(
+					fmt.Sprintf("  Generating SBOM for /layers/%s/composer-packages", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_")),
+					MatchRegexp(`      Completed in \d+(\.?\d+)*`),
+				))
+				Expect(logs).To(ContainLines(
+					"  Writing SBOM in the following format(s):",
+					"    application/vnd.cyclonedx+json",
+					"    application/spdx+json",
+					"    application/vnd.syft+json",
+				))
+
+				// check that all required SBOM files are present
+				Expect(filepath.Join(sbomDir, "sbom", "launch", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"), "composer-packages", "sbom.cdx.json")).To(BeARegularFile())
+				Expect(filepath.Join(sbomDir, "sbom", "launch", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"), "composer-packages", "sbom.spdx.json")).To(BeARegularFile())
+				Expect(filepath.Join(sbomDir, "sbom", "launch", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"), "composer-packages", "sbom.syft.json")).To(BeARegularFile())
+
+				// check an SBOM file to make sure it has an entry for a dependency from composer.json
+				contents, err := os.ReadFile(filepath.Join(sbomDir, "sbom", "launch", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"), "composer-packages", "sbom.cdx.json"))
+				Expect(err).NotTo(HaveOccurred())
+				Expect(string(contents)).To(ContainSubstring(`"name": "vlucas/phpdotenv"`))
+			})
 		})
 	})
 }

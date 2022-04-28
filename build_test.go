@@ -12,7 +12,9 @@ import (
 	"github.com/paketo-buildpacks/composer"
 	"github.com/paketo-buildpacks/composer/fakes"
 	"github.com/paketo-buildpacks/packit/v2"
+	"github.com/paketo-buildpacks/packit/v2/chronos"
 	"github.com/paketo-buildpacks/packit/v2/pexec"
+	"github.com/paketo-buildpacks/packit/v2/sbom"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
 	"github.com/sclevine/spec"
 )
@@ -29,17 +31,26 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		composerInstallExecution                pexec.Execution
 		composerGlobalExecution                 pexec.Execution
 		composerCheckPlatformReqsExecExecution  pexec.Execution
+		sbomGenerator                           *fakes.SBOMGenerator
 		calculator                              *fakes.Calculator
 
 		layersDir  string
 		workingDir string
 
 		buildpackPlan packit.BuildpackPlan
+		buildpackInfo packit.BuildpackInfo
 
 		build packit.BuildFunc
 	)
 
 	it.Before(func() {
+		var err error
+		layersDir, err = os.MkdirTemp("", "layers")
+		Expect(err).NotTo(HaveOccurred())
+
+		workingDir, err = os.MkdirTemp("", "working-dir")
+		Expect(err).NotTo(HaveOccurred())
+
 		buffer = bytes.NewBuffer(nil)
 		installOptions = &fakes.DetermineComposerInstallOptions{}
 		composerInstallExecutable = &fakes.Executable{}
@@ -76,15 +87,10 @@ php       8.1.4    success
 			return nil
 		}
 
+		sbomGenerator = &fakes.SBOMGenerator{}
+		sbomGenerator.GenerateCall.Returns.SBOM = sbom.SBOM{}
 		calculator = &fakes.Calculator{}
 		calculator.SumCall.Returns.String = "default-checksum"
-
-		var err error
-		layersDir, err = os.MkdirTemp("", "layers")
-		Expect(err).NotTo(HaveOccurred())
-
-		workingDir, err = os.MkdirTemp("", "working-dir")
-		Expect(err).NotTo(HaveOccurred())
 
 		Expect(os.Setenv("PHP_EXTENSION_DIR", "php-extension-dir"))
 
@@ -100,8 +106,16 @@ php       8.1.4    success
 			composerInstallExecutable,
 			composerGlobalExecutable,
 			composerCheckPlatformReqsExecExecutable,
+			sbomGenerator,
 			"fake-path-from-tests",
-			calculator)
+			calculator,
+			chronos.DefaultClock)
+
+		buildpackInfo = packit.BuildpackInfo{
+			Name:        "Some Buildpack",
+			Version:     "some-version",
+			SBOMFormats: []string{sbom.CycloneDXFormat, sbom.SPDXFormat},
+		}
 
 		buildpackPlan = packit.BuildpackPlan{
 			Entries: []packit.BuildpackPlanEntry{
@@ -125,28 +139,39 @@ php       8.1.4    success
 
 	context("without COMPOSER set", func() {
 		it("contributes a layer called 'composer-packages'", func() {
-			result, err := build(packit.BuildContext{
-				WorkingDir: workingDir,
-				Layers:     packit.Layers{Path: layersDir},
-				Plan:       buildpackPlan,
-			})
+			result, err := build(
+				packit.BuildContext{
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
+				},
+			)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(result).To(Equal(packit.BuildResult{
-				Layers: []packit.Layer{
-					{
-						Name:             composer.ComposerPackagesLayerName,
-						Path:             filepath.Join(layersDir, composer.ComposerPackagesLayerName),
-						SharedEnv:        packit.Environment{},
-						BuildEnv:         packit.Environment{},
-						LaunchEnv:        packit.Environment{},
-						ProcessLaunchEnv: map[string]packit.Environment{},
-						Build:            false,
-						Launch:           true,
-						Cache:            false,
-						Metadata: map[string]interface{}{
-							"composer-lock-sha": "default-checksum",
-						},
-					},
+			layers := result.Layers
+			Expect(layers).To(HaveLen(1))
+
+			packagesLayer := layers[0]
+			Expect(packagesLayer.Name).To(Equal(composer.ComposerPackagesLayerName))
+			Expect(packagesLayer.Path).To(Equal(filepath.Join(layersDir, composer.ComposerPackagesLayerName)))
+
+			Expect(packagesLayer.Build).To(BeFalse())
+			Expect(packagesLayer.Launch).To(BeTrue())
+			Expect(packagesLayer.Cache).To(BeFalse())
+
+			Expect(packagesLayer.BuildEnv).To(BeEmpty())
+			Expect(packagesLayer.LaunchEnv).To(BeEmpty())
+			Expect(packagesLayer.ProcessLaunchEnv).To(BeEmpty())
+			Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("default-checksum"))
+
+			Expect(packagesLayer.SBOM.Formats()).To(Equal([]packit.SBOMFormat{
+				{
+					Extension: sbom.Format(sbom.CycloneDXFormat).Extension(),
+					Content:   sbom.NewFormattedReader(sbom.SBOM{}, sbom.CycloneDXFormat),
+				},
+				{
+					Extension: sbom.Format(sbom.SPDXFormat).Extension(),
+					Content:   sbom.NewFormattedReader(sbom.SBOM{}, sbom.SPDXFormat),
 				},
 			}))
 
@@ -160,6 +185,7 @@ php       8.1.4    success
 			Expect(composerInstallExecution.Stderr).ToNot(BeNil())
 			Expect(len(composerInstallExecution.Env)).To(Equal(len(os.Environ()) + 6))
 
+			Expect(sbomGenerator.GenerateCall.Receives.Dir).To(Equal(workingDir))
 			Expect(composerInstallExecution.Env).To(ContainElements(
 				"COMPOSER_NO_INTERACTION=1",
 				fmt.Sprintf("COMPOSER=%s", filepath.Join(workingDir, "composer.json")),
@@ -189,9 +215,10 @@ extension = openssl.so`))
 
 			it("copies the vendor dir into the layer for composer install", func() {
 				_, err := build(packit.BuildContext{
-					WorkingDir: workingDir,
-					Layers:     packit.Layers{Path: layersDir},
-					Plan:       buildpackPlan,
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
 				})
 				Expect(err).NotTo(HaveOccurred())
 				Expect(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor", "existing-file.text")).To(BeARegularFile())
@@ -206,9 +233,10 @@ extension = openssl.so`))
 
 		it("provides COMPOSER to composer install composerInstallExecution", func() {
 			_, err := build(packit.BuildContext{
-				WorkingDir: workingDir,
-				Layers:     packit.Layers{Path: layersDir},
-				Plan:       buildpackPlan,
+				BuildpackInfo: buildpackInfo,
+				WorkingDir:    workingDir,
+				Layers:        packit.Layers{Path: layersDir},
+				Plan:          buildpackPlan,
 			})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(composerInstallExecution.Env).To(ContainElements(
@@ -228,9 +256,10 @@ extension = openssl.so`))
 
 		it("symlinks COMPOSER_VENDOR_DIR", func() {
 			_, err := build(packit.BuildContext{
-				WorkingDir: workingDir,
-				Layers:     packit.Layers{Path: layersDir},
-				Plan:       buildpackPlan,
+				BuildpackInfo: buildpackInfo,
+				WorkingDir:    workingDir,
+				Layers:        packit.Layers{Path: layersDir},
+				Plan:          buildpackPlan,
 			})
 			Expect(err).NotTo(HaveOccurred())
 
@@ -247,9 +276,10 @@ extension = openssl.so`))
 
 			it("copies the vendor dir into the layer for composer install", func() {
 				_, err := build(packit.BuildContext{
-					WorkingDir: workingDir,
-					Layers:     packit.Layers{Path: layersDir},
-					Plan:       buildpackPlan,
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
 				})
 				Expect(err).NotTo(HaveOccurred())
 				existingFile, err := filepath.EvalSymlinks(filepath.Join(workingDir, "some-custom-dir", "existing-file.text"))
@@ -271,9 +301,10 @@ extension = openssl.so`))
 
 		it("runs 'composer global require'", func() {
 			_, err := build(packit.BuildContext{
-				WorkingDir: workingDir,
-				Layers:     packit.Layers{Path: layersDir},
-				Plan:       buildpackPlan,
+				BuildpackInfo: buildpackInfo,
+				WorkingDir:    workingDir,
+				Layers:        packit.Layers{Path: layersDir},
+				Plan:          buildpackPlan,
 			})
 			Expect(err).NotTo(HaveOccurred())
 
@@ -311,43 +342,50 @@ composer-lock-sha = "sha-from-composer-lock"
 
 		it("reuses the cached version of the composer packages", func() {
 			result, err := build(packit.BuildContext{
-				WorkingDir: workingDir,
-				Layers:     packit.Layers{Path: layersDir},
-				Plan:       buildpackPlan,
+				BuildpackInfo: buildpackInfo,
+				WorkingDir:    workingDir,
+				Layers:        packit.Layers{Path: layersDir},
+				Plan:          buildpackPlan,
 			})
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(buffer).NotTo(ContainSubstring("Running 'composer install'"))
 
 			Expect(calculator.SumCall.Receives.Paths).To(Equal([]string{filepath.Join(workingDir, "composer.lock")}))
+			layers := result.Layers
+			Expect(layers).To(HaveLen(1))
 
-			Expect(result).To(Equal(packit.BuildResult{
-				Layers: []packit.Layer{
-					{
-						Name:             composer.ComposerPackagesLayerName,
-						Path:             filepath.Join(layersDir, composer.ComposerPackagesLayerName),
-						SharedEnv:        packit.Environment{},
-						BuildEnv:         packit.Environment{},
-						LaunchEnv:        packit.Environment{},
-						ProcessLaunchEnv: map[string]packit.Environment{},
-						Build:            true,
-						Launch:           true,
-						Cache:            true,
-						Metadata: map[string]interface{}{
-							"composer-lock-sha": "sha-from-composer-lock",
-						},
-					},
+			packagesLayer := layers[0]
+			Expect(packagesLayer.Name).To(Equal(composer.ComposerPackagesLayerName))
+			Expect(packagesLayer.Path).To(Equal(filepath.Join(layersDir, composer.ComposerPackagesLayerName)))
+
+			Expect(packagesLayer.Build).To(BeTrue())
+			Expect(packagesLayer.Launch).To(BeTrue())
+			Expect(packagesLayer.Cache).To(BeTrue())
+
+			Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("sha-from-composer-lock"))
+
+			Expect(packagesLayer.SBOM.Formats()).To(Equal([]packit.SBOMFormat{
+				{
+					Extension: sbom.Format(sbom.CycloneDXFormat).Extension(),
+					Content:   sbom.NewFormattedReader(sbom.SBOM{}, sbom.CycloneDXFormat),
+				},
+				{
+					Extension: sbom.Format(sbom.SPDXFormat).Extension(),
+					Content:   sbom.NewFormattedReader(sbom.SBOM{}, sbom.SPDXFormat),
 				},
 			}))
+
 		})
 	})
 
 	context("invokes 'composer check-platform-reqs'", func() {
 		it("generates '.php.ini.d/composer-extensions.ini'", func() {
 			_, err := build(packit.BuildContext{
-				WorkingDir: workingDir,
-				Layers:     packit.Layers{Path: layersDir},
-				Plan:       buildpackPlan,
+				BuildpackInfo: buildpackInfo,
+				WorkingDir:    workingDir,
+				Layers:        packit.Layers{Path: layersDir},
+				Plan:          buildpackPlan,
 			})
 			Expect(err).NotTo(HaveOccurred())
 
@@ -385,8 +423,10 @@ extension = bar.so
 		it("prints additional information", func() {
 			_, err := build(packit.BuildContext{
 				BuildpackInfo: packit.BuildpackInfo{
-					Name:    "buildpack-name",
-					Version: "buildpack-version"},
+					Name:        "buildpack-name",
+					Version:     "buildpack-version",
+					SBOMFormats: []string{sbom.CycloneDXFormat, sbom.SPDXFormat},
+				},
 				WorkingDir: workingDir,
 				Layers:     packit.Layers{Path: layersDir},
 				Plan:       buildpackPlan,
@@ -406,6 +446,7 @@ extension = bar.so
   Ran 'composer global require --no-progress package'
     Adding global Composer packages to PATH:
     - global-package-name
+  Executing build process
   Calculated checksum of default-checksum for composer.lock
   Building new layer %s
     Setting layer types: launch=[true], build=[false], cache=[false]
@@ -413,6 +454,15 @@ extension = bar.so
     stdout from composer install
     stderr from composer install
   Ran 'composer install options from fake'
+      Completed in 0s
+
+  Generating SBOM for %s
+      Completed in 0s
+
+  Writing SBOM in the following format(s):
+    application/vnd.cyclonedx+json
+    application/spdx+json
+
   Writing symlink %s => %s
     Listing files in %s:
     - local-package-name
@@ -420,6 +470,7 @@ extension = bar.so
   Ran 'composer check-platform-reqs', found extensions 'hello, bar'
 `,
 				filepath.Join(layersDir, composer.ComposerPhpIniLayerName, "composer-php.ini"),
+				filepath.Join(layersDir, composer.ComposerPackagesLayerName),
 				filepath.Join(layersDir, composer.ComposerPackagesLayerName),
 				filepath.Join(workingDir, "vendor"),
 				filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor"),
@@ -444,9 +495,10 @@ extension = bar.so
 
 			it("logs the output", func() {
 				result, err := build(packit.BuildContext{
-					WorkingDir: workingDir,
-					Layers:     packit.Layers{Path: layersDir},
-					Plan:       buildpackPlan,
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
 				})
 				Expect(err).To(Equal(errors.New("some error from global")))
 				Expect(result).To(Equal(packit.BuildResult{}))
@@ -466,9 +518,10 @@ extension = bar.so
 
 			it("logs the output", func() {
 				result, err := build(packit.BuildContext{
-					WorkingDir: workingDir,
-					Layers:     packit.Layers{Path: layersDir},
-					Plan:       buildpackPlan,
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
 				})
 				Expect(err).To(Equal(errors.New("some error from check-platform-reqs")))
 				Expect(result).To(Equal(packit.BuildResult{}))
@@ -488,14 +541,47 @@ extension = bar.so
 
 			it("logs the output", func() {
 				result, err := build(packit.BuildContext{
-					WorkingDir: workingDir,
-					Layers:     packit.Layers{Path: layersDir},
-					Plan:       buildpackPlan,
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
 				})
 				Expect(err).To(Equal(errors.New("some error from install")))
 				Expect(result).To(Equal(packit.BuildResult{}))
 
 				Expect(buffer.String()).To(ContainSubstring("error message from install"))
+			})
+		})
+
+		context("when generating the SBOM returns an error", func() {
+			it.Before(func() {
+				buildpackInfo.SBOMFormats = []string{"random-format"}
+			})
+
+			it("returns an error", func() {
+				_, err := build(packit.BuildContext{
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
+				})
+				Expect(err).To(MatchError(`unsupported SBOM format: 'random-format'`))
+			})
+		})
+
+		context("when formatting the SBOM returns an error", func() {
+			it.Before(func() {
+				sbomGenerator.GenerateCall.Returns.Error = errors.New("failed to generate SBOM")
+			})
+
+			it("returns an error", func() {
+				_, err := build(packit.BuildContext{
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
+				})
+				Expect(err).To(MatchError(ContainSubstring("failed to generate SBOM")))
 			})
 		})
 	})
