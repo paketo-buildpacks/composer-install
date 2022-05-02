@@ -70,7 +70,7 @@ func testWithVendoredPackages(t *testing.T, context spec.G, it spec.S) {
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Distribution Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo Composer Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo Composer Install Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Paketo Php FPM Buildpack")))
+			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP FPM Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo Nginx Server Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Nginx Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Start Buildpack")))
