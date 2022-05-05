@@ -423,7 +423,7 @@ func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executabl
 
 	iniDir := filepath.Join(workingDir, ".php.ini.d")
 
-	err = os.Mkdir(iniDir, os.ModeDir|os.ModePerm)
+	err = os.MkdirAll(iniDir, os.ModeDir|os.ModePerm)
 	if err != nil { // untested
 		return err
 	}
