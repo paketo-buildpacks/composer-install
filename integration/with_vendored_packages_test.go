@@ -67,13 +67,13 @@ func testWithVendoredPackages(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(logs).To(ContainSubstring("Detected existing vendored packages, will run 'composer install' with those packages"))
 
-			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Distribution Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Paketo Composer Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Paketo Composer Install Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP FPM Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Paketo Nginx Server Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Nginx Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Paketo PHP Start Buildpack")))
+			Expect(logs).To(ContainLines(ContainSubstring("PHP Distribution Buildpack")))
+			Expect(logs).To(ContainLines(ContainSubstring("Composer Buildpack")))
+			Expect(logs).To(ContainLines(ContainSubstring("Composer Install Buildpack")))
+			Expect(logs).To(ContainLines(ContainSubstring("PHP FPM Buildpack")))
+			Expect(logs).To(ContainLines(ContainSubstring("Nginx Server Buildpack")))
+			Expect(logs).To(ContainLines(ContainSubstring("PHP Nginx Buildpack")))
+			Expect(logs).To(ContainLines(ContainSubstring("PHP Start Buildpack")))
 
 			container, err = docker.Container.Run.
 				WithEnv(map[string]string{"PORT": "8765"}).
