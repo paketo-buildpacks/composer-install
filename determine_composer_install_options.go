@@ -33,6 +33,6 @@ func (_ InstallOptions) Determine() []string {
 			}
 		}
 
-		return append([]string{"--no-progress"}, parsedOptionsFromEnv...)
+		return append([]string{"--no-progress", "--no-autoloader"}, parsedOptionsFromEnv...)
 	}
 }

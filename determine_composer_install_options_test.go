@@ -54,6 +54,7 @@ func testComposerInstallOptions(t *testing.T, context spec.G, it spec.S) {
 		it("should return those values as individual args", func() {
 			Expect(options.Determine()).To(Equal([]string{
 				"--no-progress",
+				"--no-autoloader",
 				"--foo=bar",
 				"-v",
 				"--something",

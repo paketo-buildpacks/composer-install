@@ -46,6 +46,7 @@ func Build(
 	logger scribe.Emitter,
 	composerInstallOptions DetermineComposerInstallOptions,
 	composerInstallExec Executable,
+	composerDumpAutoloadExec Executable,
 	composerGlobalExec Executable,
 	checkPlatformReqsExec Executable,
 	sbomGenerator SBOMGenerator,
@@ -79,16 +80,16 @@ func Build(
 		}
 
 		var composerPackagesLayer packit.Layer
-		var layerVendorDir string
 		logger.Process("Executing build process")
 		duration, err := clock.Measure(func() error {
-			composerPackagesLayer, layerVendorDir, err = runComposerInstall(
+			composerPackagesLayer, err = runComposerInstall(
 				logger,
 				context,
 				composerInstallOptions,
 				composerPhpIniPath,
 				path,
 				composerInstallExec,
+				composerDumpAutoloadExec,
 				workspaceVendorDir,
 				calculator)
 			return err
@@ -117,24 +118,6 @@ func Build(
 		composerPackagesLayer.SBOM, err = sbomContent.InFormats(context.BuildpackInfo.SBOMFormats...)
 		if err != nil {
 			return packit.BuildResult{}, err
-		}
-
-		logger.Process("Writing symlink %s => %s", workspaceVendorDir, layerVendorDir)
-
-		err = os.Symlink(layerVendorDir, workspaceVendorDir)
-		if err != nil { // untested
-			return packit.BuildResult{}, err
-		}
-
-		if os.Getenv(BpLogLevel) == "DEBUG" {
-			logger.Debug.Subprocess("Listing files in %s:", layerVendorDir)
-			files, err := os.ReadDir(layerVendorDir)
-			if err != nil { // untested
-				return packit.BuildResult{}, err
-			}
-			for _, f := range files {
-				logger.Debug.Subprocess(fmt.Sprintf("- %s", f.Name()))
-			}
 		}
 
 		err = runCheckPlatformReqs(logger, checkPlatformReqsExec, context.WorkingDir, composerPhpIniPath, path)
@@ -241,23 +224,24 @@ func runComposerInstall(
 	composerPhpIniPath string,
 	path string,
 	composerInstallExec Executable,
+	composerDumpAutoloadExec Executable,
 	workspaceVendorDir string,
-	calculator Calculator) (composerPackagesLayer packit.Layer, layerVendorDir string, err error) {
+	calculator Calculator) (composerPackagesLayer packit.Layer, err error) {
 
 	launch, build := draft.NewPlanner().MergeLayerTypes(ComposerPackagesDependency, context.Plan.Entries)
 
 	composerPackagesLayer, err = context.Layers.Get(ComposerPackagesLayerName)
 	if err != nil { // untested
-		return packit.Layer{}, "", err
+		return packit.Layer{}, err
 	}
 
 	composerJsonPath, composerLockPath, _, _ := FindComposerFiles(context.WorkingDir)
 
-	layerVendorDir = filepath.Join(composerPackagesLayer.Path, "vendor")
+	layerVendorDir := filepath.Join(composerPackagesLayer.Path, "vendor")
 
 	composerLockChecksum, err := calculator.Sum(composerLockPath)
 	if err != nil { // untested
-		return packit.Layer{}, "", err
+		return packit.Layer{}, err
 	}
 
 	logger.Debug.Process("Calculated checksum of %s for composer.lock", composerLockChecksum)
@@ -273,14 +257,31 @@ func runComposerInstall(
 			composerPackagesLayer.Build,
 			composerPackagesLayer.Cache)
 
-		return composerPackagesLayer, layerVendorDir, nil
+		logger.Process("Writing symlink %s => %s", workspaceVendorDir, layerVendorDir)
+		if os.Getenv(BpLogLevel) == "DEBUG" {
+			logger.Debug.Subprocess("Listing files in %s:", layerVendorDir)
+			files, err := os.ReadDir(layerVendorDir)
+			if err != nil { // untested
+				return packit.Layer{}, err
+			}
+			for _, f := range files {
+				logger.Debug.Subprocess(fmt.Sprintf("- %s", f.Name()))
+			}
+		}
+
+		err = os.Symlink(layerVendorDir, workspaceVendorDir)
+		if err != nil { // untested
+			return packit.Layer{}, err
+		}
+
+		return composerPackagesLayer, nil
 	}
 
 	logger.Process("Building new layer %s", composerPackagesLayer.Path)
 
 	composerPackagesLayer, err = composerPackagesLayer.Reset()
 	if err != nil { // untested
-		return packit.Layer{}, "", err
+		return packit.Layer{}, err
 	}
 
 	composerPackagesLayer.Launch, composerPackagesLayer.Build, composerPackagesLayer.Cache = launch, build, build
@@ -295,19 +296,25 @@ func runComposerInstall(
 	}
 
 	if exists, err := fs.Exists(workspaceVendorDir); err != nil {
-		return packit.Layer{}, "", err
+		return packit.Layer{}, err
 	} else if exists {
 		logger.Process("Detected existing vendored packages, will run 'composer install' with those packages")
 		if err := fs.Copy(workspaceVendorDir, layerVendorDir); err != nil { // untested
-			return packit.Layer{}, "", err
+			return packit.Layer{}, err
 		}
 		if err := os.RemoveAll(workspaceVendorDir); err != nil { // untested
-			return packit.Layer{}, "", err
+			return packit.Layer{}, err
 		}
 	}
 
 	composerInstallBuffer := bytes.NewBuffer(nil)
 
+	// `composer install` will run with `--no-autoloader` to avoid errors from
+	// autoloading classes outside of the vendor directory
+
+	// Once `composer install` has run, the symlink to the working directory is
+	// set up, and then `composer dump-autoload` on the vendor directory from
+	// the working directory.
 	logger.Process("Running 'composer install'")
 
 	execution := pexec.Execution{
@@ -328,16 +335,58 @@ func runComposerInstall(
 
 	if err != nil {
 		logger.Subprocess(composerInstallBuffer.String())
-		return packit.Layer{}, "", err
+		return packit.Layer{}, err
 	}
 
 	logger.Debug.Subprocess(composerInstallBuffer.String())
 	logger.Process("Ran 'composer %s'", strings.Join(execution.Args, " "))
 
-	return composerPackagesLayer, layerVendorDir, nil
+	logger.Process("Writing symlink %s => %s", workspaceVendorDir, layerVendorDir)
+	if os.Getenv(BpLogLevel) == "DEBUG" {
+		logger.Debug.Subprocess("Listing files in %s:", layerVendorDir)
+		files, err := os.ReadDir(layerVendorDir)
+		if err != nil { // untested
+			return packit.Layer{}, err
+		}
+		for _, f := range files {
+			logger.Debug.Subprocess(fmt.Sprintf("- %s", f.Name()))
+		}
+	}
+
+	err = os.Symlink(layerVendorDir, workspaceVendorDir)
+	if err != nil { // untested
+		return packit.Layer{}, err
+	}
+
+	logger.Process("Running 'composer dump-autoload'")
+
+	composerAutoloadBuffer := bytes.NewBuffer(nil)
+	execution = pexec.Execution{
+		Args: append([]string{"dump-autoload", "--classmap-authoritative"}),
+		Dir:  context.WorkingDir,
+		Env: append(os.Environ(),
+			"COMPOSER_NO_INTERACTION=1",  // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
+			"COMPOSER_VENDOR_DIR=vendor", // ensure default in the layer
+			fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
+			fmt.Sprintf("PATH=%s", path),
+		),
+		Stdout: composerAutoloadBuffer,
+		Stderr: composerAutoloadBuffer,
+	}
+
+	err = composerDumpAutoloadExec.Execute(execution)
+	if err != nil {
+		logger.Subprocess(composerAutoloadBuffer.String())
+		return packit.Layer{}, err
+	}
+
+	logger.Debug.Subprocess(composerAutoloadBuffer.String())
+	logger.Process("Ran 'composer %s'", strings.Join(execution.Args, " "))
+
+	return composerPackagesLayer, nil
 }
 
-// riteComposerPhpIni will create a PHP INI file used by Composer itself,
+// writeComposerPhpIni will create a PHP INI file used by Composer itself,
 // such as when running `composer global` and `composer install.
 // This is created in a new ignored layer.
 func writeComposerPhpIni(logger scribe.Emitter, context packit.BuildContext) (composerPhpIniPath string, err error) {
