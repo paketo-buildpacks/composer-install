@@ -106,11 +106,12 @@ func TestIntegration(t *testing.T) {
 	SetDefaultEventuallyTimeout(5 * time.Second)
 
 	suite := spec.New("Integration", spec.Report(report.Terminal{}))
+	suite("CustomVendorDir", testCustomVendorDir)
 	suite("Default", testDefaultApp)
 	suite("Global", testGlobal)
-	suite("CustomVendorDir", testCustomVendorDir)
+	suite("ReusingLayerRebuild", testReusingLayerRebuild, spec.Sequential())
+	suite("TestOutsideAutoloading", testOutsideAutoloading)
 	suite("WithExtensions", testWithExtensions)
 	suite("WithVendoredPackages", testWithVendoredPackages)
-	suite("ReusingLayerRebuild", testReusingLayerRebuild, spec.Sequential())
 	suite.Run(t)
 }
