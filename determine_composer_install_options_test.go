@@ -30,6 +30,7 @@ func testComposerInstallOptions(t *testing.T, context spec.G, it spec.S) {
 			Expect(options.Determine()).To(Equal([]string{
 				"--no-progress",
 				"--no-dev",
+				"--no-autoloader",
 			}))
 		})
 	})
@@ -42,6 +43,7 @@ func testComposerInstallOptions(t *testing.T, context spec.G, it spec.S) {
 		it("should return --no-progress only", func() {
 			Expect(options.Determine()).To(Equal([]string{
 				"--no-progress",
+				"--no-autoloader",
 			}))
 		})
 	})
@@ -54,6 +56,7 @@ func testComposerInstallOptions(t *testing.T, context spec.G, it spec.S) {
 		it("should return those values as individual args", func() {
 			Expect(options.Determine()).To(Equal([]string{
 				"--no-progress",
+				"--no-autoloader",
 				"--foo=bar",
 				"-v",
 				"--something",
@@ -69,6 +72,7 @@ func testComposerInstallOptions(t *testing.T, context spec.G, it spec.S) {
 		it("should return those values as one single arg", func() {
 			Expect(options.Determine()).To(Equal([]string{
 				"--no-progress",
+				"--no-autoloader",
 				"invalid'option for composer",
 			}))
 		})
