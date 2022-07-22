@@ -365,8 +365,8 @@ func runComposerInstall(
 		Args: append([]string{"dump-autoload", "--classmap-authoritative"}),
 		Dir:  context.WorkingDir,
 		Env: append(os.Environ(),
-			"COMPOSER_NO_INTERACTION=1",  // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
-			"COMPOSER_VENDOR_DIR=vendor", // ensure default in the layer
+			"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
+			fmt.Sprintf("COMPOSER_VENDOR_DIR=%s", workspaceVendorDir),
 			fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
 			fmt.Sprintf("PATH=%s", path),
 		),
