@@ -59,13 +59,12 @@ func testOutsideAutoloading(t *testing.T, context spec.G, it spec.S) {
 				WithPullPolicy("never").
 				WithBuildpacks(buildpacksArray...).
 				WithEnv(map[string]string{
-					"BP_PHP_SERVER":               "nginx",
-					"BP_COMPOSER_INSTALL_OPTIONS": "--no-scripts",
+					"BP_PHP_SERVER": "nginx",
 				}).
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
-			Expect(logs).To(ContainSubstring("Ran 'composer install --no-progress --no-autoloader --no-scripts'"))
+			Expect(logs).To(ContainSubstring("Ran 'composer install --no-progress --no-dev --no-autoloader'"))
 			Expect(logs).To(ContainSubstring("Ran 'composer dump-autoload --classmap-authoritative'"))
 
 			Expect(logs).To(ContainLines(ContainSubstring("PHP Distribution Buildpack")))
@@ -82,7 +81,10 @@ func testOutsideAutoloading(t *testing.T, context spec.G, it spec.S) {
 				Execute(image.ID)
 			Expect(err).NotTo(HaveOccurred())
 
-			Eventually(container).Should(Serve(ContainSubstring("ClassMap exists")).OnPort(8080))
+			Eventually(container).Should(Serve(And(
+				ContainSubstring("ClassMap exists"),
+				ContainSubstring("NonVendorClass exists"),
+			)).OnPort(8080))
 		})
 	})
 }

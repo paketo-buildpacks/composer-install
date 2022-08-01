@@ -5,6 +5,10 @@
     },
     "autoload" :
     {
+        "psr-4" :
+        {
+            "Application\\" : "src"
+        },
         "classmap" :
         [
             "classmap/ClassMap.php"

@@ -9,3 +9,11 @@ if (class_exists('ClassMap')) {
 } else {
     echo "Can't find ClassMap";
 }
+
+echo '<br>';
+
+if (class_exists('Application\\NonVendorClass')) {
+    echo "NonVendorClass exists";
+} else {
+    echo "Can't find NonVendorClass";
+}
