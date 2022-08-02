@@ -24,6 +24,7 @@ func main() {
 	options := composer.NewComposerInstallOptions()
 
 	installExec := pexec.NewExecutable("composer")
+	dumpAutoloadExec := pexec.NewExecutable("composer")
 	globalExec := pexec.NewExecutable("composer")
 	checkPlatformReqsExec := pexec.NewExecutable("composer")
 
@@ -33,6 +34,7 @@ func main() {
 			logEmitter,
 			options,
 			installExec,
+			dumpAutoloadExec,
 			globalExec,
 			checkPlatformReqsExec,
 			Generator{},

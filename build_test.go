@@ -26,9 +26,11 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		buffer                                  *bytes.Buffer
 		installOptions                          *fakes.DetermineComposerInstallOptions
 		composerInstallExecutable               *fakes.Executable
+		composerDumpAutoloadExecutable          *fakes.Executable
 		composerGlobalExecutable                *fakes.Executable
 		composerCheckPlatformReqsExecExecutable *fakes.Executable
 		composerInstallExecution                pexec.Execution
+		composerDumpAutoloadExecution           pexec.Execution
 		composerGlobalExecution                 pexec.Execution
 		composerCheckPlatformReqsExecExecution  pexec.Execution
 		sbomGenerator                           *fakes.SBOMGenerator
@@ -54,6 +56,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		buffer = bytes.NewBuffer(nil)
 		installOptions = &fakes.DetermineComposerInstallOptions{}
 		composerInstallExecutable = &fakes.Executable{}
+		composerDumpAutoloadExecutable = &fakes.Executable{}
 		composerGlobalExecutable = &fakes.Executable{}
 		composerCheckPlatformReqsExecExecutable = &fakes.Executable{}
 
@@ -62,6 +65,14 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(fmt.Fprint(temp.Stdout, "stdout from composer install\n")).To(Equal(29))
 			Expect(fmt.Fprint(temp.Stderr, "stderr from composer install\n")).To(Equal(29))
 			composerInstallExecution = temp
+			return nil
+		}
+
+		composerDumpAutoloadExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+			Expect(os.MkdirAll(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor", "autoload.php"), os.ModeDir|os.ModePerm)).To(Succeed())
+			Expect(fmt.Fprint(temp.Stdout, "stdout from composer dump-autoload\n")).To(Equal(35))
+			Expect(fmt.Fprint(temp.Stderr, "stderr from composer dump-autoload\n")).To(Equal(35))
+			composerDumpAutoloadExecution = temp
 			return nil
 		}
 
@@ -104,6 +115,7 @@ php       8.1.4    success
 			scribe.NewEmitter(buffer).WithLevel("DEBUG"),
 			installOptions,
 			composerInstallExecutable,
+			composerDumpAutoloadExecutable,
 			composerGlobalExecutable,
 			composerCheckPlatformReqsExecExecutable,
 			sbomGenerator,
@@ -184,6 +196,11 @@ php       8.1.4    success
 			Expect(composerInstallExecution.Stdout).ToNot(BeNil())
 			Expect(composerInstallExecution.Stderr).ToNot(BeNil())
 			Expect(len(composerInstallExecution.Env)).To(Equal(len(os.Environ()) + 6))
+
+			Expect(composerDumpAutoloadExecution.Args).To(Equal([]string{"dump-autoload", "--classmap-authoritative"}))
+			Expect(composerDumpAutoloadExecution.Dir).To(Equal(workingDir))
+			Expect(composerDumpAutoloadExecution.Stdout).ToNot(BeNil())
+			Expect(composerDumpAutoloadExecution.Stderr).ToNot(BeNil())
 
 			Expect(sbomGenerator.GenerateCall.Receives.Dir).To(Equal(workingDir))
 			Expect(composerInstallExecution.Env).To(ContainElements(
@@ -433,48 +450,19 @@ extension = bar.so
 			})
 			Expect(err).NotTo(HaveOccurred())
 			output := buffer.String()
-			Expect(output).To(Equal(fmt.Sprintf(`buildpack-name buildpack-version
-  Writing php.ini for composer
-    Writing composer-php.ini to %s
-    Writing php.ini contents:
-    '[PHP]
-    extension_dir = "php-extension-dir"
-    extension = openssl.so'
-  Running 'composer global require'
-    stdout from composer global
-    stderr from composer global
-  Ran 'composer global require --no-progress package'
-    Adding global Composer packages to PATH:
-    - global-package-name
-  Executing build process
-  Calculated checksum of default-checksum for composer.lock
-  Building new layer %s
-    Setting layer types: launch=[true], build=[false], cache=[false]
-  Running 'composer install'
-    stdout from composer install
-    stderr from composer install
-  Ran 'composer install options from fake'
-      Completed in 0s
-
-  Generating SBOM for %s
-      Completed in 0s
-
-  Writing SBOM in the following format(s):
-    application/vnd.cyclonedx+json
-    application/spdx+json
-
-  Writing symlink %s => %s
-    Listing files in %s:
-    - local-package-name
-  Running 'composer check-platform-reqs'
-  Ran 'composer check-platform-reqs', found extensions 'hello, bar'
-`,
-				filepath.Join(layersDir, composer.ComposerPhpIniLayerName, "composer-php.ini"),
-				filepath.Join(layersDir, composer.ComposerPackagesLayerName),
-				filepath.Join(layersDir, composer.ComposerPackagesLayerName),
-				filepath.Join(workingDir, "vendor"),
-				filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor"),
+			Expect(output).To(ContainSubstring("Writing php.ini for composer"))
+			Expect(output).To(ContainSubstring("Running 'composer global require'"))
+			Expect(output).To(ContainSubstring("Ran 'composer global require --no-progress package'"))
+			Expect(output).To(ContainSubstring(" Running 'composer install'"))
+			Expect(output).To(ContainSubstring("Ran 'composer install options from fake'"))
+			Expect(output).To(ContainSubstring(fmt.Sprintf("Writing symlink %s => %s", filepath.Join(workingDir, "vendor"),
 				filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor"))))
+			Expect(output).To(ContainSubstring(fmt.Sprintf("Listing files in %s:", filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor"))))
+			Expect(output).To(ContainSubstring("Running 'composer dump-autoload'"))
+			Expect(output).To(ContainSubstring("Ran 'composer dump-autoload --classmap-authoritative'"))
+			Expect(output).To(ContainSubstring(" Generating SBOM"))
+			Expect(output).To(ContainSubstring(" Running 'composer check-platform-reqs'"))
+			Expect(output).To(ContainSubstring(" Ran 'composer check-platform-reqs', found extensions 'hello, bar'"))
 		})
 	})
 
@@ -550,6 +538,29 @@ extension = bar.so
 				Expect(result).To(Equal(packit.BuildResult{}))
 
 				Expect(buffer.String()).To(ContainSubstring("error message from install"))
+			})
+
+			context("when composerDumpAutoloadExecution fails", func() {
+				it.Before(func() {
+					composerDumpAutoloadExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+						composerDumpAutoloadExecution = temp
+						_, _ = fmt.Fprint(composerDumpAutoloadExecution.Stderr, "error message from dump-autoload")
+						return errors.New("some error from dump-autoload")
+					}
+				})
+
+				it("logs the output", func() {
+					result, err := build(packit.BuildContext{
+						BuildpackInfo: buildpackInfo,
+						WorkingDir:    workingDir,
+						Layers:        packit.Layers{Path: layersDir},
+						Plan:          buildpackPlan,
+					})
+					Expect(err).To(Equal(errors.New("some error from install")))
+					Expect(result).To(Equal(packit.BuildResult{}))
+
+					Expect(buffer.String()).To(ContainSubstring("error message from install"))
+				})
 			})
 		})
 
