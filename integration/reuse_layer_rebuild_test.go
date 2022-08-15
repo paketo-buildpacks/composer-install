@@ -21,8 +21,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 		docker occam.Docker
 		pack   occam.Pack
 
-		imageIDs     []string
-		containerIDs []string
+		imageIDs map[string]struct{}
 
 		name   string
 		source string
@@ -35,16 +34,11 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 		docker = occam.NewDocker()
 		pack = occam.NewPack()
-		imageIDs = []string{}
-		containerIDs = []string{}
+		imageIDs = map[string]struct{}{}
 	})
 
 	it.After(func() {
-		for _, id := range containerIDs {
-			Expect(docker.Container.Remove.Execute(id)).To(Succeed())
-		}
-
-		for _, id := range imageIDs {
+		for id := range imageIDs {
 			Expect(docker.Image.Remove.Execute(id)).To(Succeed())
 		}
 
@@ -74,7 +68,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			firstImage, logs, err = build.Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
-			imageIDs = append(imageIDs, firstImage.ID)
+			imageIDs[firstImage.ID] = struct{}{}
 
 			Expect(firstImage.Buildpacks).To(HaveLen(7))
 
@@ -87,7 +81,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			secondImage, logs, err = build.Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
-			imageIDs = append(imageIDs, secondImage.ID)
+			imageIDs[secondImage.ID] = struct{}{}
 
 			Expect(secondImage.Buildpacks).To(HaveLen(7))
 
@@ -123,7 +117,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			firstImage, logs, err = build.Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
-			imageIDs = append(imageIDs, firstImage.ID)
+			imageIDs[firstImage.ID] = struct{}{}
 
 			Expect(firstImage.Buildpacks).To(HaveLen(7))
 
@@ -140,7 +134,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
-			imageIDs = append(imageIDs, secondImage.ID)
+			imageIDs[secondImage.ID] = struct{}{}
 
 			Expect(secondImage.Buildpacks).To(HaveLen(7))
 
