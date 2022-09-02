@@ -72,7 +72,7 @@ func testCustomVendorDir(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(logs).To(ContainLines(ContainSubstring("PHP Distribution Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Composer Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Composer Install Buildpack")))
+			Expect(logs).To(ContainLines(ContainSubstring("Buildpack for Composer Install ")))
 			Expect(logs).To(ContainLines(ContainSubstring("PHP FPM Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("Nginx Server Buildpack")))
 			Expect(logs).To(ContainLines(ContainSubstring("PHP Nginx Buildpack")))
