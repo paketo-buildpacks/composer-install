@@ -418,7 +418,7 @@ extension = openssl.so`, os.Getenv(PhpExtensionDir))
 // https://getcomposer.org/doc/03-cli.md#check-platform-reqs
 //
 // Any "missing" requirements will be added to an INI file that should be autoloaded via PHP_INI_SCAN_DIR,
-// when used in conjunction with the `php-dist` Paketo Cloud Native Buildpack
+// when used in conjunction with the `php-dist` Paketo Buildpack
 // INI file location: {workingDir}/.php.ini.d/composer-extensions.ini
 // PHP_INI_SCAN_DIR: https://github.com/paketo-buildpacks/php-dist/blob/bfed65e9c3b59cf2c5aee3752d82470f8259f655/build.go#L219-L223
 // Requires `php-dist` 0.8.0+ (https://github.com/paketo-buildpacks/php-dist/releases/tag/v0.8.0)

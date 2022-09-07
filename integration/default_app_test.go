@@ -67,14 +67,6 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(logs).To(ContainSubstring("Ran 'composer install --no-progress --no-dev --no-autoloader'"))
 
-			Expect(logs).To(ContainLines(ContainSubstring("PHP Distribution Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Composer Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Composer Install Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("PHP FPM Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("Nginx Server Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("PHP Nginx Buildpack")))
-			Expect(logs).To(ContainLines(ContainSubstring("PHP Start Buildpack")))
-
 			container, err = docker.Container.Run.
 				WithEnv(map[string]string{"PORT": "8765"}).
 				WithPublish("8765").
