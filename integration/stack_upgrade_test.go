@@ -114,8 +114,6 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 
 			containerIDs[secondContainer.ID] = struct{}{}
 			Eventually(secondContainer).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
-
-			Expect(secondImage.Buildpacks[2].Layers["composer-packages"].SHA).NotTo(Equal(firstImage.Buildpacks[2].Layers["composer-packages"].SHA))
 		})
 	})
 }
