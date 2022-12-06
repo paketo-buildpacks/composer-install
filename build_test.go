@@ -175,6 +175,7 @@ php       8.1.4    success
 			Expect(packagesLayer.LaunchEnv).To(BeEmpty())
 			Expect(packagesLayer.ProcessLaunchEnv).To(BeEmpty())
 			Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("default-checksum"))
+			Expect(packagesLayer.Metadata["stack"]).To(Equal(""))
 
 			Expect(packagesLayer.SBOM.Formats()).To(Equal([]packit.SBOMFormat{
 				{
@@ -351,6 +352,7 @@ extension = openssl.so`))
 
 			err := os.WriteFile(filepath.Join(layersDir, fmt.Sprintf("%s.toml", composer.ComposerPackagesLayerName)),
 				[]byte(`[metadata]
+stack = ""
 composer-lock-sha = "sha-from-composer-lock"
 `), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
@@ -381,6 +383,7 @@ composer-lock-sha = "sha-from-composer-lock"
 			Expect(packagesLayer.Cache).To(BeTrue())
 
 			Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("sha-from-composer-lock"))
+			Expect(packagesLayer.Metadata["stack"]).To(Equal(""))
 
 			Expect(packagesLayer.SBOM.Formats()).To(Equal([]packit.SBOMFormat{
 				{
@@ -392,7 +395,36 @@ composer-lock-sha = "sha-from-composer-lock"
 					Content:   sbom.NewFormattedReader(sbom.SBOM{}, sbom.SPDXFormat),
 				},
 			}))
+		})
 
+		context("when trying to reuse a layer but the stack changes", func() {
+			it("does not reuse the existing layer", func() {
+				result, err := build(packit.BuildContext{
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
+					Stack:         "another-stack",
+				})
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(buffer.String()).To(ContainSubstring("Running 'composer install'"))
+
+				Expect(calculator.SumCall.Receives.Paths).To(Equal([]string{filepath.Join(workingDir, "composer.lock")}))
+				layers := result.Layers
+				Expect(layers).To(HaveLen(1))
+
+				packagesLayer := layers[0]
+				Expect(packagesLayer.Name).To(Equal(composer.ComposerPackagesLayerName))
+				Expect(packagesLayer.Path).To(Equal(filepath.Join(layersDir, composer.ComposerPackagesLayerName)))
+
+				Expect(packagesLayer.Build).To(BeTrue())
+				Expect(packagesLayer.Launch).To(BeTrue())
+				Expect(packagesLayer.Cache).To(BeTrue())
+
+				Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("sha-from-composer-lock"))
+				Expect(packagesLayer.Metadata["stack"]).To(Equal("another-stack"))
+			})
 		})
 	})
 
