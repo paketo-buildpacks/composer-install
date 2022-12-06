@@ -246,7 +246,14 @@ func runComposerInstall(
 
 	logger.Debug.Process("Calculated checksum of %s for composer.lock", composerLockChecksum)
 
-	if cachedSHA, ok := composerPackagesLayer.Metadata["composer-lock-sha"].(string); ok && cachedSHA == composerLockChecksum {
+	stack, stackOk := composerPackagesLayer.Metadata["stack"]
+	if stackOk {
+		logger.Debug.Process("Previous stack: %s", stack.(string))
+		logger.Debug.Process("Current stack: %s", context.Stack)
+	}
+
+	cachedSHA, shaOk := composerPackagesLayer.Metadata["composer-lock-sha"].(string)
+	if (shaOk && cachedSHA == composerLockChecksum) && (stackOk && stack.(string) == context.Stack) {
 		logger.Process("Reusing cached layer %s", composerPackagesLayer.Path)
 		logger.Break()
 
@@ -292,6 +299,7 @@ func runComposerInstall(
 		composerPackagesLayer.Cache)
 
 	composerPackagesLayer.Metadata = map[string]interface{}{
+		"stack":             context.Stack,
 		"composer-lock-sha": composerLockChecksum,
 	}
 
