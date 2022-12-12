@@ -83,7 +83,7 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 
 			firstImage, logs, err = build.Execute(name, source)
 			Expect(err).NotTo(HaveOccurred(), logs.String())
-			Expect(logs).To(ContainSubstring("Ran 'composer install --no-progress --no-dev --no-autoloader'"))
+			Expect(logs).To(ContainSubstring("Ran 'composer install --no-progress --no-dev'"))
 
 			imageIDs[firstImage.ID] = struct{}{}
 
