@@ -65,8 +65,6 @@ func testWithVendoredPackages(t *testing.T, context spec.G, it spec.S) {
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
-			Expect(logs).To(ContainSubstring("Detected existing vendored packages, will run 'composer install' with those packages"))
-
 			container, err = docker.Container.Run.
 				WithEnv(map[string]string{"PORT": "8765"}).
 				WithPublish("8765").

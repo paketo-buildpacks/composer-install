@@ -19,23 +19,20 @@ func (_ InstallOptions) Determine() []string {
 		return []string{
 			"--no-progress",
 			"--no-dev",
-			"--no-autoloader",
 		}
 	} else if installOptionsFromEnv == "" {
 		return []string{
 			"--no-progress",
-			"--no-autoloader",
 		}
 	} else {
 		parsedOptionsFromEnv, err := shellwords.Parse(installOptionsFromEnv)
 		if err != nil {
 			return []string{
 				"--no-progress",
-				"--no-autoloader",
 				installOptionsFromEnv,
 			}
 		}
 
-		return append([]string{"--no-progress", "--no-autoloader"}, parsedOptionsFromEnv...)
+		return append([]string{"--no-progress"}, parsedOptionsFromEnv...)
 	}
 }

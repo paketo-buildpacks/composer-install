@@ -46,7 +46,6 @@ func Build(
 	logger scribe.Emitter,
 	composerInstallOptions DetermineComposerInstallOptions,
 	composerInstallExec Executable,
-	composerDumpAutoloadExec Executable,
 	composerGlobalExec Executable,
 	checkPlatformReqsExec Executable,
 	sbomGenerator SBOMGenerator,
@@ -89,7 +88,6 @@ func Build(
 				composerPhpIniPath,
 				path,
 				composerInstallExec,
-				composerDumpAutoloadExec,
 				workspaceVendorDir,
 				calculator)
 			return err
@@ -209,14 +207,12 @@ func runComposerGlobalIfRequired(
 	return
 }
 
-// runComposerInstall will run `composer install` to download dependencies into a new layer
+// runComposerInstall will run `composer install` to download dependencie into
+// the app directory, and will be copied into a layer and cached for reuse.
 //
 // Returns:
 // - composerPackagesLayer: a new layer into which the dependencies will be installed
-// - layerVendorDir: the absolute file path inside the layer where the dependencies are installed
 // - err: any error
-//
-// https://getcomposer.org/doc/03-cli.md#install-i
 func runComposerInstall(
 	logger scribe.Emitter,
 	context packit.BuildContext,
@@ -224,7 +220,6 @@ func runComposerInstall(
 	composerPhpIniPath string,
 	path string,
 	composerInstallExec Executable,
-	composerDumpAutoloadExec Executable,
 	workspaceVendorDir string,
 	calculator Calculator) (composerPackagesLayer packit.Layer, err error) {
 
@@ -257,17 +252,18 @@ func runComposerInstall(
 		logger.Process("Reusing cached layer %s", composerPackagesLayer.Path)
 		logger.Break()
 
-		composerPackagesLayer.Launch, composerPackagesLayer.Build, composerPackagesLayer.Cache = launch, build, build
+		composerPackagesLayer.Launch, composerPackagesLayer.Build = launch, build
+		// the layer is always set to cache = true because we need it during subsequent builds to copy vendor into /workspace
+		composerPackagesLayer.Cache = true
 
 		logger.Debug.Subprocess("Setting cached layer types: launch=[%t], build=[%t], cache=[%t]",
 			composerPackagesLayer.Launch,
 			composerPackagesLayer.Build,
 			composerPackagesLayer.Cache)
 
-		logger.Process("Writing symlink %s => %s", workspaceVendorDir, layerVendorDir)
 		if os.Getenv(BpLogLevel) == "DEBUG" {
-			logger.Debug.Subprocess("Listing files in %s:", layerVendorDir)
-			files, err := os.ReadDir(layerVendorDir)
+			logger.Debug.Subprocess("Listing files in %s:", composerPackagesLayer)
+			files, err := os.ReadDir(composerPackagesLayer.Path)
 			if err != nil { // untested
 				return packit.Layer{}, err
 			}
@@ -276,8 +272,16 @@ func runComposerInstall(
 			}
 		}
 
-		err = os.Symlink(layerVendorDir, workspaceVendorDir)
-		if err != nil { // untested
+		if exists, err := fs.Exists(workspaceVendorDir); err != nil {
+			return packit.Layer{}, err
+		} else if exists {
+			logger.Process("Detected existing vendored packages, replacing with cached vendored packages")
+			if err := os.RemoveAll(workspaceVendorDir); err != nil { // untested
+				return packit.Layer{}, err
+			}
+		}
+
+		if err := fs.Copy(layerVendorDir, workspaceVendorDir); err != nil { // untested
 			return packit.Layer{}, err
 		}
 
@@ -291,7 +295,9 @@ func runComposerInstall(
 		return packit.Layer{}, err
 	}
 
-	composerPackagesLayer.Launch, composerPackagesLayer.Build, composerPackagesLayer.Cache = launch, build, build
+	composerPackagesLayer.Launch, composerPackagesLayer.Build = launch, build
+	// the layer is always set to cache = true because we need it during subsequent builds to copy vendor into /workspace
+	composerPackagesLayer.Cache = true
 
 	logger.Debug.Subprocess("Setting layer types: launch=[%t], build=[%t], cache=[%t]",
 		composerPackagesLayer.Launch,
@@ -303,36 +309,19 @@ func runComposerInstall(
 		"composer-lock-sha": composerLockChecksum,
 	}
 
-	if exists, err := fs.Exists(workspaceVendorDir); err != nil {
-		return packit.Layer{}, err
-	} else if exists {
-		logger.Process("Detected existing vendored packages, will run 'composer install' with those packages")
-		if err := fs.Copy(workspaceVendorDir, layerVendorDir); err != nil { // untested
-			return packit.Layer{}, err
-		}
-		if err := os.RemoveAll(workspaceVendorDir); err != nil { // untested
-			return packit.Layer{}, err
-		}
-	}
-
 	composerInstallBuffer := bytes.NewBuffer(nil)
 
-	// `composer install` will run with `--no-autoloader` to avoid errors from
-	// autoloading classes outside of the vendor directory
-
-	// Once `composer install` has run, the symlink to the working directory is
-	// set up, and then `composer dump-autoload` on the vendor directory from
-	// the working directory.
 	logger.Process("Running 'composer install'")
 
+	// install packages into /workspace/vendor because composer cannot handle symlinks easily
 	execution := pexec.Execution{
 		Args: append([]string{"install"}, composerInstallOptions.Determine()...),
-		Dir:  composerPackagesLayer.Path,
+		Dir:  context.WorkingDir,
 		Env: append(os.Environ(),
 			"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
 			fmt.Sprintf("COMPOSER=%s", composerJsonPath),
 			fmt.Sprintf("COMPOSER_HOME=%s", filepath.Join(composerPackagesLayer.Path, ".composer")),
-			"COMPOSER_VENDOR_DIR=vendor", // ensure default in the layer
+			fmt.Sprintf("COMPOSER_VENDOR_DIR=%s", workspaceVendorDir),
 			fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
 			fmt.Sprintf("PATH=%s", path),
 		),
@@ -348,8 +337,13 @@ func runComposerInstall(
 
 	logger.Debug.Subprocess(composerInstallBuffer.String())
 	logger.Process("Ran 'composer %s'", strings.Join(execution.Args, " "))
+	logger.Process("Copying from %s => to %s", workspaceVendorDir, layerVendorDir)
 
-	logger.Process("Writing symlink %s => %s", workspaceVendorDir, layerVendorDir)
+	err = fs.Copy(workspaceVendorDir, layerVendorDir)
+	if err != nil {
+		return packit.Layer{}, err
+	}
+
 	if os.Getenv(BpLogLevel) == "DEBUG" {
 		logger.Debug.Subprocess("Listing files in %s:", layerVendorDir)
 		files, err := os.ReadDir(layerVendorDir)
@@ -360,36 +354,6 @@ func runComposerInstall(
 			logger.Debug.Subprocess(fmt.Sprintf("- %s", f.Name()))
 		}
 	}
-
-	err = os.Symlink(layerVendorDir, workspaceVendorDir)
-	if err != nil { // untested
-		return packit.Layer{}, err
-	}
-
-	logger.Process("Running 'composer dump-autoload'")
-
-	composerAutoloadBuffer := bytes.NewBuffer(nil)
-	execution = pexec.Execution{
-		Args: append([]string{"dump-autoload", "--classmap-authoritative"}),
-		Dir:  context.WorkingDir,
-		Env: append(os.Environ(),
-			"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
-			fmt.Sprintf("COMPOSER_VENDOR_DIR=%s", workspaceVendorDir),
-			fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
-			fmt.Sprintf("PATH=%s", path),
-		),
-		Stdout: composerAutoloadBuffer,
-		Stderr: composerAutoloadBuffer,
-	}
-
-	err = composerDumpAutoloadExec.Execute(execution)
-	if err != nil {
-		logger.Subprocess(composerAutoloadBuffer.String())
-		return packit.Layer{}, err
-	}
-
-	logger.Debug.Subprocess(composerAutoloadBuffer.String())
-	logger.Process("Ran 'composer %s'", strings.Join(execution.Args, " "))
 
 	return composerPackagesLayer, nil
 }
