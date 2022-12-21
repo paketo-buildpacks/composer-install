@@ -252,7 +252,9 @@ func runComposerInstall(
 		logger.Process("Reusing cached layer %s", composerPackagesLayer.Path)
 		logger.Break()
 
-		composerPackagesLayer.Launch, composerPackagesLayer.Build, composerPackagesLayer.Cache = launch, build, launch
+		composerPackagesLayer.Launch, composerPackagesLayer.Build = launch, build
+		// the layer is always set to cache = true because we need it during subsequent builds to copy vendor into /workspace
+		composerPackagesLayer.Cache = true
 
 		logger.Debug.Subprocess("Setting cached layer types: launch=[%t], build=[%t], cache=[%t]",
 			composerPackagesLayer.Launch,
@@ -293,7 +295,9 @@ func runComposerInstall(
 		return packit.Layer{}, err
 	}
 
-	composerPackagesLayer.Launch, composerPackagesLayer.Build, composerPackagesLayer.Cache = launch, build, launch
+	composerPackagesLayer.Launch, composerPackagesLayer.Build = launch, build
+	// the layer is always set to cache = true because we need it during subsequent builds to copy vendor into /workspace
+	composerPackagesLayer.Cache = true
 
 	logger.Debug.Subprocess("Setting layer types: launch=[%t], build=[%t], cache=[%t]",
 		composerPackagesLayer.Launch,
