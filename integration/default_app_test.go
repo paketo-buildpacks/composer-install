@@ -76,6 +76,46 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 			Eventually(container).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
 		})
 
+		context("autoloader-suffix config", func() {
+			it("ensures reproducible builds", func() {
+				var err error
+				var logs fmt.Stringer
+
+				image, logs, err = pack.Build.
+					WithPullPolicy("never").
+					WithBuildpacks(buildpacksArray...).
+					WithEnv(map[string]string{
+						"BP_PHP_SERVER": "nginx",
+					}).
+					Execute(name, source)
+				Expect(err).ToNot(HaveOccurred(), logs.String)
+
+				firstID := image.ID
+				Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
+				Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
+
+				image, logs, err = pack.Build.
+					WithPullPolicy("never").
+					WithBuildpacks(buildpacksArray...).
+					WithEnv(map[string]string{
+						"BP_PHP_SERVER": "nginx",
+					}).
+					WithClearCache().
+					Execute(name, source)
+				Expect(err).ToNot(HaveOccurred(), logs.String)
+
+				Expect(firstID).To(Equal(image.ID))
+
+				container, err = docker.Container.Run.
+					WithEnv(map[string]string{"PORT": "8765"}).
+					WithPublish("8765").
+					Execute(image.ID)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(container).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
+			})
+		})
+
 		context("validating SBOM", func() {
 			var (
 				sbomDir string
