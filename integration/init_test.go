@@ -103,12 +103,13 @@ func TestIntegration(t *testing.T) {
 		buildpacks.PhpStart,
 	}
 
-	SetDefaultEventuallyTimeout(5 * time.Second)
+	SetDefaultEventuallyTimeout(20 * time.Second)
 
 	suite := spec.New("Integration", spec.Report(report.Terminal{}))
 	suite("StackUpgrade", testStackUpgrade)
 	suite("CustomVendorDir", testCustomVendorDir)
 	suite("Default", testDefaultApp)
+	suite("FrameworkApps", testFrameworkApps)
 	suite("Global", testGlobal)
 	suite("ReusingLayerRebuild", testReusingLayerRebuild, spec.Sequential())
 	suite("TestOutsideAutoloading", testOutsideAutoloading)

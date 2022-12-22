@@ -27,12 +27,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		installOptions                          *fakes.DetermineComposerInstallOptions
 		composerConfigExecutable                *fakes.Executable
 		composerInstallExecutable               *fakes.Executable
-		composerDumpAutoloadExecutable          *fakes.Executable
 		composerGlobalExecutable                *fakes.Executable
 		composerCheckPlatformReqsExecExecutable *fakes.Executable
 		composerConfigExecution                 pexec.Execution
 		composerInstallExecution                pexec.Execution
-		composerDumpAutoloadExecution           pexec.Execution
 		composerGlobalExecution                 pexec.Execution
 		composerCheckPlatformReqsExecExecution  pexec.Execution
 		sbomGenerator                           *fakes.SBOMGenerator
@@ -59,7 +57,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		installOptions = &fakes.DetermineComposerInstallOptions{}
 		composerConfigExecutable = &fakes.Executable{}
 		composerInstallExecutable = &fakes.Executable{}
-		composerDumpAutoloadExecutable = &fakes.Executable{}
 		composerGlobalExecutable = &fakes.Executable{}
 		composerCheckPlatformReqsExecExecutable = &fakes.Executable{}
 
@@ -71,18 +68,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		}
 
 		composerInstallExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
-			Expect(os.MkdirAll(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor", "local-package-name"), os.ModeDir|os.ModePerm)).To(Succeed())
+			Expect(os.MkdirAll(filepath.Join(workingDir, "vendor", "local-package-name"), os.ModeDir|os.ModePerm)).To(Succeed())
 			Expect(fmt.Fprint(temp.Stdout, "stdout from composer install\n")).To(Equal(29))
 			Expect(fmt.Fprint(temp.Stderr, "stderr from composer install\n")).To(Equal(29))
 			composerInstallExecution = temp
-			return nil
-		}
-
-		composerDumpAutoloadExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
-			Expect(os.MkdirAll(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor", "autoload.php"), os.ModeDir|os.ModePerm)).To(Succeed())
-			Expect(fmt.Fprint(temp.Stdout, "stdout from composer dump-autoload\n")).To(Equal(35))
-			Expect(fmt.Fprint(temp.Stderr, "stderr from composer dump-autoload\n")).To(Equal(35))
-			composerDumpAutoloadExecution = temp
 			return nil
 		}
 
@@ -126,7 +115,6 @@ php       8.1.4    success
 			installOptions,
 			composerConfigExecutable,
 			composerInstallExecutable,
-			composerDumpAutoloadExecutable,
 			composerGlobalExecutable,
 			composerCheckPlatformReqsExecExecutable,
 			sbomGenerator,
@@ -180,7 +168,7 @@ php       8.1.4    success
 
 			Expect(packagesLayer.Build).To(BeFalse())
 			Expect(packagesLayer.Launch).To(BeTrue())
-			Expect(packagesLayer.Cache).To(BeFalse())
+			Expect(packagesLayer.Cache).To(BeTrue())
 
 			Expect(packagesLayer.BuildEnv).To(BeEmpty())
 			Expect(packagesLayer.LaunchEnv).To(BeEmpty())
@@ -209,22 +197,17 @@ php       8.1.4    success
 			Expect(len(composerConfigExecution.Env)).To(Equal(len(os.Environ()) + 6))
 
 			Expect(composerInstallExecution.Args).To(Equal([]string{"install", "options", "from", "fake"}))
-			Expect(composerInstallExecution.Dir).To(Equal(filepath.Join(layersDir, composer.ComposerPackagesLayerName)))
+			Expect(composerInstallExecution.Dir).To(Equal(filepath.Join(workingDir)))
 			Expect(composerInstallExecution.Stdout).ToNot(BeNil())
 			Expect(composerInstallExecution.Stderr).ToNot(BeNil())
 			Expect(len(composerInstallExecution.Env)).To(Equal(len(os.Environ()) + 6))
-
-			Expect(composerDumpAutoloadExecution.Args).To(Equal([]string{"dump-autoload", "--classmap-authoritative"}))
-			Expect(composerDumpAutoloadExecution.Dir).To(Equal(workingDir))
-			Expect(composerDumpAutoloadExecution.Stdout).ToNot(BeNil())
-			Expect(composerDumpAutoloadExecution.Stderr).ToNot(BeNil())
 
 			Expect(sbomGenerator.GenerateCall.Receives.Dir).To(Equal(workingDir))
 			Expect(composerInstallExecution.Env).To(ContainElements(
 				"COMPOSER_NO_INTERACTION=1",
 				fmt.Sprintf("COMPOSER=%s", filepath.Join(workingDir, "composer.json")),
 				fmt.Sprintf("COMPOSER_HOME=%s", filepath.Join(layersDir, composer.ComposerPackagesLayerName, ".composer")),
-				fmt.Sprintf("COMPOSER_VENDOR_DIR=vendor"),
+				fmt.Sprintf("COMPOSER_VENDOR_DIR=%s/vendor", workingDir),
 				fmt.Sprintf("PHPRC=%s", filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")),
 				fmt.Sprintf("PATH=fake-path-from-tests")))
 
@@ -236,27 +219,7 @@ php       8.1.4    success
 extension_dir = "php-extension-dir"
 extension = openssl.so`))
 
-			vendorLink, err := os.Readlink(filepath.Join(workingDir, "vendor"))
-			Expect(err).NotTo(HaveOccurred())
-			Expect(vendorLink).To(Equal(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor")))
-		})
-
-		context("with previously existing vendor dir", func() {
-			it.Before(func() {
-				Expect(os.Mkdir(filepath.Join(workingDir, "vendor"), os.ModeDir|os.ModePerm)).To(Succeed())
-				Expect(os.WriteFile(filepath.Join(workingDir, "vendor", "existing-file.text"), []byte(""), os.ModePerm)).To(Succeed())
-			})
-
-			it("copies the vendor dir into the layer for composer install", func() {
-				_, err := build(packit.BuildContext{
-					BuildpackInfo: buildpackInfo,
-					WorkingDir:    workingDir,
-					Layers:        packit.Layers{Path: layersDir},
-					Plan:          buildpackPlan,
-				})
-				Expect(err).NotTo(HaveOccurred())
-				Expect(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor", "existing-file.text")).To(BeARegularFile())
-			})
+			Expect(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor")).To(BeADirectory())
 		})
 	})
 
@@ -280,15 +243,23 @@ extension = openssl.so`))
 	})
 
 	context("with COMPOSER_VENDOR_DIR set", func() {
+		var (
+			err       error
+			customDir string
+		)
+
 		it.Before(func() {
-			Expect(os.Setenv("COMPOSER_VENDOR_DIR", "some-custom-dir")).To(Succeed())
+			customDir, err = os.MkdirTemp(workingDir, "some-custom-dir")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(os.Setenv("COMPOSER_VENDOR_DIR", filepath.Base(customDir))).To(Succeed())
 		})
 
 		it.After(func() {
+			Expect(os.RemoveAll(customDir)).To(Succeed())
 			Expect(os.Unsetenv("COMPOSER_VENDOR_DIR")).To(Succeed())
 		})
 
-		it("symlinks COMPOSER_VENDOR_DIR", func() {
+		it("uses custom COMPOSER_VENDOR_DIR", func() {
 			_, err := build(packit.BuildContext{
 				BuildpackInfo: buildpackInfo,
 				WorkingDir:    workingDir,
@@ -296,19 +267,15 @@ extension = openssl.so`))
 				Plan:          buildpackPlan,
 			})
 			Expect(err).NotTo(HaveOccurred())
-
-			vendorLink, err := os.Readlink(filepath.Join(workingDir, "some-custom-dir"))
-			Expect(err).NotTo(HaveOccurred())
-			Expect(vendorLink).To(Equal(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor")))
+			Expect(composerInstallExecution.Env).To(ContainElement(fmt.Sprintf("COMPOSER_VENDOR_DIR=%s", customDir)))
 		})
 
 		context("with previously existing vendor dir", func() {
 			it.Before(func() {
-				Expect(os.Mkdir(filepath.Join(workingDir, "some-custom-dir"), os.ModeDir|os.ModePerm)).To(Succeed())
-				Expect(os.WriteFile(filepath.Join(workingDir, "some-custom-dir", "existing-file.text"), []byte(""), os.ModePerm)).To(Succeed())
+				Expect(os.WriteFile(filepath.Join(customDir, "existing-file.text"), []byte(""), os.ModePerm)).To(Succeed())
 			})
 
-			it("copies the vendor dir into the layer for composer install", func() {
+			it("existing files are in final composer packages layer", func() {
 				_, err := build(packit.BuildContext{
 					BuildpackInfo: buildpackInfo,
 					WorkingDir:    workingDir,
@@ -316,10 +283,7 @@ extension = openssl.so`))
 					Plan:          buildpackPlan,
 				})
 				Expect(err).NotTo(HaveOccurred())
-				existingFile, err := filepath.EvalSymlinks(filepath.Join(workingDir, "some-custom-dir", "existing-file.text"))
-				Expect(err).NotTo(HaveOccurred())
-				Expect(existingFile).To(BeARegularFile())
-				Expect(existingFile).To(HaveSuffix(filepath.Join(composer.ComposerPackagesLayerName, "vendor", "existing-file.text")))
+				Expect(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor", "existing-file.text")).To(BeAnExistingFile())
 			})
 		})
 	})
@@ -373,6 +337,12 @@ composer-lock-sha = "sha-from-composer-lock"
 `), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
+			Expect(os.MkdirAll(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor"), os.ModePerm)).To(Succeed())
+			Expect(os.WriteFile(filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor", "file.txt"), []byte(""), os.ModePerm)).To(Succeed())
+		})
+
+		it.After(func() {
+			Expect(os.RemoveAll(filepath.Join(layersDir, composer.ComposerPackagesLayerName))).To(Succeed())
 		})
 
 		it("reuses the cached version of the composer packages", func() {
@@ -411,6 +381,8 @@ composer-lock-sha = "sha-from-composer-lock"
 					Content:   sbom.NewFormattedReader(sbom.SBOM{}, sbom.SPDXFormat),
 				},
 			}))
+
+			Expect(filepath.Join(workingDir, "vendor", "file.txt")).To(BeAnExistingFile())
 		})
 
 		context("when trying to reuse a layer but the stack changes", func() {
@@ -440,6 +412,42 @@ composer-lock-sha = "sha-from-composer-lock"
 
 				Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("sha-from-composer-lock"))
 				Expect(packagesLayer.Metadata["stack"]).To(Equal("another-stack"))
+			})
+		})
+
+		context("with previously existing vendor dir", func() {
+			it.Before(func() {
+				Expect(os.Mkdir(filepath.Join(workingDir, "vendor"), os.ModeDir|os.ModePerm)).To(Succeed())
+				Expect(os.WriteFile(filepath.Join(workingDir, "vendor", "pre-existing-file.text"), []byte(""), os.ModePerm)).To(Succeed())
+			})
+
+			it("replaces workspace vendor directory with cached vendor directory", func() {
+				result, err := build(packit.BuildContext{
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
+				})
+				Expect(err).NotTo(HaveOccurred())
+				Expect(buffer).NotTo(ContainSubstring("Running 'composer install'"))
+
+				Expect(calculator.SumCall.Receives.Paths).To(Equal([]string{filepath.Join(workingDir, "composer.lock")}))
+				layers := result.Layers
+				Expect(layers).To(HaveLen(1))
+
+				packagesLayer := layers[0]
+				Expect(packagesLayer.Name).To(Equal(composer.ComposerPackagesLayerName))
+				Expect(packagesLayer.Path).To(Equal(filepath.Join(layersDir, composer.ComposerPackagesLayerName)))
+
+				Expect(packagesLayer.Build).To(BeTrue())
+				Expect(packagesLayer.Launch).To(BeTrue())
+				Expect(packagesLayer.Cache).To(BeTrue())
+
+				Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("sha-from-composer-lock"))
+				Expect(packagesLayer.Metadata["stack"]).To(Equal(""))
+
+				Expect(filepath.Join(workingDir, "vendor", "file.txt")).To(BeAnExistingFile())
+				Expect(filepath.Join(workingDir, "vendor", "pre-existing-file.text")).NotTo(BeAnExistingFile())
 			})
 		})
 	})
@@ -503,11 +511,10 @@ extension = bar.so
 			Expect(output).To(ContainSubstring("Ran 'composer global require --no-progress package'"))
 			Expect(output).To(ContainSubstring(" Running 'composer install'"))
 			Expect(output).To(ContainSubstring("Ran 'composer install options from fake'"))
-			Expect(output).To(ContainSubstring(fmt.Sprintf("Writing symlink %s => %s", filepath.Join(workingDir, "vendor"),
-				filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor"))))
+			Expect(output).To(ContainSubstring(fmt.Sprintf("Copying from %s => to %s", filepath.Join(workingDir, "vendor"),
+				filepath.Join(layersDir, composer.ComposerPackagesLayerName))))
+
 			Expect(output).To(ContainSubstring(fmt.Sprintf("Listing files in %s:", filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor"))))
-			Expect(output).To(ContainSubstring("Running 'composer dump-autoload'"))
-			Expect(output).To(ContainSubstring("Ran 'composer dump-autoload --classmap-authoritative'"))
 			Expect(output).To(ContainSubstring(" Generating SBOM"))
 			Expect(output).To(ContainSubstring(" Running 'composer check-platform-reqs'"))
 			Expect(output).To(ContainSubstring(" Ran 'composer check-platform-reqs', found extensions 'hello, bar'"))
@@ -609,29 +616,6 @@ extension = bar.so
 				Expect(result).To(Equal(packit.BuildResult{}))
 
 				Expect(buffer.String()).To(ContainSubstring("error message from install"))
-			})
-
-			context("when composerDumpAutoloadExecution fails", func() {
-				it.Before(func() {
-					composerDumpAutoloadExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
-						composerDumpAutoloadExecution = temp
-						_, _ = fmt.Fprint(composerDumpAutoloadExecution.Stderr, "error message from dump-autoload")
-						return errors.New("some error from dump-autoload")
-					}
-				})
-
-				it("logs the output", func() {
-					result, err := build(packit.BuildContext{
-						BuildpackInfo: buildpackInfo,
-						WorkingDir:    workingDir,
-						Layers:        packit.Layers{Path: layersDir},
-						Plan:          buildpackPlan,
-					})
-					Expect(err).To(Equal(errors.New("some error from install")))
-					Expect(result).To(Equal(packit.BuildResult{}))
-
-					Expect(buffer.String()).To(ContainSubstring("error message from install"))
-				})
 			})
 		})
 

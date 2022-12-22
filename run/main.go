@@ -25,7 +25,6 @@ func main() {
 
 	configExec := pexec.NewExecutable("composer")
 	installExec := pexec.NewExecutable("composer")
-	dumpAutoloadExec := pexec.NewExecutable("composer")
 	globalExec := pexec.NewExecutable("composer")
 	checkPlatformReqsExec := pexec.NewExecutable("composer")
 
@@ -36,7 +35,6 @@ func main() {
 			options,
 			configExec,
 			installExec,
-			dumpAutoloadExec,
 			globalExec,
 			checkPlatformReqsExec,
 			Generator{},

@@ -147,4 +147,54 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(secondImage.Buildpacks[2].Layers["composer-packages"].SHA).NotTo(Equal(firstImage.Buildpacks[2].Layers["composer-packages"].SHA))
 		})
 	})
+
+	context("when a vendored app is rebuilt and composer.lock does not change", func() {
+		it("reuses the vendor layer from a previous build", func() {
+			var (
+				err         error
+				logs        fmt.Stringer
+				firstImage  occam.Image
+				secondImage occam.Image
+			)
+
+			source, err = occam.Source(filepath.Join("testdata", "with_vendored_packages"))
+			Expect(err).NotTo(HaveOccurred())
+
+			build := pack.WithNoColor().Build.
+				WithPullPolicy("never").
+				WithBuildpacks(buildpacksArray...).
+				WithEnv(map[string]string{
+					"BP_PHP_SERVER": "nginx",
+				})
+
+			firstImage, logs, err = build.Execute(name, source)
+			Expect(err).NotTo(HaveOccurred())
+
+			imageIDs[firstImage.ID] = struct{}{}
+
+			Expect(firstImage.Buildpacks).To(HaveLen(7))
+
+			Expect(firstImage.Buildpacks[2].Key).To(Equal(buildpackInfo.Buildpack.ID))
+			Expect(firstImage.Buildpacks[2].Layers).To(HaveKey("composer-packages"))
+
+			Expect(logs.String()).To(ContainSubstring("Running 'composer install'"))
+
+			// Second pack build
+			secondImage, logs, err = build.Execute(name, source)
+			Expect(err).NotTo(HaveOccurred())
+
+			imageIDs[secondImage.ID] = struct{}{}
+
+			Expect(secondImage.Buildpacks).To(HaveLen(7))
+
+			Expect(secondImage.Buildpacks[2].Key).To(Equal(buildpackInfo.Buildpack.ID))
+			Expect(secondImage.Buildpacks[2].Layers).To(HaveKey("composer-packages"))
+
+			Expect(logs.String()).NotTo(ContainSubstring("Running 'composer install'"))
+			Expect(logs.String()).To(ContainSubstring("Detected existing vendored packages, replacing with cached vendored packages"))
+			Expect(logs.String()).To(ContainSubstring(fmt.Sprintf("Reusing cached layer /layers/%s/composer-packages", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
+
+			Expect(secondImage.Buildpacks[2].Layers["composer-packages"].SHA).To(Equal(firstImage.Buildpacks[2].Layers["composer-packages"].SHA))
+		})
+	})
 }
