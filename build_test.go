@@ -25,9 +25,11 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		buffer                                  *bytes.Buffer
 		installOptions                          *fakes.DetermineComposerInstallOptions
+		composerConfigExecutable                *fakes.Executable
 		composerInstallExecutable               *fakes.Executable
 		composerGlobalExecutable                *fakes.Executable
 		composerCheckPlatformReqsExecExecutable *fakes.Executable
+		composerConfigExecution                 pexec.Execution
 		composerInstallExecution                pexec.Execution
 		composerGlobalExecution                 pexec.Execution
 		composerCheckPlatformReqsExecExecution  pexec.Execution
@@ -53,9 +55,17 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		buffer = bytes.NewBuffer(nil)
 		installOptions = &fakes.DetermineComposerInstallOptions{}
+		composerConfigExecutable = &fakes.Executable{}
 		composerInstallExecutable = &fakes.Executable{}
 		composerGlobalExecutable = &fakes.Executable{}
 		composerCheckPlatformReqsExecExecutable = &fakes.Executable{}
+
+		composerConfigExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+			Expect(fmt.Fprint(temp.Stdout, "stdout from composer config\n")).To(Equal(28))
+			Expect(fmt.Fprint(temp.Stderr, "stderr from composer config\n")).To(Equal(28))
+			composerConfigExecution = temp
+			return nil
+		}
 
 		composerInstallExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
 			Expect(os.MkdirAll(filepath.Join(workingDir, "vendor", "local-package-name"), os.ModeDir|os.ModePerm)).To(Succeed())
@@ -103,6 +113,7 @@ php       8.1.4    success
 		build = composer.Build(
 			scribe.NewEmitter(buffer).WithLevel("DEBUG"),
 			installOptions,
+			composerConfigExecutable,
 			composerInstallExecutable,
 			composerGlobalExecutable,
 			composerCheckPlatformReqsExecExecutable,
@@ -179,6 +190,11 @@ php       8.1.4    success
 			Expect(buffer).To(ContainSubstring("Running 'composer install'"))
 
 			Expect(installOptions.DetermineCall.CallCount).To(Equal(1))
+
+			Expect(composerConfigExecution.Args).To(Equal([]string{"config", "autoloader-suffix", composer.ComposerAutoloaderSuffix}))
+			Expect(composerConfigExecution.Stdout).ToNot(BeNil())
+			Expect(composerConfigExecution.Stderr).ToNot(BeNil())
+			Expect(len(composerConfigExecution.Env)).To(Equal(len(os.Environ()) + 6))
 
 			Expect(composerInstallExecution.Args).To(Equal([]string{"install", "options", "from", "fake"}))
 			Expect(composerInstallExecution.Dir).To(Equal(filepath.Join(workingDir)))
@@ -554,6 +570,29 @@ extension = bar.so
 				Expect(result).To(Equal(packit.BuildResult{}))
 
 				Expect(buffer.String()).To(ContainSubstring("error message from check-platform-reqs"))
+			})
+		})
+
+		context("when composerConfigExecution fails", func() {
+			it.Before(func() {
+				composerConfigExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+					composerConfigExecution = temp
+					_, _ = fmt.Fprint(composerConfigExecution.Stderr, "error message from config")
+					return errors.New("some error from config")
+				}
+			})
+
+			it("logs the output", func() {
+				result, err := build(packit.BuildContext{
+					BuildpackInfo: buildpackInfo,
+					WorkingDir:    workingDir,
+					Layers:        packit.Layers{Path: layersDir},
+					Plan:          buildpackPlan,
+				})
+				Expect(err).To(Equal(errors.New("some error from config")))
+				Expect(result).To(Equal(packit.BuildResult{}))
+
+				Expect(buffer.String()).To(ContainSubstring("error message from config"))
 			})
 		})
 

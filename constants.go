@@ -5,6 +5,9 @@ const (
 	ComposerGlobalLayerName   = "composer-global"
 	ComposerPhpIniLayerName   = "composer-php-ini"
 
+	// Autoloader Suffix
+	ComposerAutoloaderSuffix = "PaketoDefaultAutoloaderSuffix"
+
 	// Dependencies
 	ComposerDependency         = "composer"
 	ComposerPackagesDependency = "composer-packages"

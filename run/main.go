@@ -23,6 +23,7 @@ func main() {
 	phpVersionResolver := composer.NewPhpVersionResolver()
 	options := composer.NewComposerInstallOptions()
 
+	configExec := pexec.NewExecutable("composer")
 	installExec := pexec.NewExecutable("composer")
 	globalExec := pexec.NewExecutable("composer")
 	checkPlatformReqsExec := pexec.NewExecutable("composer")
@@ -32,6 +33,7 @@ func main() {
 		composer.Build(
 			logEmitter,
 			options,
+			configExec,
 			installExec,
 			globalExec,
 			checkPlatformReqsExec,

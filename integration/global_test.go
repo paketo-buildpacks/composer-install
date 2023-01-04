@@ -77,5 +77,50 @@ func testGlobal(t *testing.T, context spec.G, it spec.S) {
 
 			Eventually(container).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
 		})
+
+		it("creates identical images on rebuild", func() {
+			var err error
+			var logs fmt.Stringer
+
+			source, err = occam.Source(filepath.Join("testdata", "default_app_global"))
+			Expect(err).NotTo(HaveOccurred())
+
+			image, logs, err = pack.Build.
+				WithPullPolicy("never").
+				WithBuildpacks(buildpacksArray...).
+				WithEnv(map[string]string{
+					"BP_COMPOSER_INSTALL_GLOBAL": "friendsofphp/php-cs-fixer",
+					"BP_LOG_LEVEL":               "DEBUG",
+					"BP_PHP_SERVER":              "nginx",
+				}).
+				Execute(name, source)
+			Expect(err).ToNot(HaveOccurred(), logs.String)
+
+			firstID := image.ID
+
+			image, logs, err = pack.Build.
+				WithPullPolicy("never").
+				WithBuildpacks(buildpacksArray...).
+				WithEnv(map[string]string{
+					"BP_COMPOSER_INSTALL_GLOBAL": "friendsofphp/php-cs-fixer",
+					"BP_LOG_LEVEL":               "DEBUG",
+					"BP_PHP_SERVER":              "nginx",
+				}).
+				WithClearCache().
+				Execute(name, source)
+			Expect(err).ToNot(HaveOccurred(), logs.String)
+
+			Expect(firstID).To(Equal(image.ID))
+
+			Expect(logs).To(ContainSubstring("Ran 'composer global require --no-progress friendsofphp/php-cs-fixer'"))
+
+			container, err = docker.Container.Run.
+				WithEnv(map[string]string{"PORT": "8765"}).
+				WithPublish("8765").
+				Execute(image.ID)
+			Expect(err).NotTo(HaveOccurred())
+
+			Eventually(container).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
+		})
 	})
 }

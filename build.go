@@ -45,6 +45,7 @@ type Calculator interface {
 func Build(
 	logger scribe.Emitter,
 	composerInstallOptions DetermineComposerInstallOptions,
+	composerConfigExec Executable,
 	composerInstallExec Executable,
 	composerGlobalExec Executable,
 	checkPlatformReqsExec Executable,
@@ -87,6 +88,7 @@ func Build(
 				composerInstallOptions,
 				composerPhpIniPath,
 				path,
+				composerConfigExec,
 				composerInstallExec,
 				workspaceVendorDir,
 				calculator)
@@ -219,6 +221,7 @@ func runComposerInstall(
 	composerInstallOptions DetermineComposerInstallOptions,
 	composerPhpIniPath string,
 	path string,
+	composerConfigExec Executable,
 	composerInstallExec Executable,
 	workspaceVendorDir string,
 	calculator Calculator) (composerPackagesLayer packit.Layer, err error) {
@@ -309,12 +312,46 @@ func runComposerInstall(
 		"composer-lock-sha": composerLockChecksum,
 	}
 
+	logger.Process("Running 'composer config'")
+
+	composerConfigBuffer := bytes.NewBuffer(nil)
+
+	execution := pexec.Execution{
+		Args: []string{"config", "autoloader-suffix", ComposerAutoloaderSuffix},
+		Dir:  composerPackagesLayer.Path,
+		Env: append(os.Environ(),
+			"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
+			fmt.Sprintf("COMPOSER=%s", composerJsonPath),
+			fmt.Sprintf("COMPOSER_HOME=%s", filepath.Join(composerPackagesLayer.Path, ".composer")),
+			"COMPOSER_VENDOR_DIR=vendor", // ensure default in the layer
+			fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
+			fmt.Sprintf("PATH=%s", path),
+		),
+		Stdout: composerConfigBuffer,
+		Stderr: composerConfigBuffer,
+	}
+
+	err = composerConfigExec.Execute(execution)
+	logger.Process(composerConfigBuffer.String())
+
+	if err != nil {
+		logger.Subprocess(composerConfigBuffer.String())
+		return packit.Layer{}, err
+	}
+
+	// `composer install` will run with `--no-autoloader` to avoid errors from
+	// autoloading classes outside of the vendor directory
+
+	// Once `composer install` has run, the symlink to the working directory is
+	// set up, and then `composer dump-autoload` on the vendor directory from
+	// the working directory.
+
 	composerInstallBuffer := bytes.NewBuffer(nil)
 
 	logger.Process("Running 'composer install'")
 
 	// install packages into /workspace/vendor because composer cannot handle symlinks easily
-	execution := pexec.Execution{
+	execution = pexec.Execution{
 		Args: append([]string{"install"}, composerInstallOptions.Determine()...),
 		Dir:  context.WorkingDir,
 		Env: append(os.Environ(),
