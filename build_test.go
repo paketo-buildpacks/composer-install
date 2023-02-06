@@ -209,7 +209,7 @@ php       8.1.4    success
 				fmt.Sprintf("COMPOSER_HOME=%s", filepath.Join(layersDir, composer.ComposerPackagesLayerName, ".composer")),
 				fmt.Sprintf("COMPOSER_VENDOR_DIR=%s/vendor", workingDir),
 				fmt.Sprintf("PHPRC=%s", filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")),
-				fmt.Sprintf("PATH=fake-path-from-tests")))
+				"PATH=fake-path-from-tests"))
 
 			composerPhpIni := filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")
 			Expect(composerPhpIni).To(BeARegularFile())
@@ -315,9 +315,9 @@ extension = openssl.so`))
 			Expect(composerGlobalExecution.Env).To(ContainElements(
 				"COMPOSER_NO_INTERACTION=1",
 				fmt.Sprintf("COMPOSER_HOME=%s", filepath.Join(layersDir, "composer-global")),
-				fmt.Sprintf("COMPOSER_VENDOR_DIR=vendor"),
+				"COMPOSER_VENDOR_DIR=vendor",
 				fmt.Sprintf("PHPRC=%s", filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")),
-				fmt.Sprintf("PATH=fake-path-from-tests")))
+				"PATH=fake-path-from-tests"))
 
 			Expect(composerInstallExecution.Env).To(ContainElements(
 				fmt.Sprintf("PATH=%s:fake-path-from-tests", filepath.Join(layersDir, "composer-global", "vendor", "bin"))))
@@ -469,7 +469,7 @@ composer-lock-sha = "sha-from-composer-lock"
 			Expect(composerCheckPlatformReqsExecExecution.Env).To(ContainElements(
 				"COMPOSER_NO_INTERACTION=1",
 				fmt.Sprintf("PHPRC=%s", filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")),
-				fmt.Sprintf("PATH=fake-path-from-tests")))
+				"PATH=fake-path-from-tests"))
 
 			Expect(filepath.Join(workingDir, ".php.ini.d", "composer-extensions.ini")).To(BeARegularFile())
 
