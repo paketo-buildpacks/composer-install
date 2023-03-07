@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -176,16 +177,54 @@ php       8.1.4    success
 			Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("default-checksum"))
 			Expect(packagesLayer.Metadata["stack"]).To(Equal(""))
 
-			Expect(packagesLayer.SBOM.Formats()).To(Equal([]packit.SBOMFormat{
+			Expect(packagesLayer.SBOM.Formats()).To(HaveLen(2))
+			cdx := packagesLayer.SBOM.Formats()[0]
+			spdx := packagesLayer.SBOM.Formats()[1]
+
+			Expect(cdx.Extension).To(Equal("cdx.json"))
+			content, err := io.ReadAll(cdx.Content)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(string(content)).To(MatchJSON(`{
+			"bomFormat": "CycloneDX",
+			"components": [],
+			"metadata": {
+				"tools": [
+					{
+						"name": "syft",
+						"vendor": "anchore",
+						"version": "[not provided]"
+					}
+				]
+			},
+			"specVersion": "1.3",
+			"version": 1
+		}`))
+
+			Expect(spdx.Extension).To(Equal("spdx.json"))
+			content, err = io.ReadAll(spdx.Content)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(string(content)).To(MatchJSON(`{
+			"SPDXID": "SPDXRef-DOCUMENT",
+			"creationInfo": {
+				"created": "0001-01-01T00:00:00Z",
+				"creators": [
+					"Organization: Anchore, Inc",
+					"Tool: syft-"
+				],
+				"licenseListVersion": "3.16"
+			},
+			"dataLicense": "CC0-1.0",
+			"documentNamespace": "https://paketo.io/packit/unknown-source-type/unknown-88cfa225-65e0-5755-895f-c1c8f10fde76",
+			"name": "unknown",
+			"relationships": [
 				{
-					Extension: sbom.Format(sbom.CycloneDXFormat).Extension(),
-					Content:   sbom.NewFormattedReader(sbom.SBOM{}, sbom.CycloneDXFormat),
-				},
-				{
-					Extension: sbom.Format(sbom.SPDXFormat).Extension(),
-					Content:   sbom.NewFormattedReader(sbom.SBOM{}, sbom.SPDXFormat),
-				},
-			}))
+					"relatedSpdxElement": "SPDXRef-DOCUMENT",
+					"relationshipType": "DESCRIBES",
+					"spdxElementId": "SPDXRef-DOCUMENT"
+				}
+			],
+			"spdxVersion": "SPDX-2.2"
+		}`))
 
 			Expect(buffer).To(ContainSubstring("Running 'composer install'"))
 
@@ -371,16 +410,54 @@ composer-lock-sha = "sha-from-composer-lock"
 			Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("sha-from-composer-lock"))
 			Expect(packagesLayer.Metadata["stack"]).To(Equal(""))
 
-			Expect(packagesLayer.SBOM.Formats()).To(Equal([]packit.SBOMFormat{
+			Expect(packagesLayer.SBOM.Formats()).To(HaveLen(2))
+			cdx := packagesLayer.SBOM.Formats()[0]
+			spdx := packagesLayer.SBOM.Formats()[1]
+
+			Expect(cdx.Extension).To(Equal("cdx.json"))
+			content, err := io.ReadAll(cdx.Content)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(string(content)).To(MatchJSON(`{
+			"bomFormat": "CycloneDX",
+			"components": [],
+			"metadata": {
+				"tools": [
+					{
+						"name": "syft",
+						"vendor": "anchore",
+						"version": "[not provided]"
+					}
+				]
+			},
+			"specVersion": "1.3",
+			"version": 1
+		}`))
+
+			Expect(spdx.Extension).To(Equal("spdx.json"))
+			content, err = io.ReadAll(spdx.Content)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(string(content)).To(MatchJSON(`{
+			"SPDXID": "SPDXRef-DOCUMENT",
+			"creationInfo": {
+				"created": "0001-01-01T00:00:00Z",
+				"creators": [
+					"Organization: Anchore, Inc",
+					"Tool: syft-"
+				],
+				"licenseListVersion": "3.16"
+			},
+			"dataLicense": "CC0-1.0",
+			"documentNamespace": "https://paketo.io/packit/unknown-source-type/unknown-88cfa225-65e0-5755-895f-c1c8f10fde76",
+			"name": "unknown",
+			"relationships": [
 				{
-					Extension: sbom.Format(sbom.CycloneDXFormat).Extension(),
-					Content:   sbom.NewFormattedReader(sbom.SBOM{}, sbom.CycloneDXFormat),
-				},
-				{
-					Extension: sbom.Format(sbom.SPDXFormat).Extension(),
-					Content:   sbom.NewFormattedReader(sbom.SBOM{}, sbom.SPDXFormat),
-				},
-			}))
+					"relatedSpdxElement": "SPDXRef-DOCUMENT",
+					"relationshipType": "DESCRIBES",
+					"spdxElementId": "SPDXRef-DOCUMENT"
+				}
+			],
+			"spdxVersion": "SPDX-2.2"
+		}`))
 
 			Expect(filepath.Join(workingDir, "vendor", "file.txt")).To(BeAnExistingFile())
 		})
