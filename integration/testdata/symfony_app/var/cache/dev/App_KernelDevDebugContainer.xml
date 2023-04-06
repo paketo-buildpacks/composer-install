@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
   <parameters>
-    <parameter key="kernel.project_dir">/app/example-symfony-api</parameter>
+    <parameter key="kernel.project_dir">/test</parameter>
     <parameter key="kernel.environment">dev</parameter>
     <parameter key="kernel.runtime_environment">%env(default:kernel.environment:APP_RUNTIME_ENV)%</parameter>
     <parameter key="kernel.debug">true</parameter>
-    <parameter key="kernel.build_dir">/app/example-symfony-api/var/cache/dev</parameter>
-    <parameter key="kernel.cache_dir">/app/example-symfony-api/var/cache/dev</parameter>
-    <parameter key="kernel.logs_dir">/app/example-symfony-api/var/log</parameter>
+    <parameter key="kernel.build_dir">/test/var/cache/dev</parameter>
+    <parameter key="kernel.cache_dir">/test/var/cache/dev</parameter>
+    <parameter key="kernel.logs_dir">/test/var/log</parameter>
     <parameter key="kernel.bundles" type="collection">
       <parameter key="FrameworkBundle">Symfony\Bundle\FrameworkBundle\FrameworkBundle</parameter>
       <parameter key="SecurityBundle">Symfony\Bundle\SecurityBundle\SecurityBundle</parameter>
@@ -24,51 +24,51 @@
     </parameter>
     <parameter key="kernel.bundles_metadata" type="collection">
       <parameter key="FrameworkBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/symfony/framework-bundle</parameter>
+        <parameter key="path">/test/vendor/symfony/framework-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\FrameworkBundle</parameter>
       </parameter>
       <parameter key="SecurityBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/symfony/security-bundle</parameter>
+        <parameter key="path">/test/vendor/symfony/security-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\SecurityBundle</parameter>
       </parameter>
       <parameter key="DoctrineBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/doctrine/doctrine-bundle</parameter>
+        <parameter key="path">/test/vendor/doctrine/doctrine-bundle</parameter>
         <parameter key="namespace">Doctrine\Bundle\DoctrineBundle</parameter>
       </parameter>
       <parameter key="MonologBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/symfony/monolog-bundle</parameter>
+        <parameter key="path">/test/vendor/symfony/monolog-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\MonologBundle</parameter>
       </parameter>
       <parameter key="TwigBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/symfony/twig-bundle</parameter>
+        <parameter key="path">/test/vendor/symfony/twig-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\TwigBundle</parameter>
       </parameter>
       <parameter key="DebugBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/symfony/debug-bundle</parameter>
+        <parameter key="path">/test/vendor/symfony/debug-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\DebugBundle</parameter>
       </parameter>
       <parameter key="WebProfilerBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/symfony/web-profiler-bundle</parameter>
+        <parameter key="path">/test/vendor/symfony/web-profiler-bundle</parameter>
         <parameter key="namespace">Symfony\Bundle\WebProfilerBundle</parameter>
       </parameter>
       <parameter key="DoctrineMigrationsBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/doctrine/doctrine-migrations-bundle</parameter>
+        <parameter key="path">/test/vendor/doctrine/doctrine-migrations-bundle</parameter>
         <parameter key="namespace">Doctrine\Bundle\MigrationsBundle</parameter>
       </parameter>
       <parameter key="DoctrineFixturesBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/doctrine/doctrine-fixtures-bundle</parameter>
+        <parameter key="path">/test/vendor/doctrine/doctrine-fixtures-bundle</parameter>
         <parameter key="namespace">Doctrine\Bundle\FixturesBundle</parameter>
       </parameter>
       <parameter key="WebpackEncoreBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/symfony/webpack-encore-bundle/src</parameter>
+        <parameter key="path">/test/vendor/symfony/webpack-encore-bundle/src</parameter>
         <parameter key="namespace">Symfony\WebpackEncoreBundle</parameter>
       </parameter>
       <parameter key="MakerBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/symfony/maker-bundle/src</parameter>
+        <parameter key="path">/test/vendor/symfony/maker-bundle/src</parameter>
         <parameter key="namespace">Symfony\Bundle\MakerBundle</parameter>
       </parameter>
       <parameter key="TwigExtraBundle" type="collection">
-        <parameter key="path">/app/example-symfony-api/vendor/twig/extra-bundle</parameter>
+        <parameter key="path">/test/vendor/twig/extra-bundle</parameter>
         <parameter key="namespace">Twig\Extra\TwigExtraBundle</parameter>
       </parameter>
     </parameter>
@@ -112,17 +112,17 @@
     <parameter key="asset.request_context.base_path">null</parameter>
     <parameter key="asset.request_context.secure">null</parameter>
     <parameter key="translator.logging">false</parameter>
-    <parameter key="translator.default_path">/app/example-symfony-api/translations</parameter>
+    <parameter key="translator.default_path">/test/translations</parameter>
     <parameter key="debug.error_handler.throw_at">-1</parameter>
-    <parameter key="debug.container.dump">/app/example-symfony-api/var/cache/dev/App_KernelDevDebugContainer.xml</parameter>
+    <parameter key="debug.container.dump">/test/var/cache/dev/App_KernelDevDebugContainer.xml</parameter>
     <parameter key="router.request_context.host">localhost</parameter>
     <parameter key="router.request_context.scheme">http</parameter>
     <parameter key="router.request_context.base_url"></parameter>
     <parameter key="router.resource">kernel::loadRoutes</parameter>
-    <parameter key="router.cache_dir">/app/example-symfony-api/var/cache/dev</parameter>
+    <parameter key="router.cache_dir">/test/var/cache/dev</parameter>
     <parameter key="request_listener.http_port">80</parameter>
     <parameter key="request_listener.https_port">443</parameter>
-    <parameter key="cache.prefix.seed">_/app/example-symfony-api.App_KernelDevDebugContainer</parameter>
+    <parameter key="cache.prefix.seed">_/test.App_KernelDevDebugContainer</parameter>
     <parameter key="session.metadata.storage_key">_sf2_meta</parameter>
     <parameter key="session.storage.options" type="collection">
       <parameter key="cache_limiter" type="string">0</parameter>
@@ -131,15 +131,15 @@
       <parameter key="cookie_samesite">lax</parameter>
       <parameter key="gc_probability">1</parameter>
     </parameter>
-    <parameter key="session.save_path">/app/example-symfony-api/var/cache/dev/sessions</parameter>
+    <parameter key="session.save_path">null</parameter>
     <parameter key="session.metadata.update_threshold">0</parameter>
     <parameter key="form.type_extension.csrf.enabled">true</parameter>
     <parameter key="form.type_extension.csrf.field_name">_token</parameter>
-    <parameter key="validator.mapping.cache.file">/app/example-symfony-api/var/cache/dev/validation.php</parameter>
+    <parameter key="validator.mapping.cache.file">/test/var/cache/dev/validation.php</parameter>
     <parameter key="validator.translation_domain">validators</parameter>
     <parameter key="profiler_listener.only_exceptions">false</parameter>
     <parameter key="profiler_listener.only_main_requests">false</parameter>
-    <parameter key="profiler.storage.dsn">file:/app/example-symfony-api/var/cache/dev/profiler</parameter>
+    <parameter key="profiler.storage.dsn">file:/test/var/cache/dev/profiler</parameter>
     <parameter key="security.role_hierarchy.roles" type="collection">
       <parameter key="ROLE_ADMIN" type="collection">
         <parameter>ROLE_USER</parameter>
@@ -153,9 +153,6 @@
       <parameter>dev</parameter>
       <parameter>main</parameter>
     </parameter>
-    <parameter key="doctrine.dbal.logger.chain.class">Doctrine\DBAL\Logging\LoggerChain</parameter>
-    <parameter key="doctrine.dbal.logger.profiling.class">Doctrine\DBAL\Logging\DebugStack</parameter>
-    <parameter key="doctrine.dbal.logger.class">Symfony\Bridge\Doctrine\Logger\DbalLogger</parameter>
     <parameter key="doctrine.dbal.configuration.class">Doctrine\DBAL\Configuration</parameter>
     <parameter key="doctrine.data_collector.class">Doctrine\Bundle\DoctrineBundle\DataCollector\DoctrineDataCollector</parameter>
     <parameter key="doctrine.dbal.connection.event_manager.class">Symfony\Bridge\Doctrine\ContainerAwareEventManager</parameter>
@@ -219,7 +216,8 @@
     <parameter key="doctrine.orm.second_level_cache.cache_configuration.class">Doctrine\ORM\Cache\CacheConfiguration</parameter>
     <parameter key="doctrine.orm.second_level_cache.regions_configuration.class">Doctrine\ORM\Cache\RegionsConfiguration</parameter>
     <parameter key="doctrine.orm.auto_generate_proxy_classes">true</parameter>
-    <parameter key="doctrine.orm.proxy_dir">/app/example-symfony-api/var/cache/dev/doctrine/orm/Proxies</parameter>
+    <parameter key="doctrine.orm.enable_lazy_ghost_objects">false</parameter>
+    <parameter key="doctrine.orm.proxy_dir">/test/var/cache/dev/doctrine/orm/Proxies</parameter>
     <parameter key="doctrine.orm.proxy_namespace">Proxies</parameter>
     <parameter key="monolog.use_microseconds">true</parameter>
     <parameter key="monolog.swift_mailer.handlers" type="collection"/>
@@ -244,7 +242,7 @@
       <parameter>form/layout.html.twig</parameter>
       <parameter>form/fields.html.twig</parameter>
     </parameter>
-    <parameter key="twig.default_path">/app/example-symfony-api/templates</parameter>
+    <parameter key="twig.default_path">/test/templates</parameter>
     <parameter key="env(VAR_DUMPER_SERVER)">127.0.0.1:9912</parameter>
     <parameter key="web_profiler.debug_toolbar.intercept_redirects">false</parameter>
     <parameter key="web_profiler.debug_toolbar.mode">2</parameter>
@@ -389,28 +387,28 @@
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
       <call method="setContainer">
-        <argument type="service" id=".service_locator.9doj5sC.App\Controller\Admin\BlogController"/>
+        <argument type="service" id=".service_locator.NmJj7Z6.App\Controller\Admin\BlogController"/>
       </call>
     </service>
     <service id="App\Controller\BlogController" class="App\Controller\BlogController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
       <call method="setContainer">
-        <argument type="service" id=".service_locator.9doj5sC.App\Controller\BlogController"/>
+        <argument type="service" id=".service_locator.NmJj7Z6.App\Controller\BlogController"/>
       </call>
     </service>
     <service id="App\Controller\SecurityController" class="App\Controller\SecurityController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
       <call method="setContainer">
-        <argument type="service" id=".service_locator.9doj5sC.App\Controller\SecurityController"/>
+        <argument type="service" id=".service_locator.NmJj7Z6.App\Controller\SecurityController"/>
       </call>
     </service>
     <service id="App\Controller\UserController" class="App\Controller\UserController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
       <call method="setContainer">
-        <argument type="service" id=".service_locator.9doj5sC.App\Controller\UserController"/>
+        <argument type="service" id=".service_locator.NmJj7Z6.App\Controller\UserController"/>
       </call>
     </service>
     <service id="App\DataFixtures\AppFixtures" class="App\DataFixtures\AppFixtures" autowire="true" autoconfigure="true">
@@ -562,7 +560,7 @@
       </argument>
     </service>
     <service id="http_cache.store" class="Symfony\Component\HttpKernel\HttpCache\Store">
-      <argument>/app/example-symfony-api/var/cache/dev/http_cache</argument>
+      <argument>/test/var/cache/dev/http_cache</argument>
     </service>
     <service id="url_helper" class="Symfony\Component\HttpFoundation\UrlHelper">
       <argument type="service" id="request_stack"/>
@@ -572,7 +570,7 @@
       <tag name="container.no_preload"/>
       <argument type="tagged_iterator" tag="kernel.cache_warmer"/>
       <argument>true</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/App_KernelDevDebugContainerDeprecations.log</argument>
+      <argument>/test/var/cache/dev/App_KernelDevDebugContainerDeprecations.log</argument>
     </service>
     <service id="cache_clearer" class="Symfony\Component\HttpKernel\CacheClearer\ChainCacheClearer">
       <argument type="tagged_iterator" tag="kernel.cache_clearer"/>
@@ -728,6 +726,7 @@
       <argument type="iterator">
         <argument type="service" id="slugger"/>
         <argument type="service" id="translator.default"/>
+        <argument type="service" id="translation.locale_switcher"/>
       </argument>
       <argument type="service" id="request_stack"/>
     </service>
@@ -823,7 +822,7 @@
       </argument>
       <argument>UTF-8</argument>
       <argument type="service" id="debug.file_link_formatter" on-invalid="null"/>
-      <argument>/app/example-symfony-api</argument>
+      <argument>/test</argument>
       <argument type="service">
         <service>
           <argument type="service" id="request_stack"/>
@@ -856,7 +855,7 @@
       <tag name="console.command"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="filesystem"/>
-      <argument>/app/example-symfony-api</argument>
+      <argument>/test</argument>
       <call method="setName">
         <argument>assets:install</argument>
       </call>
@@ -1042,7 +1041,7 @@
       <tag name="console.command"/>
       <tag name="container.no_preload"/>
       <argument>dev</argument>
-      <argument>/app/example-symfony-api</argument>
+      <argument>/test</argument>
       <call method="setName">
         <argument>debug:dotenv</argument>
       </call>
@@ -1091,16 +1090,16 @@
       <argument type="service" id="translator.data_collector"/>
       <argument type="service" id="translation.reader"/>
       <argument type="service" id="translation.extractor"/>
-      <argument>/app/example-symfony-api/translations</argument>
-      <argument>/app/example-symfony-api/templates</argument>
+      <argument>/test/translations</argument>
+      <argument>/test/templates</argument>
       <argument type="collection">
-        <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations</argument>
-        <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations</argument>
-        <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations</argument>
+        <argument>/test/vendor/symfony/validator/Resources/translations</argument>
+        <argument>/test/vendor/symfony/form/Resources/translations</argument>
+        <argument>/test/vendor/symfony/security-core/Resources/translations</argument>
       </argument>
       <argument type="collection">
-        <argument>/app/example-symfony-api/vendor/symfony/twig-bridge/Resources/views/Email</argument>
-        <argument>/app/example-symfony-api/vendor/symfony/twig-bridge/Resources/views/Form</argument>
+        <argument>/test/vendor/symfony/twig-bridge/Resources/views/Email</argument>
+        <argument>/test/vendor/symfony/twig-bridge/Resources/views/Form</argument>
       </argument>
       <argument type="collection"/>
       <call method="setName">
@@ -1117,16 +1116,16 @@
       <argument type="service" id="translation.reader"/>
       <argument type="service" id="translation.extractor"/>
       <argument>en</argument>
-      <argument>/app/example-symfony-api/translations</argument>
-      <argument>/app/example-symfony-api/templates</argument>
+      <argument>/test/translations</argument>
+      <argument>/test/templates</argument>
       <argument type="collection">
-        <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations</argument>
-        <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations</argument>
-        <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations</argument>
+        <argument>/test/vendor/symfony/validator/Resources/translations</argument>
+        <argument>/test/vendor/symfony/form/Resources/translations</argument>
+        <argument>/test/vendor/symfony/security-core/Resources/translations</argument>
       </argument>
       <argument type="collection">
-        <argument>/app/example-symfony-api/vendor/symfony/twig-bridge/Resources/views/Email</argument>
-        <argument>/app/example-symfony-api/vendor/symfony/twig-bridge/Resources/views/Form</argument>
+        <argument>/test/vendor/symfony/twig-bridge/Resources/views/Email</argument>
+        <argument>/test/vendor/symfony/twig-bridge/Resources/views/Form</argument>
       </argument>
       <argument type="collection"/>
       <call method="setName">
@@ -1357,7 +1356,7 @@
       <argument></argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1376,7 +1375,7 @@
       <tag name="monolog.logger" channel="cache"/>
       <argument></argument>
       <argument>0</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/app</argument>
+      <argument>/test/var/cache/dev/pools/app</argument>
       <argument type="service" id="cache.default_marshaller" on-invalid="ignore"/>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
@@ -1680,353 +1679,353 @@
         </argument>
       </argument>
       <argument type="collection">
-        <argument key="cache_dir">/app/example-symfony-api/var/cache/dev/translations</argument>
+        <argument key="cache_dir">/test/var/cache/dev/translations</argument>
         <argument key="debug">true</argument>
         <argument key="resource_files" type="collection">
           <argument key="af" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.af.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.af.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.af.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.af.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.af.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.af.xlf</argument>
           </argument>
           <argument key="ar" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.ar.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.ar.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.ar.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.ar.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.ar.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.ar.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.ar.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.ar.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.ar.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.ar.xlf</argument>
           </argument>
           <argument key="az" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.az.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.az.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.az.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.az.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.az.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.az.xlf</argument>
           </argument>
           <argument key="be" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.be.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.be.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.be.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.be.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.be.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.be.xlf</argument>
           </argument>
           <argument key="bg" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.bg.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.bg.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.bg.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.bg.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.bg.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.bg.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.bg.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.bg.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.bg.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.bg.xlf</argument>
           </argument>
           <argument key="bs" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.bs.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.bs.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.bs.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.bs.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.bs.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.bs.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.bs.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.bs.xlf</argument>
           </argument>
           <argument key="ca" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.ca.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.ca.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.ca.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.ca.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.ca.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.ca.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.ca.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.ca.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.ca.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.ca.xlf</argument>
           </argument>
           <argument key="cs" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.cs.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.cs.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.cs.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.cs.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.cs.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.cs.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.cs.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.cs.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.cs.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.cs.xlf</argument>
           </argument>
           <argument key="cy" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.cy.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.cy.xlf</argument>
           </argument>
           <argument key="da" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.da.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.da.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.da.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.da.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.da.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.da.xlf</argument>
           </argument>
           <argument key="de" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.de.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.de.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.de.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.de.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.de.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.de.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.de.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.de.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.de.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.de.xlf</argument>
           </argument>
           <argument key="el" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.el.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.el.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.el.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.el.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.el.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.el.xlf</argument>
           </argument>
           <argument key="en" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.en.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.en.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.en.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.en.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.en.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.en.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.en.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.en.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.en.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.en.xlf</argument>
           </argument>
           <argument key="es" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.es.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.es.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.es.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.es.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.es.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.es.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.es.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.es.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.es.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.es.xlf</argument>
           </argument>
           <argument key="et" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.et.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.et.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.et.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.et.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.et.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.et.xlf</argument>
           </argument>
           <argument key="eu" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.eu.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.eu.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.eu.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.eu.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.eu.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.eu.xlf</argument>
           </argument>
           <argument key="fa" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.fa.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.fa.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.fa.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.fa.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.fa.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.fa.xlf</argument>
           </argument>
           <argument key="fi" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.fi.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.fi.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.fi.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.fi.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.fi.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.fi.xlf</argument>
           </argument>
           <argument key="fr" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.fr.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.fr.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.fr.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.fr.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.fr.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.fr.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.fr.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.fr.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.fr.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.fr.xlf</argument>
           </argument>
           <argument key="gl" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.gl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.gl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.gl.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.gl.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.gl.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.gl.xlf</argument>
           </argument>
           <argument key="he" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.he.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.he.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.he.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.he.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.he.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.he.xlf</argument>
           </argument>
           <argument key="hr" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.hr.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.hr.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.hr.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.hr.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.hr.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.hr.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.hr.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.hr.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.hr.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.hr.xlf</argument>
           </argument>
           <argument key="hu" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.hu.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.hu.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.hu.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.hu.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.hu.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.hu.xlf</argument>
           </argument>
           <argument key="hy" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.hy.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.hy.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.hy.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.hy.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.hy.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.hy.xlf</argument>
           </argument>
           <argument key="id" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.id.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.id.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.id.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.id.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.id.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.id.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.id.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.id.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.id.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.id.xlf</argument>
           </argument>
           <argument key="it" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.it.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.it.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.it.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.it.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.it.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.it.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.it.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.it.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.it.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.it.xlf</argument>
           </argument>
           <argument key="ja" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.ja.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.ja.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.ja.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.ja.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.ja.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.ja.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.ja.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.ja.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.ja.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.ja.xlf</argument>
           </argument>
           <argument key="lb" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.lb.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.lb.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.lb.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.lb.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.lb.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.lb.xlf</argument>
           </argument>
           <argument key="lt" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.lt.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.lt.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.lt.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.lt.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.lt.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.lt.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.lt.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.lt.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.lt.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.lt.xlf</argument>
           </argument>
           <argument key="lv" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.lv.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.lv.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.lv.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.lv.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.lv.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.lv.xlf</argument>
           </argument>
           <argument key="mn" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.mn.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.mn.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.mn.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.mn.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.mn.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.mn.xlf</argument>
           </argument>
           <argument key="my" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.my.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.my.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.my.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.my.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.my.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.my.xlf</argument>
           </argument>
           <argument key="nb" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.nb.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.nb.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.nb.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.nb.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.nb.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.nb.xlf</argument>
           </argument>
           <argument key="nl" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.nl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.nl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.nl.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.nl.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.nl.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.nl.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.nl.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.nl.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.nl.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.nl.xlf</argument>
           </argument>
           <argument key="nn" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.nn.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.nn.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.nn.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.nn.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.nn.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.nn.xlf</argument>
           </argument>
           <argument key="no" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.no.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.no.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.no.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.no.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.no.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.no.xlf</argument>
           </argument>
           <argument key="pl" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.pl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.pl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.pl.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.pl.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.pl.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.pl.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.pl.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.pl.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.pl.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.pl.xlf</argument>
           </argument>
           <argument key="pt" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.pt.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.pt.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.pt.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.pt.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.pt.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.pt.xlf</argument>
           </argument>
           <argument key="pt_BR" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.pt_BR.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.pt_BR.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.pt_BR.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.pt_BR.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.pt_BR.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.pt_BR.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.pt_BR.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.pt_BR.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.pt_BR.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.pt_BR.xlf</argument>
           </argument>
           <argument key="ro" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.ro.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.ro.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.ro.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.ro.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.ro.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.ro.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.ro.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.ro.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.ro.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.ro.xlf</argument>
           </argument>
           <argument key="ru" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.ru.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.ru.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.ru.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.ru.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.ru.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.ru.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.ru.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.ru.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.ru.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.ru.xlf</argument>
           </argument>
           <argument key="sk" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.sk.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.sk.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.sk.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.sk.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.sk.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.sk.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.sk.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.sk.xlf</argument>
           </argument>
           <argument key="sl" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.sl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.sl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.sl.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.sl.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.sl.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.sl.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.sl.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.sl.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.sl.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.sl.xlf</argument>
           </argument>
           <argument key="sq" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.sq.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.sq.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.sq.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.sq.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.sq.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.sq.xlf</argument>
           </argument>
           <argument key="sr_Cyrl" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.sr_Cyrl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.sr_Cyrl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.sr_Cyrl.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.sr_Cyrl.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.sr_Cyrl.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.sr_Cyrl.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.sr_Cyrl.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.sr_Cyrl.xlf</argument>
           </argument>
           <argument key="sr_Latn" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.sr_Latn.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.sr_Latn.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.sr_Latn.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.sr_Latn.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.sr_Latn.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.sr_Latn.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.sr_Latn.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.sr_Latn.xlf</argument>
           </argument>
           <argument key="sv" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.sv.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.sv.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.sv.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.sv.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.sv.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.sv.xlf</argument>
           </argument>
           <argument key="th" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.th.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.th.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.th.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.th.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.th.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.th.xlf</argument>
           </argument>
           <argument key="tl" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.tl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.tl.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.tl.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.tl.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.tl.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.tl.xlf</argument>
           </argument>
           <argument key="tr" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.tr.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.tr.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.tr.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.tr.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.tr.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.tr.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.tr.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.tr.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.tr.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.tr.xlf</argument>
           </argument>
           <argument key="uk" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.uk.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.uk.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.uk.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.uk.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.uk.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.uk.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.uk.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.uk.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.uk.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.uk.xlf</argument>
           </argument>
           <argument key="ur" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.ur.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.ur.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.ur.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.ur.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.ur.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.ur.xlf</argument>
           </argument>
           <argument key="uz" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.uz.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.uz.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.uz.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.uz.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.uz.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.uz.xlf</argument>
           </argument>
           <argument key="vi" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.vi.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.vi.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.vi.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.vi.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.vi.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.vi.xlf</argument>
           </argument>
           <argument key="zh_CN" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.zh_CN.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.zh_CN.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.zh_CN.xlf</argument>
-            <argument>/app/example-symfony-api/translations/messages+intl-icu.zh_CN.xlf</argument>
-            <argument>/app/example-symfony-api/translations/validators+intl-icu.zh_CN.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.zh_CN.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.zh_CN.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.zh_CN.xlf</argument>
+            <argument>/test/translations/messages+intl-icu.zh_CN.xlf</argument>
+            <argument>/test/translations/validators+intl-icu.zh_CN.xlf</argument>
           </argument>
           <argument key="zh_TW" type="collection">
-            <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations/validators.zh_TW.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations/validators.zh_TW.xlf</argument>
-            <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations/security.zh_TW.xlf</argument>
+            <argument>/test/vendor/symfony/validator/Resources/translations/validators.zh_TW.xlf</argument>
+            <argument>/test/vendor/symfony/form/Resources/translations/validators.zh_TW.xlf</argument>
+            <argument>/test/vendor/symfony/security-core/Resources/translations/security.zh_TW.xlf</argument>
           </argument>
         </argument>
         <argument key="scanned_directories" type="collection">
-          <argument>/app/example-symfony-api/vendor/symfony/validator/Resources/translations</argument>
-          <argument>/app/example-symfony-api/vendor/symfony/form/Resources/translations</argument>
-          <argument>/app/example-symfony-api/vendor/symfony/security-core/Resources/translations</argument>
-          <argument>/app/example-symfony-api/translations</argument>
-          <argument>/app/example-symfony-api/vendor/symfony/framework-bundle/translations</argument>
-          <argument>/app/example-symfony-api/vendor/symfony/security-bundle/translations</argument>
-          <argument>/app/example-symfony-api/vendor/doctrine/doctrine-bundle/translations</argument>
-          <argument>/app/example-symfony-api/vendor/symfony/monolog-bundle/translations</argument>
-          <argument>/app/example-symfony-api/vendor/symfony/twig-bundle/translations</argument>
-          <argument>/app/example-symfony-api/vendor/symfony/debug-bundle/translations</argument>
-          <argument>/app/example-symfony-api/vendor/symfony/web-profiler-bundle/translations</argument>
-          <argument>/app/example-symfony-api/vendor/doctrine/doctrine-migrations-bundle/translations</argument>
-          <argument>/app/example-symfony-api/vendor/doctrine/doctrine-fixtures-bundle/translations</argument>
-          <argument>/app/example-symfony-api/vendor/symfony/webpack-encore-bundle/src/translations</argument>
-          <argument>/app/example-symfony-api/vendor/symfony/maker-bundle/src/translations</argument>
-          <argument>/app/example-symfony-api/vendor/twig/extra-bundle/translations</argument>
+          <argument>/test/vendor/symfony/validator/Resources/translations</argument>
+          <argument>/test/vendor/symfony/form/Resources/translations</argument>
+          <argument>/test/vendor/symfony/security-core/Resources/translations</argument>
+          <argument>/test/translations</argument>
+          <argument>/test/vendor/symfony/framework-bundle/translations</argument>
+          <argument>/test/vendor/symfony/security-bundle/translations</argument>
+          <argument>/test/vendor/doctrine/doctrine-bundle/translations</argument>
+          <argument>/test/vendor/symfony/monolog-bundle/translations</argument>
+          <argument>/test/vendor/symfony/twig-bundle/translations</argument>
+          <argument>/test/vendor/symfony/debug-bundle/translations</argument>
+          <argument>/test/vendor/symfony/web-profiler-bundle/translations</argument>
+          <argument>/test/vendor/doctrine/doctrine-migrations-bundle/translations</argument>
+          <argument>/test/vendor/doctrine/doctrine-fixtures-bundle/translations</argument>
+          <argument>/test/vendor/symfony/webpack-encore-bundle/src/translations</argument>
+          <argument>/test/vendor/symfony/maker-bundle/src/translations</argument>
+          <argument>/test/vendor/twig/extra-bundle/translations</argument>
         </argument>
         <argument key="cache_vary" type="collection">
           <argument key="scanned_directories" type="collection">
@@ -2151,12 +2150,71 @@
     <service id="translation.extractor.visitor.constraint" class="Symfony\Component\Translation\Extractor\Visitor\ConstraintVisitor">
       <tag name="translation.extractor.visitor"/>
       <argument type="collection">
+        <argument>All</argument>
+        <argument>AtLeastOneOf</argument>
+        <argument>Bic</argument>
+        <argument>Blank</argument>
+        <argument>Callback</argument>
+        <argument>CardScheme</argument>
+        <argument>Choice</argument>
+        <argument>Cidr</argument>
+        <argument>Collection</argument>
+        <argument>Compound</argument>
+        <argument>Count</argument>
+        <argument>Country</argument>
+        <argument>CssColor</argument>
+        <argument>Currency</argument>
+        <argument>DateTime</argument>
+        <argument>Date</argument>
+        <argument>DivisibleBy</argument>
+        <argument>Email</argument>
+        <argument>EqualTo</argument>
+        <argument>ExpressionSyntax</argument>
+        <argument>Expression</argument>
+        <argument>File</argument>
+        <argument>GreaterThanOrEqual</argument>
+        <argument>GreaterThan</argument>
+        <argument>Hostname</argument>
+        <argument>Iban</argument>
+        <argument>IdenticalTo</argument>
+        <argument>Image</argument>
+        <argument>Ip</argument>
+        <argument>IsFalse</argument>
+        <argument>IsNull</argument>
+        <argument>IsTrue</argument>
+        <argument>Isbn</argument>
+        <argument>Isin</argument>
+        <argument>Issn</argument>
+        <argument>Json</argument>
+        <argument>Language</argument>
+        <argument>Length</argument>
+        <argument>LessThanOrEqual</argument>
+        <argument>LessThan</argument>
+        <argument>Locale</argument>
+        <argument>Luhn</argument>
+        <argument>NotBlank</argument>
+        <argument>NotCompromisedPassword</argument>
+        <argument>NotEqualTo</argument>
+        <argument>NotIdenticalTo</argument>
+        <argument>NotNull</argument>
+        <argument>Range</argument>
+        <argument>Regex</argument>
+        <argument>Sequentially</argument>
+        <argument>Time</argument>
+        <argument>Timezone</argument>
+        <argument>Type</argument>
+        <argument>Ulid</argument>
+        <argument>Unique</argument>
+        <argument>Url</argument>
+        <argument>Uuid</argument>
+        <argument>Valid</argument>
+        <argument>When</argument>
         <argument>Expression</argument>
         <argument>Email</argument>
         <argument>NotCompromisedPassword</argument>
         <argument>When</argument>
         <argument>UserPassword</argument>
-        <argument></argument>
+        <argument>UniqueEntity</argument>
       </argument>
     </service>
     <service id="translation.reader" class="Symfony\Component\Translation\Reader\TranslationReader">
@@ -2280,8 +2338,9 @@
     </service>
     <service id="translation.locale_switcher" class="Symfony\Component\Translation\LocaleSwitcher">
       <tag name="kernel.reset" method="reset"/>
+      <tag name="kernel.locale_aware"/>
       <argument>en</argument>
-      <argument type="tagged_iterator" tag="kernel.locale_aware"/>
+      <argument type="tagged_iterator" tag="kernel.locale_aware" exclude="translation.locale_switcher"/>
       <argument type="service" id="router.request_context" on-invalid="ignore"/>
     </service>
     <service id="translation.provider_collection" class="Symfony\Component\Translation\Provider\TranslationProviderCollection">
@@ -2310,7 +2369,7 @@
     <service id="debug.file_link_formatter" class="Symfony\Component\HttpKernel\Debug\FileLinkFormatter">
       <argument>null</argument>
       <argument type="service" id="request_stack" on-invalid="ignore"/>
-      <argument>/app/example-symfony-api</argument>
+      <argument>/test</argument>
       <argument type="service_closure" id="debug.file_link_formatter.url_format"/>
     </service>
     <service id="debug.stopwatch" class="Symfony\Component\Stopwatch\Stopwatch">
@@ -2479,10 +2538,10 @@
         <argument>-128</argument>
       </call>
       <call method="addListener">
-        <argument>kernel.controller</argument>
+        <argument>kernel.controller_arguments</argument>
         <argument type="collection">
           <argument type="service_closure" id="controller.cache_attribute_listener"/>
-          <argument>onKernelController</argument>
+          <argument>onKernelControllerArguments</argument>
         </argument>
         <argument>10</argument>
       </call>
@@ -2676,7 +2735,7 @@
           <argument type="service_closure" id="controller.is_granted_attribute_listener"/>
           <argument>onKernelControllerArguments</argument>
         </argument>
-        <argument>10</argument>
+        <argument>20</argument>
       </call>
       <call method="addListener">
         <argument>Symfony\Component\Security\Http\Event\CheckPassportEvent</argument>
@@ -2899,7 +2958,7 @@
     </service>
     <service id="routing.loader.annotation" class="Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader">
       <tag name="routing.loader" priority="-10"/>
-      <argument type="service" id="annotations.cached_reader" on-invalid="null"/>
+      <argument>null</argument>
       <argument>dev</argument>
     </service>
     <service id="routing.loader.annotation.directory" class="Symfony\Component\Routing\Loader\AnnotationDirectoryLoader">
@@ -2929,7 +2988,7 @@
       <argument type="service" id=".service_locator.iD.GLrW.router.default"/>
       <argument>kernel::loadRoutes</argument>
       <argument type="collection">
-        <argument key="cache_dir">/app/example-symfony-api/var/cache/dev</argument>
+        <argument key="cache_dir">/test/var/cache/dev</argument>
         <argument key="debug">true</argument>
         <argument key="generator_class">Symfony\Component\Routing\Generator\CompiledUrlGenerator</argument>
         <argument key="generator_dumper_class">Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper</argument>
@@ -2979,7 +3038,7 @@
       <argument type="service" id="request_stack"/>
       <argument type="service" id="router.request_context" on-invalid="ignore"/>
       <argument type="service" id="monolog.logger.request" on-invalid="ignore"/>
-      <argument>/app/example-symfony-api</argument>
+      <argument>/test</argument>
       <argument>true</argument>
     </service>
     <service id="Symfony\Bundle\FrameworkBundle\Controller\RedirectController" class="Symfony\Bundle\FrameworkBundle\Controller\RedirectController" public="true">
@@ -2998,45 +3057,6 @@
     <service id="Symfony\Bundle\FrameworkBundle\Controller\TemplateController" class="Symfony\Bundle\FrameworkBundle\Controller\TemplateController" public="true">
       <argument type="service" id="twig" on-invalid="ignore"/>
     </service>
-    <service id="annotations.reader" class="Doctrine\Common\Annotations\AnnotationReader">
-      <call method="addGlobalIgnoredName">
-        <argument>required</argument>
-        <argument type="service" id="annotations.dummy_registry"/>
-      </call>
-    </service>
-    <service id="annotations.dummy_registry" class="Doctrine\Common\Annotations\AnnotationRegistry">
-      <call method="registerUniqueLoader">
-        <argument>class_exists</argument>
-      </call>
-    </service>
-    <service id="annotations.cached_reader" class="Doctrine\Common\Annotations\PsrCachedReader">
-      <tag name="annotations.cached_reader"/>
-      <tag name="container.do_not_inline"/>
-      <argument type="service" id="annotations.reader"/>
-      <argument type="service">
-        <service class="Symfony\Component\Cache\Adapter\ArrayAdapter"/>
-      </argument>
-      <argument>true</argument>
-      <argument type="service_closure" id="annotations.cache_adapter"/>
-    </service>
-    <service id="annotations.filesystem_cache_adapter" class="Symfony\Component\Cache\Adapter\FilesystemAdapter">
-      <argument></argument>
-      <argument>0</argument>
-      <argument type="abstract">Cache-Directory</argument>
-    </service>
-    <service id="annotations.cache_warmer" class="Symfony\Bundle\FrameworkBundle\CacheWarmer\AnnotationsCacheWarmer">
-      <tag name="kernel.cache_warmer"/>
-      <argument type="service" id="annotations.reader"/>
-      <argument>/app/example-symfony-api/var/cache/dev/annotations.php</argument>
-      <argument>#^Symfony\\(?:Component\\HttpKernel\\|Bundle\\FrameworkBundle\\Controller\\(?!.*Controller$))#</argument>
-      <argument>true</argument>
-    </service>
-    <service id="annotations.cache_adapter" class="Symfony\Component\Cache\Adapter\PhpArrayAdapter">
-      <tag name="container.hot_path"/>
-      <argument>/app/example-symfony-api/var/cache/dev/annotations.php</argument>
-      <argument type="service" id="cache.annotations"/>
-      <factory class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" method="create"/>
-    </service>
     <service id="property_accessor" class="Symfony\Component\PropertyAccess\PropertyAccessor">
       <argument>3</argument>
       <argument>2</argument>
@@ -3046,7 +3066,7 @@
     </service>
     <service id="secrets.vault" class="Symfony\Bundle\FrameworkBundle\Secrets\SodiumVault">
       <tag name="container.env_var_loader"/>
-      <argument>/app/example-symfony-api/config/secrets/%env(default:kernel.environment:APP_RUNTIME_ENV)%</argument>
+      <argument>/test/config/secrets/%env(default:kernel.environment:APP_RUNTIME_ENV)%</argument>
       <argument type="service" id="secrets.decryption_key" on-invalid="ignore"/>
     </service>
     <service id="secrets.decryption_key" class="Symfony\Component\String\LazyString">
@@ -3055,7 +3075,7 @@
       <factory class="Symfony\Component\String\LazyString" method="fromCallable"/>
     </service>
     <service id="secrets.local_vault" class="Symfony\Bundle\FrameworkBundle\Secrets\DotenvVault">
-      <argument>/app/example-symfony-api/.env.dev.local</argument>
+      <argument>/test/.env.dev.local</argument>
     </service>
     <service id="property_info" class="Symfony\Component\PropertyInfo\PropertyInfoExtractor">
       <argument type="iterator">
@@ -3109,7 +3129,7 @@
     </service>
     <service id="session.storage.factory.native" class="Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory">
       <argument>%session.storage.options%</argument>
-      <argument>null</argument>
+      <argument type="service" id="session.handler.native"/>
       <argument type="service">
         <service class="Symfony\Component\HttpFoundation\Session\Storage\MetadataBag">
           <argument>_sf2_meta</argument>
@@ -3119,7 +3139,7 @@
       <argument>true</argument>
     </service>
     <service id="session.storage.factory.php_bridge" class="Symfony\Component\HttpFoundation\Session\Storage\PhpBridgeSessionStorageFactory">
-      <argument>null</argument>
+      <argument type="service" id="session.handler.native"/>
       <argument type="service">
         <service class="Symfony\Component\HttpFoundation\Session\Storage\MetadataBag">
           <argument>_sf2_meta</argument>
@@ -3129,7 +3149,7 @@
       <argument>true</argument>
     </service>
     <service id="session.storage.factory.mock_file" class="Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorageFactory">
-      <argument>/app/example-symfony-api/var/cache/dev/sessions</argument>
+      <argument>/test/var/cache/dev/sessions</argument>
       <argument>MOCKSESSID</argument>
       <argument type="service">
         <service class="Symfony\Component\HttpFoundation\Session\Storage\MetadataBag">
@@ -3138,10 +3158,15 @@
         </service>
       </argument>
     </service>
+    <service id="session.handler.native" class="Symfony\Component\HttpFoundation\Session\Storage\Handler\StrictSessionHandler">
+      <argument type="service">
+        <service class="SessionHandler"/>
+      </argument>
+    </service>
     <service id="session.handler.native_file" class="Symfony\Component\HttpFoundation\Session\Storage\Handler\StrictSessionHandler">
       <argument type="service">
         <service class="Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeFileSessionHandler">
-          <argument>/app/example-symfony-api/var/cache/dev/sessions</argument>
+          <argument>null</argument>
         </service>
       </argument>
     </service>
@@ -3308,14 +3333,11 @@
       </call>
       <call method="addXmlMappings">
         <argument type="collection">
-          <argument>/app/example-symfony-api/vendor/symfony/form/Resources/config/validation.xml</argument>
+          <argument>/test/vendor/symfony/form/Resources/config/validation.xml</argument>
         </argument>
       </call>
       <call method="enableAnnotationMapping">
         <argument>true</argument>
-      </call>
-      <call method="setDoctrineAnnotationReader">
-        <argument type="service" id="annotations.cached_reader"/>
       </call>
       <call method="addMethodMapping">
         <argument>loadValidatorMetadata</argument>
@@ -3336,18 +3358,257 @@
     <service id="validator.mapping.cache_warmer" class="Symfony\Bundle\FrameworkBundle\CacheWarmer\ValidatorCacheWarmer">
       <tag name="kernel.cache_warmer"/>
       <argument type="service" id="validator.builder"/>
-      <argument>/app/example-symfony-api/var/cache/dev/validation.php</argument>
+      <argument>/test/var/cache/dev/validation.php</argument>
     </service>
     <service id="validator.mapping.cache.adapter" class="Symfony\Component\Cache\Adapter\PhpArrayAdapter">
-      <argument>/app/example-symfony-api/var/cache/dev/validation.php</argument>
+      <argument>/test/var/cache/dev/validation.php</argument>
       <argument type="service" id="cache.validator"/>
       <factory class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" method="create"/>
     </service>
     <service id="validator.validator_factory" class="Symfony\Component\Validator\ContainerConstraintValidatorFactory">
-      <argument type="service" id=".service_locator.j4nuUXI"/>
+      <argument type="service" id=".service_locator.QC5sIxg"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator" class="Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator" abstract="true">
+      <tag name="container.excluded" source="in &quot;config/validator.php&quot;"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\AllValidator" class="Symfony\Component\Validator\Constraints\AllValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\AtLeastOneOfValidator" class="Symfony\Component\Validator\Constraints\AtLeastOneOfValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\BicValidator" class="Symfony\Component\Validator\Constraints\BicValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\BlankValidator" class="Symfony\Component\Validator\Constraints\BlankValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\CallbackValidator" class="Symfony\Component\Validator\Constraints\CallbackValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\CardSchemeValidator" class="Symfony\Component\Validator\Constraints\CardSchemeValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\ChoiceValidator" class="Symfony\Component\Validator\Constraints\ChoiceValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\CidrValidator" class="Symfony\Component\Validator\Constraints\CidrValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\CollectionValidator" class="Symfony\Component\Validator\Constraints\CollectionValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\CompoundValidator" class="Symfony\Component\Validator\Constraints\CompoundValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\CountValidator" class="Symfony\Component\Validator\Constraints\CountValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\CountryValidator" class="Symfony\Component\Validator\Constraints\CountryValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\CssColorValidator" class="Symfony\Component\Validator\Constraints\CssColorValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\CurrencyValidator" class="Symfony\Component\Validator\Constraints\CurrencyValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\DateTimeValidator" class="Symfony\Component\Validator\Constraints\DateTimeValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\DateValidator" class="Symfony\Component\Validator\Constraints\DateValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\DivisibleByValidator" class="Symfony\Component\Validator\Constraints\DivisibleByValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\EmailValidator" class="Symfony\Component\Validator\Constraints\EmailValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\EqualToValidator" class="Symfony\Component\Validator\Constraints\EqualToValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\ExpressionSyntaxValidator" class="Symfony\Component\Validator\Constraints\ExpressionSyntaxValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\ExpressionValidator" class="Symfony\Component\Validator\Constraints\ExpressionValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\FileValidator" class="Symfony\Component\Validator\Constraints\FileValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\GreaterThanOrEqualValidator" class="Symfony\Component\Validator\Constraints\GreaterThanOrEqualValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\GreaterThanValidator" class="Symfony\Component\Validator\Constraints\GreaterThanValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\HostnameValidator" class="Symfony\Component\Validator\Constraints\HostnameValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\IbanValidator" class="Symfony\Component\Validator\Constraints\IbanValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\IdenticalToValidator" class="Symfony\Component\Validator\Constraints\IdenticalToValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\ImageValidator" class="Symfony\Component\Validator\Constraints\ImageValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\IpValidator" class="Symfony\Component\Validator\Constraints\IpValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\IsFalseValidator" class="Symfony\Component\Validator\Constraints\IsFalseValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\IsNullValidator" class="Symfony\Component\Validator\Constraints\IsNullValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\IsTrueValidator" class="Symfony\Component\Validator\Constraints\IsTrueValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\IsbnValidator" class="Symfony\Component\Validator\Constraints\IsbnValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\IsinValidator" class="Symfony\Component\Validator\Constraints\IsinValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\IssnValidator" class="Symfony\Component\Validator\Constraints\IssnValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\JsonValidator" class="Symfony\Component\Validator\Constraints\JsonValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\LanguageValidator" class="Symfony\Component\Validator\Constraints\LanguageValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\LengthValidator" class="Symfony\Component\Validator\Constraints\LengthValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\LessThanOrEqualValidator" class="Symfony\Component\Validator\Constraints\LessThanOrEqualValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\LessThanValidator" class="Symfony\Component\Validator\Constraints\LessThanValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\LocaleValidator" class="Symfony\Component\Validator\Constraints\LocaleValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\LuhnValidator" class="Symfony\Component\Validator\Constraints\LuhnValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\NotBlankValidator" class="Symfony\Component\Validator\Constraints\NotBlankValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\NotCompromisedPasswordValidator" class="Symfony\Component\Validator\Constraints\NotCompromisedPasswordValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\NotEqualToValidator" class="Symfony\Component\Validator\Constraints\NotEqualToValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\NotIdenticalToValidator" class="Symfony\Component\Validator\Constraints\NotIdenticalToValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\NotNullValidator" class="Symfony\Component\Validator\Constraints\NotNullValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\RangeValidator" class="Symfony\Component\Validator\Constraints\RangeValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\RegexValidator" class="Symfony\Component\Validator\Constraints\RegexValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\SequentiallyValidator" class="Symfony\Component\Validator\Constraints\SequentiallyValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\TimeValidator" class="Symfony\Component\Validator\Constraints\TimeValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\TimezoneValidator" class="Symfony\Component\Validator\Constraints\TimezoneValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\TypeValidator" class="Symfony\Component\Validator\Constraints\TypeValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\UlidValidator" class="Symfony\Component\Validator\Constraints\UlidValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\UniqueValidator" class="Symfony\Component\Validator\Constraints\UniqueValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\UrlValidator" class="Symfony\Component\Validator\Constraints\UrlValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\UuidValidator" class="Symfony\Component\Validator\Constraints\UuidValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\ValidValidator" class="Symfony\Component\Validator\Constraints\ValidValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
+    </service>
+    <service id="Symfony\Component\Validator\Constraints\WhenValidator" class="Symfony\Component\Validator\Constraints\WhenValidator" abstract="true">
+      <tag name="container.excluded"/>
+      <tag name="validator.constraint_validator"/>
     </service>
     <service id="validator.expression" class="Symfony\Component\Validator\Constraints\ExpressionValidator">
-      <tag name="validator.constraint_validator" alias="validator.expression"/>
+      <tag name="validator.constraint_validator"/>
       <argument type="service" id="validator.expression_language" on-invalid="null"/>
     </service>
     <service id="validator.expression_language" class="Symfony\Component\ExpressionLanguage\ExpressionLanguage">
@@ -3359,18 +3620,18 @@
       <argument type="service" id="cache.validator_expression_language.recorder_inner"/>
     </service>
     <service id="validator.email" class="Symfony\Component\Validator\Constraints\EmailValidator">
-      <tag name="validator.constraint_validator" alias="Symfony\Component\Validator\Constraints\EmailValidator"/>
+      <tag name="validator.constraint_validator"/>
       <argument>html5</argument>
     </service>
     <service id="validator.not_compromised_password" class="Symfony\Component\Validator\Constraints\NotCompromisedPasswordValidator">
-      <tag name="validator.constraint_validator" alias="Symfony\Component\Validator\Constraints\NotCompromisedPasswordValidator"/>
+      <tag name="validator.constraint_validator"/>
       <argument type="service" id=".debug.http_client" on-invalid="null"/>
       <argument>UTF-8</argument>
       <argument>true</argument>
       <argument>null</argument>
     </service>
     <service id="validator.when" class="Symfony\Component\Validator\Constraints\WhenValidator">
-      <tag name="validator.constraint_validator" alias="Symfony\Component\Validator\Constraints\WhenValidator"/>
+      <tag name="validator.constraint_validator"/>
       <argument type="service" id="validator.expression_language" on-invalid="null"/>
     </service>
     <service id="validator.property_info_loader" class="Symfony\Component\Validator\Mapping\Loader\PropertyInfoLoader">
@@ -3446,7 +3707,7 @@
       </call>
     </service>
     <service id="profiler.storage" class="Symfony\Component\HttpKernel\Profiler\FileProfilerStorage">
-      <argument>file:/app/example-symfony-api/var/cache/dev/profiler</argument>
+      <argument>file:/test/var/cache/dev/profiler</argument>
     </service>
     <service id="profiler_listener" class="Symfony\Component\HttpKernel\EventListener\ProfilerListener">
       <tag name="kernel.event_subscriber"/>
@@ -3493,7 +3754,7 @@
       <tag name="monolog.logger" channel="profiler"/>
       <tag name="data_collector" template="@WebProfiler/Collector/logger.html.twig" id="logger" priority="300"/>
       <argument type="service" id="monolog.logger.profiler" on-invalid="ignore"/>
-      <argument>/app/example-symfony-api/var/cache/dev/App_KernelDevDebugContainer</argument>
+      <argument>/test/var/cache/dev/App_KernelDevDebugContainer</argument>
       <argument type="service" id="request_stack" on-invalid="ignore"/>
     </service>
     <service id="data_collector.time" class="Symfony\Component\HttpKernel\DataCollector\TimeDataCollector">
@@ -3612,17 +3873,11 @@
       <call method="forceHttpsUrls" returns-clone="true">
         <argument>false</argument>
       </call>
-      <call method="allowLinkSchemes" returns-clone="true">
-        <argument type="collection"/>
-      </call>
       <call method="allowLinkHosts" returns-clone="true">
         <argument>null</argument>
       </call>
       <call method="allowRelativeLinks" returns-clone="true">
         <argument>false</argument>
-      </call>
-      <call method="allowMediaSchemes" returns-clone="true">
-        <argument type="collection"/>
       </call>
       <call method="allowMediaHosts" returns-clone="true">
         <argument>null</argument>
@@ -3654,7 +3909,7 @@
     </service>
     <service id="security.untracked_token_storage" class="Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage"/>
     <service id="security.helper" class="Symfony\Bundle\SecurityBundle\Security">
-      <argument type="service" id=".service_locator.WiCTJMq"/>
+      <argument type="service" id=".service_locator.LrCXAmX"/>
       <argument type="collection">
         <argument key="dev">null</argument>
         <argument key="main" type="service" id=".service_locator.I5Q3J1s"/>
@@ -3663,6 +3918,7 @@
     <service id="security.authentication.trust_resolver" class="Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolver"/>
     <service id="security.authentication.session_strategy" class="Symfony\Component\Security\Http\Session\SessionAuthenticationStrategy">
       <argument>migrate</argument>
+      <argument type="service" id="security.csrf.token_storage" on-invalid="ignore"/>
     </service>
     <service id="security.authentication.session_strategy_noop" class="Symfony\Component\Security\Http\Session\SessionAuthenticationStrategy">
       <argument>none</argument>
@@ -4586,14 +4842,6 @@
         <argument>Hash a user password</argument>
       </call>
     </service>
-    <service id="doctrine.dbal.logger.chain" class="Doctrine\DBAL\Logging\LoggerChain" abstract="true"/>
-    <service id="doctrine.dbal.logger.profiling" class="Doctrine\DBAL\Logging\DebugStack" abstract="true"/>
-    <service id="doctrine.dbal.logger.backtrace" class="Doctrine\Bundle\DoctrineBundle\Dbal\Logging\BacktraceLogger" abstract="true"/>
-    <service id="doctrine.dbal.logger" class="Symfony\Bridge\Doctrine\Logger\DbalLogger">
-      <tag name="monolog.logger" channel="doctrine"/>
-      <argument>null</argument>
-      <argument type="service" id="debug.stopwatch" on-invalid="null"/>
-    </service>
     <service id="data_collector.doctrine" class="Doctrine\Bundle\DoctrineBundle\DataCollector\DoctrineDataCollector">
       <tag name="data_collector" template="@Doctrine/Collector/db.html.twig" id="db" priority="250"/>
       <argument type="service" id="doctrine"/>
@@ -4663,7 +4911,12 @@
       <argument type="service" id="doctrine"/>
       <argument type="service" id="profiler"/>
     </service>
+    <service id="doctrine.dbal.default_schema_manager_factory" class="Doctrine\DBAL\Schema\DefaultSchemaManagerFactory"/>
+    <service id="doctrine.dbal.legacy_schema_manager_factory" class="Doctrine\DBAL\Schema\LegacySchemaManagerFactory"/>
     <service id="doctrine.dbal.default_connection.configuration" class="Doctrine\DBAL\Configuration">
+      <call method="setSchemaManagerFactory">
+        <argument type="service" id="doctrine.dbal.legacy_schema_manager_factory"/>
+      </call>
       <call method="setMiddlewares">
         <argument type="collection">
           <argument type="service">
@@ -4737,7 +4990,7 @@
       <argument type="service" id="doctrine.debug_data_holder"/>
       <argument type="service" id="debug.stopwatch" on-invalid="null"/>
     </service>
-    <service id=".1_ServiceLocator~cLefmF7" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".1_ServiceLocator~4RDht5L" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <argument type="collection"/>
     </service>
     <service id="doctrine.orm.proxy_cache_warmer" class="Symfony\Bridge\Doctrine\CacheWarmer\ProxyCacheWarmer">
@@ -4802,7 +5055,7 @@
       <argument type="service" id="doctrine"/>
     </service>
     <service id="doctrine.orm.entity_value_resolver.expression_language" class="Symfony\Component\ExpressionLanguage\ExpressionLanguage"/>
-    <service id="doctrine.cache_clear_metadata_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearMetadataCacheDoctrineCommand">
+    <service id="doctrine.cache_clear_metadata_command" class="Doctrine\ORM\Tools\Console\Command\ClearCache\MetadataCommand">
       <tag name="console.command" command="doctrine:cache:clear-metadata"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4810,7 +5063,7 @@
         <argument>doctrine:cache:clear-metadata</argument>
       </call>
     </service>
-    <service id="doctrine.cache_clear_query_cache_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearQueryCacheDoctrineCommand">
+    <service id="doctrine.cache_clear_query_cache_command" class="Doctrine\ORM\Tools\Console\Command\ClearCache\QueryCommand">
       <tag name="console.command" command="doctrine:cache:clear-query"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4818,7 +5071,7 @@
         <argument>doctrine:cache:clear-query</argument>
       </call>
     </service>
-    <service id="doctrine.cache_clear_result_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearResultCacheDoctrineCommand">
+    <service id="doctrine.cache_clear_result_command" class="Doctrine\ORM\Tools\Console\Command\ClearCache\ResultCommand">
       <tag name="console.command" command="doctrine:cache:clear-result"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4826,7 +5079,7 @@
         <argument>doctrine:cache:clear-result</argument>
       </call>
     </service>
-    <service id="doctrine.cache_collection_region_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\CollectionRegionDoctrineCommand">
+    <service id="doctrine.cache_collection_region_command" class="Doctrine\ORM\Tools\Console\Command\ClearCache\CollectionRegionCommand">
       <tag name="console.command" command="doctrine:cache:clear-collection-region"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4834,7 +5087,7 @@
         <argument>doctrine:cache:clear-collection-region</argument>
       </call>
     </service>
-    <service id="doctrine.mapping_convert_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\ConvertMappingDoctrineCommand">
+    <service id="doctrine.mapping_convert_command" class="Doctrine\ORM\Tools\Console\Command\ConvertMappingCommand">
       <tag name="console.command" command="doctrine:mapping:convert"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4842,7 +5095,7 @@
         <argument>doctrine:mapping:convert</argument>
       </call>
     </service>
-    <service id="doctrine.schema_create_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\CreateSchemaDoctrineCommand">
+    <service id="doctrine.schema_create_command" class="Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand">
       <tag name="console.command" command="doctrine:schema:create"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4850,7 +5103,7 @@
         <argument>doctrine:schema:create</argument>
       </call>
     </service>
-    <service id="doctrine.schema_drop_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\DropSchemaDoctrineCommand">
+    <service id="doctrine.schema_drop_command" class="Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand">
       <tag name="console.command" command="doctrine:schema:drop"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4858,7 +5111,7 @@
         <argument>doctrine:schema:drop</argument>
       </call>
     </service>
-    <service id="doctrine.ensure_production_settings_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\EnsureProductionSettingsDoctrineCommand">
+    <service id="doctrine.ensure_production_settings_command" class="Doctrine\ORM\Tools\Console\Command\EnsureProductionSettingsCommand">
       <tag name="console.command" command="doctrine:ensure-production-settings"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4866,7 +5119,7 @@
         <argument>doctrine:ensure-production-settings</argument>
       </call>
     </service>
-    <service id="doctrine.clear_entity_region_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\EntityRegionCacheDoctrineCommand">
+    <service id="doctrine.clear_entity_region_command" class="Doctrine\ORM\Tools\Console\Command\ClearCache\EntityRegionCommand">
       <tag name="console.command" command="doctrine:cache:clear-entity-region"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4874,7 +5127,7 @@
         <argument>doctrine:cache:clear-entity-region</argument>
       </call>
     </service>
-    <service id="doctrine.mapping_info_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\InfoDoctrineCommand">
+    <service id="doctrine.mapping_info_command" class="Doctrine\ORM\Tools\Console\Command\InfoCommand">
       <tag name="console.command" command="doctrine:mapping:info"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4882,7 +5135,7 @@
         <argument>doctrine:mapping:info</argument>
       </call>
     </service>
-    <service id="doctrine.clear_query_region_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\QueryRegionCacheDoctrineCommand">
+    <service id="doctrine.clear_query_region_command" class="Doctrine\ORM\Tools\Console\Command\ClearCache\QueryRegionCommand">
       <tag name="console.command" command="doctrine:cache:clear-query-region"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4890,7 +5143,7 @@
         <argument>doctrine:cache:clear-query-region</argument>
       </call>
     </service>
-    <service id="doctrine.query_dql_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\RunDqlDoctrineCommand">
+    <service id="doctrine.query_dql_command" class="Doctrine\ORM\Tools\Console\Command\RunDqlCommand">
       <tag name="console.command" command="doctrine:query:dql"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4898,7 +5151,7 @@
         <argument>doctrine:query:dql</argument>
       </call>
     </service>
-    <service id="doctrine.schema_update_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\UpdateSchemaDoctrineCommand">
+    <service id="doctrine.schema_update_command" class="Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand">
       <tag name="console.command" command="doctrine:schema:update"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4906,7 +5159,7 @@
         <argument>doctrine:schema:update</argument>
       </call>
     </service>
-    <service id="doctrine.schema_validate_command" class="Doctrine\Bundle\DoctrineBundle\Command\Proxy\ValidateSchemaCommand">
+    <service id="doctrine.schema_validate_command" class="Doctrine\ORM\Tools\Console\Command\ValidateSchemaCommand">
       <tag name="console.command" command="doctrine:schema:validate"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="doctrine.orm.command.entity_manager_provider"/>
@@ -4943,7 +5196,7 @@
         <argument type="service" id=".doctrine.orm.default_metadata_driver"/>
       </call>
       <call method="setProxyDir">
-        <argument>/app/example-symfony-api/var/cache/dev/doctrine/orm/Proxies</argument>
+        <argument>/test/var/cache/dev/doctrine/orm/Proxies</argument>
       </call>
       <call method="setProxyNamespace">
         <argument>Proxies</argument>
@@ -4969,13 +5222,16 @@
       <call method="setEntityListenerResolver">
         <argument type="service" id="doctrine.orm.default_entity_listener_resolver"/>
       </call>
+      <call method="setLazyGhostObjectEnabled">
+        <argument>false</argument>
+      </call>
       <call method="setRepositoryFactory">
         <argument type="service" id="doctrine.orm.container_repository_factory"/>
       </call>
     </service>
     <service id="doctrine.orm.default_attribute_metadata_driver" class="Doctrine\ORM\Mapping\Driver\AttributeDriver">
       <argument type="collection">
-        <argument>/app/example-symfony-api/src/Entity</argument>
+        <argument>/test/src/Entity</argument>
       </argument>
     </service>
     <service id="cache.doctrine.orm.default.metadata" class="Symfony\Component\Cache\Adapter\ArrayAdapter"/>
@@ -5057,7 +5313,7 @@
     <service id="monolog.processor.psr_log_message" class="Monolog\Processor\PsrLogMessageProcessor"/>
     <service id="monolog.handler.main" class="Monolog\Handler\StreamHandler">
       <tag name="kernel.reset" method="reset"/>
-      <argument>/app/example-symfony-api/var/log/dev.log</argument>
+      <argument>/test/var/log/dev.log</argument>
       <argument>100</argument>
       <argument>true</argument>
       <argument>null</argument>
@@ -5087,7 +5343,7 @@
       <argument type="service" id="twig.loader.native_filesystem"/>
       <argument type="collection">
         <argument key="autoescape">name</argument>
-        <argument key="cache">/app/example-symfony-api/var/cache/dev/twig</argument>
+        <argument key="cache">/test/var/cache/dev/twig</argument>
         <argument key="charset">UTF-8</argument>
         <argument key="debug">true</argument>
         <argument key="strict_variables">true</argument>
@@ -5208,10 +5464,10 @@
     <service id="twig.template_iterator" class="Symfony\Bundle\TwigBundle\TemplateIterator">
       <argument type="service" id="kernel"/>
       <argument type="collection">
-        <argument key="/app/example-symfony-api/vendor/symfony/twig-bridge/Resources/views/Email">email</argument>
-        <argument key="/app/example-symfony-api/vendor/symfony/twig-bridge/Resources/views/Form">null</argument>
+        <argument key="/test/vendor/symfony/twig-bridge/Resources/views/Email">email</argument>
+        <argument key="/test/vendor/symfony/twig-bridge/Resources/views/Form">null</argument>
       </argument>
-      <argument>/app/example-symfony-api/templates</argument>
+      <argument>/test/templates</argument>
       <argument type="collection"/>
     </service>
     <service id="twig.template_cache_warmer" class="Symfony\Bundle\TwigBundle\CacheWarmer\TemplateCacheWarmer">
@@ -5223,68 +5479,68 @@
     <service id="twig.loader.native_filesystem" class="Twig\Loader\FilesystemLoader">
       <tag name="twig.loader"/>
       <argument type="collection"/>
-      <argument>/app/example-symfony-api</argument>
+      <argument>/test</argument>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/symfony/security-bundle/Resources/views</argument>
+        <argument>/test/vendor/symfony/security-bundle/Resources/views</argument>
         <argument>Security</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/symfony/security-bundle/Resources/views</argument>
+        <argument>/test/vendor/symfony/security-bundle/Resources/views</argument>
         <argument>!Security</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/doctrine/doctrine-bundle/Resources/views</argument>
+        <argument>/test/vendor/doctrine/doctrine-bundle/Resources/views</argument>
         <argument>Doctrine</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/doctrine/doctrine-bundle/Resources/views</argument>
+        <argument>/test/vendor/doctrine/doctrine-bundle/Resources/views</argument>
         <argument>!Doctrine</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/templates/bundles/TwigBundle</argument>
+        <argument>/test/templates/bundles/TwigBundle</argument>
         <argument>Twig</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/templates/bundles/TwigBundle</argument>
+        <argument>/test/templates/bundles/TwigBundle</argument>
         <argument>!Twig</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/symfony/debug-bundle/Resources/views</argument>
+        <argument>/test/vendor/symfony/debug-bundle/Resources/views</argument>
         <argument>Debug</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/symfony/debug-bundle/Resources/views</argument>
+        <argument>/test/vendor/symfony/debug-bundle/Resources/views</argument>
         <argument>!Debug</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/symfony/web-profiler-bundle/Resources/views</argument>
+        <argument>/test/vendor/symfony/web-profiler-bundle/Resources/views</argument>
         <argument>WebProfiler</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/symfony/web-profiler-bundle/Resources/views</argument>
+        <argument>/test/vendor/symfony/web-profiler-bundle/Resources/views</argument>
         <argument>!WebProfiler</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/doctrine/doctrine-migrations-bundle/Resources/views</argument>
+        <argument>/test/vendor/doctrine/doctrine-migrations-bundle/Resources/views</argument>
         <argument>DoctrineMigrations</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/doctrine/doctrine-migrations-bundle/Resources/views</argument>
+        <argument>/test/vendor/doctrine/doctrine-migrations-bundle/Resources/views</argument>
         <argument>!DoctrineMigrations</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/templates</argument>
+        <argument>/test/templates</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/symfony/twig-bridge/Resources/views/Email</argument>
+        <argument>/test/vendor/symfony/twig-bridge/Resources/views/Email</argument>
         <argument>email</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/symfony/twig-bridge/Resources/views/Email</argument>
+        <argument>/test/vendor/symfony/twig-bridge/Resources/views/Email</argument>
         <argument>!email</argument>
       </call>
       <call method="addPath">
-        <argument>/app/example-symfony-api/vendor/symfony/twig-bridge/Resources/views/Form</argument>
+        <argument>/test/vendor/symfony/twig-bridge/Resources/views/Form</argument>
       </call>
     </service>
     <service id="twig.loader.chain" class="Twig\Loader\ChainLoader"/>
@@ -5310,7 +5566,7 @@
     <service id="twig.extension.code" class="Symfony\Bridge\Twig\Extension\CodeExtension">
       <tag name="twig.extension"/>
       <argument type="service" id="debug.file_link_formatter" on-invalid="ignore"/>
-      <argument>/app/example-symfony-api</argument>
+      <argument>/test</argument>
       <argument>UTF-8</argument>
     </service>
     <service id="twig.extension.routing" class="Symfony\Bridge\Twig\Extension\RoutingExtension">
@@ -5400,9 +5656,9 @@
       <tag name="console.command"/>
       <tag name="container.no_preload"/>
       <argument type="service" id="twig"/>
-      <argument>/app/example-symfony-api</argument>
+      <argument>/test</argument>
       <argument>%kernel.bundles_metadata%</argument>
-      <argument>/app/example-symfony-api/templates</argument>
+      <argument>/test/templates</argument>
       <argument type="service" id="debug.file_link_formatter" on-invalid="null"/>
       <call method="setName">
         <argument>debug:twig</argument>
@@ -5475,7 +5731,7 @@
         <argument key="source" type="service">
           <service class="Symfony\Component\VarDumper\Dumper\ContextProvider\SourceContextProvider">
             <argument>UTF-8</argument>
-            <argument>/app/example-symfony-api</argument>
+            <argument>/test</argument>
             <argument type="service" id="debug.file_link_formatter" on-invalid="null"/>
           </service>
         </argument>
@@ -5497,7 +5753,7 @@
         <argument key="source" type="service">
           <service class="Symfony\Component\VarDumper\Dumper\ContextProvider\SourceContextProvider">
             <argument>UTF-8</argument>
-            <argument>/app/example-symfony-api</argument>
+            <argument>/test</argument>
             <argument type="service" id="debug.file_link_formatter" on-invalid="null"/>
           </service>
         </argument>
@@ -5555,7 +5811,7 @@
       <argument type="service" id="twig"/>
       <argument>%data_collector.templates%</argument>
       <argument type="service" id="web_profiler.csp.handler"/>
-      <argument>/app/example-symfony-api</argument>
+      <argument>/test</argument>
     </service>
     <service id="web_profiler.controller.router" class="Symfony\Bundle\WebProfilerBundle\Controller\RouterController" public="true">
       <argument type="service" id="profiler" on-invalid="null"/>
@@ -5632,7 +5888,7 @@
     <service id="doctrine.migrations.configuration" class="Doctrine\Migrations\Configuration\Configuration">
       <call method="addMigrationsDirectory">
         <argument>DoctrineMigrations</argument>
-        <argument>/app/example-symfony-api/migrations</argument>
+        <argument>/test/migrations</argument>
       </call>
       <call method="setAllOrNothing">
         <argument>false</argument>
@@ -5795,7 +6051,7 @@
     <service id="doctrine.fixtures.purger.orm_purger_factory" class="Doctrine\Bundle\FixturesBundle\Purger\ORMPurgerFactory">
       <tag name="doctrine.fixtures.purger_factory" alias="default"/>
     </service>
-    <service id=".1_ServiceLocator~CesDnYR" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".1_ServiceLocator~zfr.piT" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="webpack_encore.entrypoint_lookup_collection" type="service_closure" id="webpack_encore.entrypoint_lookup_collection"/>
@@ -5819,7 +6075,7 @@
     </service>
     <service id="webpack_encore.twig_entry_files_extension" class="Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension">
       <tag name="twig.extension"/>
-      <argument type="service" id=".1_ServiceLocator~CesDnYR"/>
+      <argument type="service" id=".1_ServiceLocator~zfr.piT"/>
     </service>
     <service id="webpack_encore.twig_stimulus_extension" class="Symfony\WebpackEncoreBundle\Twig\StimulusTwigExtension">
       <tag name="twig.extension"/>
@@ -5827,12 +6083,12 @@
     <service id="webpack_encore.entrypoint_lookup.cache_warmer" class="Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer">
       <tag name="kernel.cache_warmer"/>
       <argument type="collection">
-        <argument key="_default">/app/example-symfony-api/public/build/entrypoints.json</argument>
+        <argument key="_default">/test/public/build/entrypoints.json</argument>
       </argument>
-      <argument>/app/example-symfony-api/var/cache/dev/webpack_encore.cache.php</argument>
+      <argument>/test/var/cache/dev/webpack_encore.cache.php</argument>
     </service>
     <service id="webpack_encore.cache" class="Symfony\Component\Cache\Adapter\PhpArrayAdapter">
-      <argument>/app/example-symfony-api/var/cache/dev/webpack_encore.cache.php</argument>
+      <argument>/test/var/cache/dev/webpack_encore.cache.php</argument>
       <argument type="service" id="cache.webpack_encore"/>
       <factory class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" method="create"/>
     </service>
@@ -5858,7 +6114,7 @@
     </service>
     <service id="webpack_encore.entrypoint_lookup[_default]" class="Symfony\WebpackEncoreBundle\Asset\EntrypointLookup">
       <tag name="kernel.reset" method="reset"/>
-      <argument>/app/example-symfony-api/public/build/entrypoints.json</argument>
+      <argument>/test/public/build/entrypoints.json</argument>
       <argument>null</argument>
       <argument>_default</argument>
       <argument>true</argument>
@@ -5873,8 +6129,8 @@
       <argument type="service" id="filesystem"/>
       <argument type="service" id="maker.autoloader_util"/>
       <argument type="service" id="maker.file_link_formatter"/>
-      <argument>/app/example-symfony-api</argument>
-      <argument>/app/example-symfony-api/templates</argument>
+      <argument>/test</argument>
+      <argument>/test/templates</argument>
     </service>
     <service id="maker.autoloader_finder" class="Symfony\Bundle\MakerBundle\Util\ComposerAutoloaderFinder">
       <argument>App</argument>
@@ -6034,7 +6290,7 @@
     </service>
     <service id="maker.maker.make_migration" class="Symfony\Bundle\MakerBundle\Maker\MakeMigration">
       <tag name="maker.command"/>
-      <argument>/app/example-symfony-api</argument>
+      <argument>/test</argument>
     </service>
     <service id="maker.maker.make_stimulus_controller" class="Symfony\Bundle\MakerBundle\Maker\MakeStimulusController">
       <tag name="maker.command"/>
@@ -6548,7 +6804,7 @@
         <argument key="kernel:registerContainerConfiguration" type="service_closure" id=".service_locator.y4_Zrx."/>
       </argument>
     </service>
-    <service id=".service_locator.j4nuUXI" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.QC5sIxg" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator" type="service_closure" id="doctrine.orm.validator.unique"/>
@@ -6559,7 +6815,6 @@
         <argument key="Symfony\Component\Validator\Constraints\WhenValidator" type="service_closure" id="validator.when"/>
         <argument key="doctrine.orm.validator.unique" type="service_closure" id="doctrine.orm.validator.unique"/>
         <argument key="security.validator.user_password" type="service_closure" id="security.validator.user_password"/>
-        <argument key="validator.expression" type="service_closure" id="validator.expression"/>
       </argument>
     </service>
     <service id=".service_locator.wmwio2R" class="Symfony\Component\DependencyInjection\ServiceLocator">
@@ -6902,7 +7157,7 @@
         <argument key="translation.loader.yml" type="service_closure" id="translation.loader.yml"/>
       </argument>
     </service>
-    <service id=".service_locator.9doj5sC" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.NmJj7Z6" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="form.factory" type="service_closure" id="form.factory" on-invalid="ignore"/>
@@ -6916,29 +7171,29 @@
         <argument key="twig" type="service_closure" id="twig" on-invalid="ignore"/>
       </argument>
     </service>
-    <service id=".service_locator.9doj5sC.App\Controller\Admin\BlogController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.NmJj7Z6.App\Controller\Admin\BlogController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\Admin\BlogController"/>
       <argument>App\Controller\Admin\BlogController</argument>
       <argument type="service" id="service_container"/>
-      <factory service=".service_locator.9doj5sC" method="withContext"/>
+      <factory service=".service_locator.NmJj7Z6" method="withContext"/>
     </service>
-    <service id=".service_locator.9doj5sC.App\Controller\BlogController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.NmJj7Z6.App\Controller\BlogController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\BlogController"/>
       <argument>App\Controller\BlogController</argument>
       <argument type="service" id="service_container"/>
-      <factory service=".service_locator.9doj5sC" method="withContext"/>
+      <factory service=".service_locator.NmJj7Z6" method="withContext"/>
     </service>
-    <service id=".service_locator.9doj5sC.App\Controller\SecurityController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.NmJj7Z6.App\Controller\SecurityController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\SecurityController"/>
       <argument>App\Controller\SecurityController</argument>
       <argument type="service" id="service_container"/>
-      <factory service=".service_locator.9doj5sC" method="withContext"/>
+      <factory service=".service_locator.NmJj7Z6" method="withContext"/>
     </service>
-    <service id=".service_locator.9doj5sC.App\Controller\UserController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.NmJj7Z6.App\Controller\UserController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\UserController"/>
       <argument>App\Controller\UserController</argument>
       <argument type="service" id="service_container"/>
-      <factory service=".service_locator.9doj5sC" method="withContext"/>
+      <factory service=".service_locator.NmJj7Z6" method="withContext"/>
     </service>
     <service id=".service_locator.fuYM_Z." class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
@@ -7044,16 +7299,16 @@
         <argument key="request_stack" type="service_closure" id="request_stack"/>
       </argument>
     </service>
-    <service id=".service_locator.WiCTJMq" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.LrCXAmX" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="request_stack" type="service_closure" id="request_stack"/>
+        <argument key="security.authenticator.managers_locator" type="service_closure" id="security.authenticator.managers_locator" on-invalid="ignore"/>
         <argument key="security.authorization_checker" type="service_closure" id="security.authorization_checker"/>
         <argument key="security.csrf.token_manager" type="service_closure" id="security.csrf.token_manager" on-invalid="ignore"/>
         <argument key="security.firewall.event_dispatcher_locator" type="service_closure" id="security.firewall.event_dispatcher_locator"/>
         <argument key="security.firewall.map" type="service_closure" id="security.firewall.map"/>
         <argument key="security.token_storage" type="service_closure" id="security.token_storage"/>
-        <argument key="security.user_authenticator" type="service_closure" id="security.user_authenticator" on-invalid="ignore"/>
         <argument key="security.user_checker" type="service_closure" id="security.user_checker"/>
       </argument>
     </service>
@@ -7065,6 +7320,14 @@
     </service>
     <service id="debug.validator.inner" class="Symfony\Component\Validator\Validator\ValidatorInterface">
       <factory service="validator.builder" method="getValidator"/>
+    </service>
+    <service id=".debug.http_client.inner" class="Symfony\Contracts\HttpClient\HttpClientInterface">
+      <argument type="collection"/>
+      <argument>6</argument>
+      <call method="setLogger">
+        <argument type="service" id="monolog.logger.http_client" on-invalid="ignore"/>
+      </call>
+      <factory class="Symfony\Component\HttpClient\HttpClient" method="create"/>
     </service>
     <service id="debug.event_dispatcher.inner" class="Symfony\Component\EventDispatcher\EventDispatcher"/>
     <service id="debug.controller_resolver.inner" class="Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver">
@@ -7135,14 +7398,6 @@
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
       <argument type="service" id=".service_locator.sgTy1_Z"/>
-    </service>
-    <service id=".debug.http_client.inner" class="Symfony\Contracts\HttpClient\HttpClientInterface">
-      <argument type="collection"/>
-      <argument>6</argument>
-      <call method="setLogger">
-        <argument type="service" id="monolog.logger.http_client" on-invalid="ignore"/>
-      </call>
-      <factory class="Symfony\Component\HttpClient\HttpClient" method="create"/>
     </service>
     <service id=".doctrine.orm.default_metadata_driver.inner" class="Doctrine\Persistence\Mapping\Driver\MappingDriverChain">
       <call method="addDriver">
@@ -7620,7 +7875,7 @@
     </service>
     <service id="console.command_loader" class="Symfony\Component\Console\CommandLoader\ContainerCommandLoader" public="true">
       <tag name="container.no_preload"/>
-      <argument type="service" id=".service_locator.PePLeXo"/>
+      <argument type="service" id=".service_locator.ooQh.Mq"/>
       <argument type="collection">
         <argument key="app:add-user">App\Command\AddUserCommand</argument>
         <argument key="app:delete-user">App\Command\DeleteUserCommand</argument>
@@ -7725,7 +7980,7 @@
         <argument key="make:stimulus-controller">maker.auto_command.make_stimulus_controller</argument>
       </argument>
     </service>
-    <service id=".service_locator.PePLeXo" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.ooQh.Mq" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Command\AddUserCommand" type="service_closure" id=".App\Command\AddUserCommand.lazy"/>
@@ -7829,93 +8084,93 @@
       </argument>
     </service>
     <service id="cache.app.recorder_inner" class="Symfony\Component\Cache\Adapter\FilesystemAdapter">
-      <argument>hI3evCGRxU</argument>
+      <argument>IMQWRHKjxO</argument>
       <argument>0</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/app</argument>
+      <argument>/test/var/cache/dev/pools/app</argument>
       <argument type="service" id="cache.default_marshaller" on-invalid="ignore"/>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       </call>
     </service>
     <service id="cache.system.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>wlhEAsZmW+</argument>
+      <argument>wXE7Q3t4un</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.validator.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>lt1odsFEqw</argument>
+      <argument>ejlIojwj2W</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.serializer.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>G7V1bm8wCw</argument>
+      <argument>sYyVfZ8mPV</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.annotations.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>7vSq-pbvNu</argument>
+      <argument>SqX5P61d05</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.property_info.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>YPXHWXiWPh</argument>
+      <argument>SWMYdhTQJN</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.validator_expression_language.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>Fq-8PpgkL6</argument>
+      <argument>kTBVuUoMsY</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.security_expression_language.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>WtkKu21WVp</argument>
+      <argument>x7eTKcWFkr</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.security_is_granted_attribute_expression_language.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>4rV8IY6Etg</argument>
+      <argument>nd5aBHLvFK</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.security_token_verifier.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>rU1NW6p4Mg</argument>
+      <argument>JGjirCwTW3</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
     <service id="cache.doctrine.orm.default.result.recorder_inner" class="Symfony\Component\Cache\Adapter\ArrayAdapter"/>
     <service id="cache.doctrine.orm.default.query.recorder_inner" class="Symfony\Component\Cache\Adapter\ArrayAdapter"/>
     <service id="cache.webpack_encore.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-      <argument>bnxVM9qYHa</argument>
+      <argument>Sss9U9s8ch</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>/app/example-symfony-api/var/cache/dev/pools/system</argument>
+      <argument>/test/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -7973,8 +8228,6 @@
     <service id="Symfony\Component\Routing\Matcher\UrlMatcherInterface" alias="router.default"/>
     <service id="Symfony\Component\Routing\RequestContextAwareInterface" alias="router.default"/>
     <service id="Symfony\Component\Routing\RequestContext" alias="router.request_context"/>
-    <service id="annotation_reader" alias="annotations.cached_reader"/>
-    <service id="Doctrine\Common\Annotations\Reader" alias="annotations.cached_reader"/>
     <service id="Symfony\Component\PropertyAccess\PropertyAccessorInterface" alias="property_accessor"/>
     <service id="Symfony\Component\PropertyInfo\PropertyAccessExtractorInterface" alias="property_info"/>
     <service id="Symfony\Component\PropertyInfo\PropertyDescriptionExtractorInterface" alias="property_info"/>
@@ -7987,9 +8240,9 @@
     <service id="cache.default_redis_provider" alias=".cache_connection.GD_MSZC"/>
     <service id="cache.default_memcached_provider" alias=".cache_connection.JKE6keX"/>
     <service id="cache.default_doctrine_dbal_provider" alias="doctrine.dbal.default_connection"/>
-    <service id="SessionHandlerInterface" alias="session.handler.native_file"/>
+    <service id="SessionHandlerInterface" alias="session.handler.native"/>
     <service id="session.storage.factory" alias="session.storage.factory.native"/>
-    <service id="session.handler" alias="session.handler.native_file"/>
+    <service id="session.handler" alias="session.handler.native"/>
     <service id="Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface" alias="security.csrf.token_generator"/>
     <service id="Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface" alias="security.csrf.token_storage"/>
     <service id="Symfony\Component\Security\Csrf\CsrfTokenManagerInterface" alias="security.csrf.token_manager"/>
@@ -8029,7 +8282,6 @@
     <service id="security.user_checker.main" alias="security.user_checker"/>
     <service id="security.firewall.context_locator" alias=".service_locator.zJyh7qS"/>
     <service id="Symfony\Component\Security\Core\User\UserCheckerInterface" alias="security.user_checker"/>
-    <service id="Doctrine\DBAL\Driver\Connection" alias="doctrine.dbal.default_connection"/>
     <service id="Doctrine\DBAL\Connection" alias="doctrine.dbal.default_connection"/>
     <service id="Doctrine\Persistence\ManagerRegistry" alias="doctrine"/>
     <service id="Doctrine\Common\Persistence\ManagerRegistry" alias="doctrine"/>
@@ -8037,7 +8289,6 @@
     <service id="doctrine.dbal.event_manager" alias="doctrine.dbal.default_connection.event_manager"/>
     <service id="Doctrine\DBAL\Connection $defaultConnection" alias="doctrine.dbal.default_connection"/>
     <service id="Doctrine\ORM\EntityManagerInterface" alias="doctrine.orm.default_entity_manager"/>
-    <service id="doctrine.orm.metadata.annotation_reader" alias="annotations.cached_reader"/>
     <service id="doctrine.orm.entity_manager" alias="doctrine.orm.default_entity_manager" public="true"/>
     <service id="doctrine.orm.default_metadata_cache" alias="cache.doctrine.orm.default.metadata"/>
     <service id="doctrine.orm.default_result_cache" alias="cache.doctrine.orm.default.result"/>
@@ -8048,6 +8299,7 @@
     <service id="Psr\Log\LoggerInterface" alias="monolog.logger"/>
     <service id="Twig_Environment" alias="twig"/>
     <service id="Twig\Environment" alias="twig"/>
+    <service id="Symfony\Component\Mime\BodyRendererInterface" alias="twig.mime_body_renderer"/>
     <service id="doctrine.migrations.metadata_storage" alias="doctrine.migrations.storage.table_storage"/>
     <service id="Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface" alias="webpack_encore.entrypoint_lookup_collection"/>
     <service id="Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface" alias="webpack_encore.entrypoint_lookup[_default]"/>
@@ -8070,7 +8322,7 @@
     <service id="Psr\Log\LoggerInterface $debugLogger" alias="monolog.logger.debug"/>
     <service id="Psr\Log\LoggerInterface $deprecationLogger" alias="monolog.logger.deprecation"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
-    <service id=".service_locator.XDGmiR3" alias=".1_ServiceLocator~CesDnYR"/>
+    <service id=".service_locator.XDGmiR3" alias=".1_ServiceLocator~zfr.piT"/>
     <service id=".service_locator.o.uf2zi" alias=".service_locator.7nzbL4K"/>
     <service id=".service_locator.7pVff4h" alias=".service_locator.OfDrtWW"/>
     <service id=".service_locator.R0Sb2kd" alias=".service_locator.rvMNZGh"/>
@@ -8079,13 +8331,14 @@
     <service id=".service_locator.eeZeAYf" alias=".service_locator.Y36a2hS"/>
     <service id=".service_locator.PbKiXGa" alias=".service_locator.vQH8NxC"/>
     <service id=".service_locator.0KNLhvP" alias=".service_locator.sgTy1_Z"/>
-    <service id=".service_locator.9XMoc9I" alias=".service_locator.j4nuUXI"/>
+    <service id=".service_locator.z7kAUPH" alias=".service_locator.QC5sIxg"/>
     <service id=".service_locator.RGe.Eww" alias=".service_locator.wmwio2R"/>
     <service id=".service_locator.Wu0yCD0" alias=".service_locator.Qm1JvtT"/>
     <service id=".service_locator.qBCHs1a" alias=".service_locator.QXcJQkF"/>
     <service id=".service_locator.O24_MAy" alias=".service_locator.yY.p4P7"/>
-    <service id=".service_locator.zUl4zFG" alias=".service_locator.9doj5sC"/>
+    <service id=".service_locator.17cTB6v" alias=".service_locator.NmJj7Z6"/>
     <service id="validator" alias="debug.validator"/>
+    <service id="http_client" alias=".debug.http_client"/>
     <service id="event_dispatcher" alias="debug.event_dispatcher" public="true"/>
     <service id="controller_resolver" alias="debug.controller_resolver"/>
     <service id="argument_resolver" alias="debug.argument_resolver"/>
@@ -8106,7 +8359,6 @@
     <service id="argument_resolver.default" alias="debug.argument_resolver.default"/>
     <service id="argument_resolver.variadic" alias="debug.argument_resolver.variadic"/>
     <service id="argument_resolver.not_tagged_controller" alias="debug.argument_resolver.not_tagged_controller"/>
-    <service id="http_client" alias=".debug.http_client"/>
     <service id="doctrine.orm.default_metadata_driver" alias=".doctrine.orm.default_metadata_driver"/>
     <service id=".service_locator.gFlme_s" alias=".service_locator.y4_Zrx."/>
     <service id=".service_locator.2zkA5.Z" alias=".service_locator.OfDrtWW"/>
@@ -8118,8 +8370,8 @@
     <service id=".service_locator.YyZa5jG" alias=".service_locator.Ge47UTU"/>
     <service id=".service_locator.UChYEkS" alias=".service_locator.Y36a2hS"/>
     <service id=".service_locator.vKui0U3" alias=".service_locator.vQH8NxC"/>
-    <service id=".service_locator.q.cy0Ts" alias=".service_locator.9doj5sC"/>
+    <service id=".service_locator.rwUv0dn" alias=".service_locator.NmJj7Z6"/>
     <service id=".service_locator.u6DWx23" alias=".service_locator.cXsfP3P"/>
-    <service id=".service_locator.b9I9uGu" alias=".service_locator.WiCTJMq"/>
+    <service id=".service_locator.BlxN3Cw" alias=".service_locator.LrCXAmX"/>
   </services>
 </container>
