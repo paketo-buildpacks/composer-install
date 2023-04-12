@@ -64,7 +64,7 @@ func testOutsideAutoloading(t *testing.T, context spec.G, it spec.S) {
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
-			Expect(logs).To(ContainSubstring("Ran 'composer install --no-progress --no-dev'"))
+			Expect(logs).To(ContainSubstring("Running 'composer install --no-progress --no-dev'"))
 
 			container, err = docker.Container.Run.
 				WithEnv(map[string]string{"PORT": "8080"}).

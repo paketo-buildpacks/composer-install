@@ -75,7 +75,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(firstImage.Buildpacks[2].Key).To(Equal(buildpackInfo.Buildpack.ID))
 			Expect(firstImage.Buildpacks[2].Layers).To(HaveKey("composer-packages"))
 
-			Expect(logs.String()).To(ContainSubstring("Running 'composer install'"))
+			Expect(logs.String()).To(ContainSubstring("Running 'composer install --no-progress --no-dev'"))
 
 			// Second pack build
 			secondImage, logs, err = build.Execute(name, source)
@@ -88,7 +88,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(secondImage.Buildpacks[2].Key).To(Equal(buildpackInfo.Buildpack.ID))
 			Expect(secondImage.Buildpacks[2].Layers).To(HaveKey("composer-packages"))
 
-			Expect(logs.String()).NotTo(ContainSubstring("Running 'composer install'"))
+			Expect(logs.String()).NotTo(ContainSubstring("Running 'composer install --no-progress --no-dev'"))
 			Expect(logs.String()).To(ContainSubstring(fmt.Sprintf("Reusing cached layer /layers/%s/composer-packages", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
 
 			Expect(secondImage.Buildpacks[2].Layers["composer-packages"].SHA).To(Equal(firstImage.Buildpacks[2].Layers["composer-packages"].SHA))
@@ -124,7 +124,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(firstImage.Buildpacks[2].Key).To(Equal(buildpackInfo.Buildpack.ID))
 			Expect(firstImage.Buildpacks[2].Layers).To(HaveKey("composer-packages"))
 
-			Expect(logs.String()).To(ContainSubstring("Running 'composer install'"))
+			Expect(logs.String()).To(ContainSubstring("Running 'composer install --no-progress --no-dev'"))
 
 			// Second pack build
 			Expect(fs.Copy(filepath.Join("testdata", "app_with_no_deps", "composer.json"), filepath.Join(source, "composer.json"))).To(Succeed())
@@ -141,7 +141,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(secondImage.Buildpacks[2].Key).To(Equal(buildpackInfo.Buildpack.ID))
 			Expect(secondImage.Buildpacks[2].Layers).To(HaveKey("composer-packages"))
 
-			Expect(logs.String()).To(ContainSubstring("Running 'composer install'"))
+			Expect(logs.String()).To(ContainSubstring("Running 'composer install --no-progress --no-dev'"))
 			Expect(logs.String()).NotTo(ContainSubstring(fmt.Sprintf("Reusing cached layer /layers/%s/composer-packages", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
 
 			Expect(secondImage.Buildpacks[2].Layers["composer-packages"].SHA).NotTo(Equal(firstImage.Buildpacks[2].Layers["composer-packages"].SHA))
@@ -177,7 +177,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(firstImage.Buildpacks[2].Key).To(Equal(buildpackInfo.Buildpack.ID))
 			Expect(firstImage.Buildpacks[2].Layers).To(HaveKey("composer-packages"))
 
-			Expect(logs.String()).To(ContainSubstring("Running 'composer install'"))
+			Expect(logs.String()).To(ContainSubstring("Running 'composer install --no-progress --no-dev'"))
 
 			// Second pack build
 			secondImage, logs, err = build.Execute(name, source)
@@ -190,7 +190,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(secondImage.Buildpacks[2].Key).To(Equal(buildpackInfo.Buildpack.ID))
 			Expect(secondImage.Buildpacks[2].Layers).To(HaveKey("composer-packages"))
 
-			Expect(logs.String()).NotTo(ContainSubstring("Running 'composer install'"))
+			Expect(logs.String()).NotTo(ContainSubstring("Running 'composer install --no-progress --no-dev'"))
 			Expect(logs.String()).To(ContainSubstring("Detected existing vendored packages, replacing with cached vendored packages"))
 			Expect(logs.String()).To(ContainSubstring(fmt.Sprintf("Reusing cached layer /layers/%s/composer-packages", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
 
