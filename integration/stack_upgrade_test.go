@@ -83,7 +83,7 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 
 			firstImage, logs, err = build.Execute(name, source)
 			Expect(err).NotTo(HaveOccurred(), logs.String())
-			Expect(logs).To(ContainSubstring("Ran 'composer install --no-progress --no-dev'"))
+			Expect(logs).To(ContainSubstring("Running 'composer install --no-progress --no-dev'"))
 
 			imageIDs[firstImage.ID] = struct{}{}
 
@@ -101,7 +101,7 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[secondImage.ID] = struct{}{}
-			Expect(logs.String()).To(ContainSubstring("Running 'composer install'"))
+			Expect(logs).To(ContainSubstring("Running 'composer install --no-progress --no-dev'"))
 			Expect(logs.String()).NotTo(ContainSubstring(fmt.Sprintf("Reusing cached layer /layers/%s/composer-packages", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
 
 			imageIDs[secondImage.ID] = struct{}{}

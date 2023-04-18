@@ -226,7 +226,7 @@ php       8.1.4    success
 			"spdxVersion": "SPDX-2.2"
 		}`))
 
-			Expect(buffer).To(ContainSubstring("Running 'composer install'"))
+			Expect(buffer.String()).To(ContainSubstring("Running 'composer install options from fake'"))
 
 			Expect(installOptions.DetermineCall.CallCount).To(Equal(1))
 
@@ -393,7 +393,7 @@ composer-lock-sha = "sha-from-composer-lock"
 			})
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(buffer).NotTo(ContainSubstring("Running 'composer install'"))
+			Expect(buffer).NotTo(ContainSubstring("Running 'composer install options from fake'"))
 
 			Expect(calculator.SumCall.Receives.Paths).To(Equal([]string{filepath.Join(workingDir, "composer.lock")}))
 			layers := result.Layers
@@ -473,7 +473,7 @@ composer-lock-sha = "sha-from-composer-lock"
 				})
 				Expect(err).NotTo(HaveOccurred())
 
-				Expect(buffer.String()).To(ContainSubstring("Running 'composer install'"))
+				Expect(buffer.String()).To(ContainSubstring("Running 'composer install options from fake'"))
 
 				Expect(calculator.SumCall.Receives.Paths).To(Equal([]string{filepath.Join(workingDir, "composer.lock")}))
 				layers := result.Layers
@@ -506,7 +506,7 @@ composer-lock-sha = "sha-from-composer-lock"
 					Plan:          buildpackPlan,
 				})
 				Expect(err).NotTo(HaveOccurred())
-				Expect(buffer).NotTo(ContainSubstring("Running 'composer install'"))
+				Expect(buffer).NotTo(ContainSubstring("Running 'composer install options from fake'"))
 
 				Expect(calculator.SumCall.Receives.Paths).To(Equal([]string{filepath.Join(workingDir, "composer.lock")}))
 				layers := result.Layers
@@ -584,17 +584,15 @@ extension = bar.so
 			Expect(err).NotTo(HaveOccurred())
 			output := buffer.String()
 			Expect(output).To(ContainSubstring("Writing php.ini for composer"))
-			Expect(output).To(ContainSubstring("Running 'composer global require'"))
-			Expect(output).To(ContainSubstring("Ran 'composer global require --no-progress package'"))
-			Expect(output).To(ContainSubstring(" Running 'composer install'"))
-			Expect(output).To(ContainSubstring("Ran 'composer install options from fake'"))
+			Expect(output).To(ContainSubstring("Running 'composer global require --no-progress package'"))
+			Expect(output).To(ContainSubstring("Running 'composer install options from fake'"))
 			Expect(output).To(ContainSubstring(fmt.Sprintf("Copying from %s => to %s", filepath.Join(workingDir, "vendor"),
 				filepath.Join(layersDir, composer.ComposerPackagesLayerName))))
 
 			Expect(output).To(ContainSubstring(fmt.Sprintf("Listing files in %s:", filepath.Join(layersDir, composer.ComposerPackagesLayerName, "vendor"))))
 			Expect(output).To(ContainSubstring(" Generating SBOM"))
-			Expect(output).To(ContainSubstring(" Running 'composer check-platform-reqs'"))
-			Expect(output).To(ContainSubstring(" Ran 'composer check-platform-reqs', found extensions 'hello, bar'"))
+			Expect(output).To(ContainSubstring("Running 'composer check-platform-reqs'"))
+			Expect(output).To(ContainSubstring("Found extensions 'hello, bar'"))
 		})
 	})
 

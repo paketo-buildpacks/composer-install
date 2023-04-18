@@ -3,6 +3,7 @@ package composer
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -154,8 +155,6 @@ func runComposerGlobalIfRequired(
 		return "", nil
 	}
 
-	logger.Process("Running 'composer global require'")
-
 	composerGlobalLayer, err := context.Layers.Get(ComposerGlobalLayerName)
 	if err != nil { // untested
 		return "", err
@@ -167,11 +166,11 @@ func runComposerGlobalIfRequired(
 	}
 
 	globalPackages := strings.Split(composerInstallGlobal, " ")
-
-	composerGlobalBuffer := bytes.NewBuffer(nil)
+	args := append([]string{"global", "require", "--no-progress"}, globalPackages...)
+	logger.Process("Running 'composer %s'", strings.Join(args, " "))
 
 	execution := pexec.Execution{
-		Args: append([]string{"global", "require", "--no-progress"}, globalPackages...),
+		Args: args,
 		Dir:  composerGlobalLayer.Path,
 		Env: append(os.Environ(),
 			"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
@@ -180,18 +179,13 @@ func runComposerGlobalIfRequired(
 			"COMPOSER_VENDOR_DIR=vendor", // ensure default in the layer
 			fmt.Sprintf("PATH=%s", path),
 		),
-		Stdout: composerGlobalBuffer,
-		Stderr: composerGlobalBuffer,
+		Stdout: logger.ActionWriter,
+		Stderr: logger.ActionWriter,
 	}
 	err = composerGlobalExec.Execute(execution)
-
 	if err != nil {
-		logger.Subprocess(composerGlobalBuffer.String())
 		return "", err
 	}
-
-	logger.Debug.Subprocess(composerGlobalBuffer.String())
-	logger.Process("Ran 'composer %s'", strings.Join(execution.Args, " "))
 
 	composerGlobalBin = filepath.Join(composerGlobalLayer.Path, "vendor", "bin")
 
@@ -312,12 +306,11 @@ func runComposerInstall(
 		"composer-lock-sha": composerLockChecksum,
 	}
 
-	logger.Process("Running 'composer config'")
-
-	composerConfigBuffer := bytes.NewBuffer(nil)
+	args := []string{"config", "autoloader-suffix", ComposerAutoloaderSuffix}
+	logger.Process("Running 'composer %s'", strings.Join(args, " "))
 
 	execution := pexec.Execution{
-		Args: []string{"config", "autoloader-suffix", ComposerAutoloaderSuffix},
+		Args: args,
 		Dir:  composerPackagesLayer.Path,
 		Env: append(os.Environ(),
 			"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
@@ -327,15 +320,12 @@ func runComposerInstall(
 			fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
 			fmt.Sprintf("PATH=%s", path),
 		),
-		Stdout: composerConfigBuffer,
-		Stderr: composerConfigBuffer,
+		Stdout: logger.ActionWriter,
+		Stderr: logger.ActionWriter,
 	}
 
 	err = composerConfigExec.Execute(execution)
-	logger.Process(composerConfigBuffer.String())
-
 	if err != nil {
-		logger.Subprocess(composerConfigBuffer.String())
 		return packit.Layer{}, err
 	}
 
@@ -346,13 +336,12 @@ func runComposerInstall(
 	// set up, and then `composer dump-autoload` on the vendor directory from
 	// the working directory.
 
-	composerInstallBuffer := bytes.NewBuffer(nil)
-
-	logger.Process("Running 'composer install'")
+	installArgs := append([]string{"install"}, composerInstallOptions.Determine()...)
+	logger.Process("Running 'composer %s'", strings.Join(installArgs, " "))
 
 	// install packages into /workspace/vendor because composer cannot handle symlinks easily
 	execution = pexec.Execution{
-		Args: append([]string{"install"}, composerInstallOptions.Determine()...),
+		Args: installArgs,
 		Dir:  context.WorkingDir,
 		Env: append(os.Environ(),
 			"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
@@ -362,18 +351,14 @@ func runComposerInstall(
 			fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
 			fmt.Sprintf("PATH=%s", path),
 		),
-		Stdout: composerInstallBuffer,
-		Stderr: composerInstallBuffer,
+		Stdout: logger.ActionWriter,
+		Stderr: logger.ActionWriter,
 	}
 	err = composerInstallExec.Execute(execution)
-
 	if err != nil {
-		logger.Subprocess(composerInstallBuffer.String())
 		return packit.Layer{}, err
 	}
 
-	logger.Debug.Subprocess(composerInstallBuffer.String())
-	logger.Process("Ran 'composer %s'", strings.Join(execution.Args, " "))
 	logger.Process("Copying from %s => to %s", workspaceVendorDir, layerVendorDir)
 
 	err = fs.Copy(workspaceVendorDir, layerVendorDir)
@@ -437,24 +422,24 @@ extension = openssl.so`, os.Getenv(PhpExtensionDir))
 //
 // In case you are curious about exit code 2: https://getcomposer.org/doc/03-cli.md#process-exit-codes
 func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executable, workingDir, composerPhpIniPath, path string) error {
+
+	args := []string{"check-platform-reqs"}
+	logger.Process("Running 'composer %s'", strings.Join(args, " "))
 	buffer := bytes.NewBuffer(nil)
-
-	logger.Process("Running 'composer check-platform-reqs'")
-
 	execution := pexec.Execution{
-		Args: []string{"check-platform-reqs"},
+		Args: args,
 		Dir:  workingDir,
 		Env: append(os.Environ(),
 			"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
 			fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
 			fmt.Sprintf("PATH=%s", path),
 		),
-		Stdout: buffer,
-		Stderr: buffer,
+		Stdout: io.MultiWriter(logger.ActionWriter, buffer),
+		Stderr: io.MultiWriter(logger.ActionWriter, buffer),
 	}
+
 	err := checkPlatformReqsExec.Execute(execution)
 	if err != nil {
-		logger.Subprocess(buffer.String())
 		exitError, ok := err.(*exec.ExitError)
 		if !ok || exitError.ExitCode() != 2 {
 			return err
@@ -471,7 +456,7 @@ func runCheckPlatformReqs(logger scribe.Emitter, checkPlatformReqsExec Executabl
 		}
 	}
 
-	logger.Process("Ran 'composer check-platform-reqs', found extensions '%s'", strings.Join(extensions, ", "))
+	logger.Process("Found extensions '%s'", strings.Join(extensions, ", "))
 
 	buf := bytes.Buffer{}
 

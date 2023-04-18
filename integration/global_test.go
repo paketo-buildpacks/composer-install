@@ -67,7 +67,7 @@ func testGlobal(t *testing.T, context spec.G, it spec.S) {
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
-			Expect(logs).To(ContainSubstring("Ran 'composer global require --no-progress friendsofphp/php-cs-fixer'"))
+			Expect(logs).To(ContainSubstring("Running 'composer global require --no-progress friendsofphp/php-cs-fixer'"))
 
 			container, err = docker.Container.Run.
 				WithEnv(map[string]string{"PORT": "8765"}).
@@ -112,7 +112,7 @@ func testGlobal(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(firstID).To(Equal(image.ID))
 
-			Expect(logs).To(ContainSubstring("Ran 'composer global require --no-progress friendsofphp/php-cs-fixer'"))
+			Expect(logs).To(ContainSubstring("Running 'composer global require --no-progress friendsofphp/php-cs-fixer'"))
 
 			container, err = docker.Container.Run.
 				WithEnv(map[string]string{"PORT": "8765"}).
