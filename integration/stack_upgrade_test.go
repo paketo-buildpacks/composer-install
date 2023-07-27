@@ -59,7 +59,7 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 		Expect(os.RemoveAll(source)).To(Succeed())
 	})
 
-	context("when an app is rebuilt and the underlying stack changes", func() {
+	context.Focus("when an app is rebuilt and the underlying stack changes", func() {
 		it("rebuilds the packages layer", func() {
 			var (
 				err         error
