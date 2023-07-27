@@ -74,12 +74,18 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 			source, err = occam.Source(filepath.Join("testdata", "default_app"))
 			Expect(err).NotTo(HaveOccurred())
 
-			build := pack.WithNoColor().Build.
-				WithPullPolicy("never").
-				WithEnv(map[string]string{
-					"BP_PHP_SERVER": "nginx",
-				}).
-				WithBuildpacks(buildpacksArray...)
+                        originalTmpdir := os.Getenv("TMPDIR")
+                        os.Setenv("TMPDIR", os.Getenv("PWD")+"/.pack")
+                        fmt.Printf("TMPDIR: %s\n", os.Getenv("TMPDIR"))
+
+                        build := pack.WithNoColor().Build.
+                                WithPullPolicy("never").
+                                WithEnv(map[string]string{
+                                        "BP_PHP_SERVER": "nginx",
+                                }).
+                                WithBuildpacks(buildpacksArray...)
+
+                        os.Setenv("TMPDIR", originalTmpdir)
 
 			firstImage, logs, err = build.Execute(name, source)
 			Expect(err).NotTo(HaveOccurred(), logs.String())
