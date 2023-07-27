@@ -79,7 +79,7 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
                         fmt.Printf("TMPDIR: %s\n", os.Getenv("TMPDIR"))
 
                         build := pack.WithNoColor().Build.
-                                WithPullPolicy("never").
+                                WithPullPolicy("if-not-present").
                                 WithEnv(map[string]string{
                                         "BP_PHP_SERVER": "nginx",
                                 }).
