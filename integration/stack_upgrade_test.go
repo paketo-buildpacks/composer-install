@@ -39,8 +39,14 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 		imageIDs = map[string]struct{}{}
 		containerIDs = map[string]struct{}{}
 
+		// pull images associated with the jammy builder incase they haven't been pulled yet
 		Expect(docker.Pull.Execute("paketobuildpacks/builder-jammy-buildpackless-full:latest")).To(Succeed())
 		Expect(docker.Pull.Execute("paketobuildpacks/run-jammy-full:latest")).To(Succeed())
+		jammyBuilder, err := pack.Builder.Inspect.Execute("paketobuildpacks/builder-jammy-buildpackless-full")
+		Expect(err).NotTo(HaveOccurred())
+		Expect(docker.Pull.Execute(
+			fmt.Sprintf("%s:%s", "buildpacksio/lifecycle", jammyBuilder.RemoteInfo.Lifecycle.Version),
+		)).To(Succeed())
 	})
 
 	it.After(func() {
