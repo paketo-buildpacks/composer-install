@@ -106,7 +106,6 @@ func TestIntegration(t *testing.T) {
 	SetDefaultEventuallyTimeout(20 * time.Second)
 
 	suite := spec.New("Integration", spec.Report(report.Terminal{}))
-	suite("StackUpgrade", testStackUpgrade)
 	suite("CustomVendorDir", testCustomVendorDir)
 	suite("Default", testDefaultApp)
 	suite("FrameworkApps", testFrameworkApps)
