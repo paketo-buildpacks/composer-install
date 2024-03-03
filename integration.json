@@ -1,5 +1,5 @@
 {
-  "builder": "index.docker.io/paketobuildpacks/builder:buildpackless-full",
+  "builder": "index.docker.io/paketobuildpacks/builder-jammy-buildpackless-full:latest",
   "php-dist": "github.com/paketo-buildpacks/php-dist",
   "composer": "github.com/paketo-buildpacks/composer",
   "php-start": "github.com/paketo-buildpacks/php-start",
