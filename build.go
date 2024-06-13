@@ -268,6 +268,30 @@ func runComposerInstall(
 				logger.Debug.Subprocess(fmt.Sprintf("- %s", f.Name()))
 			}
 		}
+		if os.Getenv("BP_RUN_COMPOSER_INSTALL") == "1" {
+			installArgs := append([]string{"install"}, composerInstallOptions.Determine()...)
+			logger.Process("Running 'composer %s' from cached files", strings.Join(installArgs, " "))
+
+			// install packages into /workspace/vendor because composer cannot handle symlinks easily
+			execution := pexec.Execution{
+				Args: installArgs,
+				Dir:  context.WorkingDir,
+				Env: append(os.Environ(),
+					"COMPOSER_NO_INTERACTION=1", // https://getcomposer.org/doc/03-cli.md#composer-no-interaction
+					fmt.Sprintf("COMPOSER=%s", composerJsonPath),
+					fmt.Sprintf("COMPOSER_HOME=%s", filepath.Join(composerPackagesLayer.Path, ".composer")),
+					fmt.Sprintf("COMPOSER_VENDOR_DIR=%s", workspaceVendorDir),
+					fmt.Sprintf("PHPRC=%s", composerPhpIniPath),
+					fmt.Sprintf("PATH=%s", path),
+				),
+				Stdout: logger.ActionWriter,
+				Stderr: logger.ActionWriter,
+			}
+			err = composerInstallExec.Execute(execution)
+			if err != nil {
+				return packit.Layer{}, err
+			}
+		}
 
 		if exists, err := fs.Exists(workspaceVendorDir); err != nil {
 			return packit.Layer{}, err

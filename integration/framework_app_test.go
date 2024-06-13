@@ -118,5 +118,53 @@ func testFrameworkApps(t *testing.T, context spec.G, it spec.S) {
 			})
 		})
 
+		context("building a drupal app", func() {
+			var (
+				err  error
+				logs fmt.Stringer
+				secondImage occam.Image
+			)
+
+			it.Before(func() {
+				source, err = occam.Source(filepath.Join("testdata", "drupal_app"))
+				Expect(err).NotTo(HaveOccurred())
+			})
+
+			it("reruns composer install when reusing cached layer", func() {
+				image, logs, err = pack.Build.
+					WithPullPolicy("never").
+					WithBuildpacks(buildpacksArray...).
+					WithEnv(map[string]string{
+						"BP_PHP_SERVER":  "nginx",
+						"BP_PHP_WEB_DIR": "web",
+						"BP_LOG_LEVEL":   "DEBUG",
+					}).
+					Execute(name, source)
+
+				Expect(err).ToNot(HaveOccurred(), logs.String)
+
+				secondImage, logs, err = pack.Build.
+					WithPullPolicy("never").
+					WithBuildpacks(buildpacksArray...).
+					WithEnv(map[string]string{
+						"BP_PHP_SERVER":  "nginx",
+						"BP_PHP_WEB_DIR": "web",
+						"BP_LOG_LEVEL":   "DEBUG",
+						"BP_RUN_COMPOSER_INSTALL": "1",
+					}).
+					Execute(name, source)
+
+				Expect(err).ToNot(HaveOccurred(), logs.String)
+				Expect(logs.String()).To(ContainSubstring("Running 'composer install --no-progress --no-dev' from cached files"))
+
+				container, err = docker.Container.Run.
+					WithEnv(map[string]string{"PORT": "8080"}).
+					WithPublish("8080").
+					Execute(secondImage.ID)
+				Expect(err).NotTo(HaveOccurred())
+
+				Eventually(container).Should(Serve(ContainSubstring("<title>Choose language | Drupal</title>")).OnPort(8080))
+			})
+		})
 	})
 }
