@@ -29,11 +29,11 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		composerConfigExecutable                *fakes.Executable
 		composerInstallExecutable               *fakes.Executable
 		composerGlobalExecutable                *fakes.Executable
-		composerCheckPlatformReqsExecExecutable *fakes.Executable
+		composerCheckAndEnablePlatformReqsExecExecutable *fakes.Executable
 		composerConfigExecution                 pexec.Execution
 		composerInstallExecution                pexec.Execution
 		composerGlobalExecution                 pexec.Execution
-		composerCheckPlatformReqsExecExecution  pexec.Execution
+		composerCheckAndEnablePlatformReqsExecExecution  pexec.Execution
 		sbomGenerator                           *fakes.SBOMGenerator
 		calculator                              *fakes.Calculator
 
@@ -59,7 +59,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		composerConfigExecutable = &fakes.Executable{}
 		composerInstallExecutable = &fakes.Executable{}
 		composerGlobalExecutable = &fakes.Executable{}
-		composerCheckPlatformReqsExecExecutable = &fakes.Executable{}
+		composerCheckAndEnablePlatformReqsExecExecutable = &fakes.Executable{}
 
 		composerConfigExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
 			Expect(fmt.Fprint(temp.Stdout, "stdout from composer config\n")).To(Equal(28))
@@ -84,8 +84,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			return nil
 		}
 
-		composerCheckPlatformReqsExecExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
-			composerCheckPlatformReqsExecExecution = temp
+		composerCheckAndEnablePlatformReqsExecExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+			composerCheckAndEnablePlatformReqsExecExecution = temp
 
 			_, err := temp.Stdout.Write([]byte(`ext-hello  8.1.4    missing
 ext-foo   8.1.4    success
@@ -117,7 +117,7 @@ php       8.1.4    success
 			composerConfigExecutable,
 			composerInstallExecutable,
 			composerGlobalExecutable,
-			composerCheckPlatformReqsExecExecutable,
+			composerCheckAndEnablePlatformReqsExecExecutable,
 			sbomGenerator,
 			"fake-path-from-tests",
 			calculator,
@@ -539,11 +539,11 @@ composer-lock-sha = "sha-from-composer-lock"
 			})
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(composerCheckPlatformReqsExecExecution.Args[0]).To(Equal("check-platform-reqs"))
-			Expect(composerCheckPlatformReqsExecExecution.Dir).To(Equal(workingDir))
-			Expect(len(composerCheckPlatformReqsExecExecution.Env)).To(Equal(len(os.Environ()) + 3))
+			Expect(composerCheckAndEnablePlatformReqsExecExecution.Args[0]).To(Equal("check-platform-reqs"))
+			Expect(composerCheckAndEnablePlatformReqsExecExecution.Dir).To(Equal(workingDir))
+			Expect(len(composerCheckAndEnablePlatformReqsExecExecution.Env)).To(Equal(len(os.Environ()) + 3))
 
-			Expect(composerCheckPlatformReqsExecExecution.Env).To(ContainElements(
+			Expect(composerCheckAndEnablePlatformReqsExecExecution.Env).To(ContainElements(
 				"COMPOSER_NO_INTERACTION=1",
 				fmt.Sprintf("PHPRC=%s", filepath.Join(layersDir, "composer-php-ini", "composer-php.ini")),
 				"PATH=fake-path-from-tests"))
@@ -625,11 +625,11 @@ extension = bar.so
 			})
 		})
 
-		context("when composerCheckPlatformReqsExecution fails", func() {
+		context("when composerCheckAndEnablePlatformReqsExecution fails", func() {
 			it.Before(func() {
-				composerCheckPlatformReqsExecExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
-					composerCheckPlatformReqsExecExecution = temp
-					_, _ = fmt.Fprint(composerCheckPlatformReqsExecExecution.Stderr, "error message from check-platform-reqs")
+				composerCheckAndEnablePlatformReqsExecExecutable.ExecuteCall.Stub = func(temp pexec.Execution) error {
+					composerCheckAndEnablePlatformReqsExecExecution = temp
+					_, _ = fmt.Fprint(composerCheckAndEnablePlatformReqsExecExecution.Stderr, "error message from check-platform-reqs")
 					return errors.New("some error from check-platform-reqs")
 				}
 			})
