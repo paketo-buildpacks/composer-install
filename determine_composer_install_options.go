@@ -14,7 +14,7 @@ func NewComposerInstallOptions() InstallOptions {
 
 // Determine will generate the list of options for `composer install`
 // https://getcomposer.org/doc/03-cli.md#install-i
-func (_ InstallOptions) Determine() []string {
+func (InstallOptions) Determine() []string {
 	if installOptionsFromEnv, exists := os.LookupEnv(BpComposerInstallOptions); !exists {
 		return []string{
 			"--no-progress",
