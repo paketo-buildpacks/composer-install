@@ -25,18 +25,18 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect = NewWithT(t).Expect
 
-		buffer                                  *bytes.Buffer
-		installOptions                          *fakes.DetermineComposerInstallOptions
-		composerConfigExecutable                *fakes.Executable
-		composerInstallExecutable               *fakes.Executable
-		composerGlobalExecutable                *fakes.Executable
+		buffer                                           *bytes.Buffer
+		installOptions                                   *fakes.DetermineComposerInstallOptions
+		composerConfigExecutable                         *fakes.Executable
+		composerInstallExecutable                        *fakes.Executable
+		composerGlobalExecutable                         *fakes.Executable
 		composerCheckAndEnablePlatformReqsExecExecutable *fakes.Executable
-		composerConfigExecution                 pexec.Execution
-		composerInstallExecution                pexec.Execution
-		composerGlobalExecution                 pexec.Execution
+		composerConfigExecution                          pexec.Execution
+		composerInstallExecution                         pexec.Execution
+		composerGlobalExecution                          pexec.Execution
 		composerCheckAndEnablePlatformReqsExecExecution  pexec.Execution
-		sbomGenerator                           *fakes.SBOMGenerator
-		calculator                              *fakes.Calculator
+		sbomGenerator                                    *fakes.SBOMGenerator
+		calculator                                       *fakes.Calculator
 
 		layersDir  string
 		workingDir string

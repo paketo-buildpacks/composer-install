@@ -20,12 +20,14 @@ import (
 )
 
 // DetermineComposerInstallOptions defines the interface to get options for `composer install`
+//
 //go:generate faux --interface DetermineComposerInstallOptions --output fakes/determine_composer_install_options.go
 type DetermineComposerInstallOptions interface {
 	Determine() []string
 }
 
 // Executable just provides a fake for pexec.Executable for testing
+//
 //go:generate faux --interface Executable --output fakes/executable.go
 type Executable interface {
 	Execute(pexec.Execution) (err error)
@@ -38,6 +40,7 @@ type SBOMGenerator interface {
 
 // Calculator defines the interface for calculating a checksum of the given set
 // of file paths.
+//
 //go:generate faux --interface Calculator --output fakes/calculator.go
 type Calculator interface {
 	Sum(paths ...string) (string, error)
