@@ -1,9 +1,12 @@
 {
-  "builder": "index.docker.io/paketobuildpacks/builder:buildpackless-full",
+  "builders": [
+    "index.docker.io/paketobuildpacks/builder-jammy-buildpackless-full:latest",
+    "index.docker.io/paketobuildpacks/ubuntu-noble-builder-buildpackless:latest"
+  ],
   "php-dist": "github.com/paketo-buildpacks/php-dist",
   "composer": "github.com/paketo-buildpacks/composer",
   "php-start": "github.com/paketo-buildpacks/php-start",
   "php-fpm": "github.com/paketo-buildpacks/php-fpm",
   "nginx": "github.com/paketo-buildpacks/nginx",
-  "php-nginx" : "github.com/paketo-buildpacks/php-nginx"
+  "php-nginx": "github.com/paketo-buildpacks/php-nginx"
 }

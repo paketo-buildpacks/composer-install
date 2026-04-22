@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"testing"
 
 	. "github.com/onsi/gomega"
@@ -185,14 +186,13 @@ php       8.1.4    success
 			content, err := io.ReadAll(cdx.Content)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(string(content)).To(MatchJSON(`{
+			"$schema": "http://cyclonedx.org/schema/bom-1.3.schema.json",
 			"bomFormat": "CycloneDX",
-			"components": [],
 			"metadata": {
 				"tools": [
 					{
-						"name": "syft",
-						"vendor": "anchore",
-						"version": "[not provided]"
+						"name": "",
+						"vendor": "anchore"
 					}
 				]
 			},
@@ -203,22 +203,40 @@ php       8.1.4    success
 			Expect(spdx.Extension).To(Equal("spdx.json"))
 			content, err = io.ReadAll(spdx.Content)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(string(content)).To(MatchJSON(`{
+
+			versionPattern := regexp.MustCompile(`"licenseListVersion": "\d+\.\d+"`)
+			contentReplaced := versionPattern.ReplaceAllString(string(content), `"licenseListVersion": "x.x"`)
+			uuidRegex := regexp.MustCompile(`[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}`)
+			contentReplaced = uuidRegex.ReplaceAllString(contentReplaced, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+
+			Expect(string(contentReplaced)).To(MatchJSON(`{
 			"SPDXID": "SPDXRef-DOCUMENT",
 			"creationInfo": {
 				"created": "0001-01-01T00:00:00Z",
 				"creators": [
 					"Organization: Anchore, Inc",
-					"Tool: syft-"
+					"Tool: -"
 				],
-				"licenseListVersion": "3.16"
+				"licenseListVersion": "x.x"
 			},
 			"dataLicense": "CC0-1.0",
-			"documentNamespace": "https://paketo.io/packit/unknown-source-type/unknown-88cfa225-65e0-5755-895f-c1c8f10fde76",
+			"documentNamespace": "https://paketo.io/unknown-source-type/unknown-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 			"name": "unknown",
+			"packages": [
+				{
+					"SPDXID": "SPDXRef-DocumentRoot-Unknown-",
+					"copyrightText": "NOASSERTION",
+					"downloadLocation": "NOASSERTION",
+					"filesAnalyzed": false,
+					"licenseConcluded": "NOASSERTION",
+					"licenseDeclared": "NOASSERTION",
+					"name": "",
+					"supplier": "NOASSERTION"
+				}
+			],
 			"relationships": [
 				{
-					"relatedSpdxElement": "SPDXRef-DOCUMENT",
+					"relatedSpdxElement": "SPDXRef-DocumentRoot-Unknown-",
 					"relationshipType": "DESCRIBES",
 					"spdxElementId": "SPDXRef-DOCUMENT"
 				}
@@ -418,14 +436,13 @@ composer-lock-sha = "sha-from-composer-lock"
 			content, err := io.ReadAll(cdx.Content)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(string(content)).To(MatchJSON(`{
+			"$schema": "http://cyclonedx.org/schema/bom-1.3.schema.json",
 			"bomFormat": "CycloneDX",
-			"components": [],
 			"metadata": {
 				"tools": [
 					{
-						"name": "syft",
-						"vendor": "anchore",
-						"version": "[not provided]"
+						"name": "",
+						"vendor": "anchore"
 					}
 				]
 			},
@@ -436,22 +453,40 @@ composer-lock-sha = "sha-from-composer-lock"
 			Expect(spdx.Extension).To(Equal("spdx.json"))
 			content, err = io.ReadAll(spdx.Content)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(string(content)).To(MatchJSON(`{
+
+			versionPattern := regexp.MustCompile(`"licenseListVersion": "\d+\.\d+"`)
+			contentReplaced := versionPattern.ReplaceAllString(string(content), `"licenseListVersion": "x.x"`)
+			uuidRegex := regexp.MustCompile(`[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}`)
+			contentReplaced = uuidRegex.ReplaceAllString(contentReplaced, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+
+			Expect(string(contentReplaced)).To(MatchJSON(`{
 			"SPDXID": "SPDXRef-DOCUMENT",
 			"creationInfo": {
 				"created": "0001-01-01T00:00:00Z",
 				"creators": [
 					"Organization: Anchore, Inc",
-					"Tool: syft-"
+					"Tool: -"
 				],
-				"licenseListVersion": "3.16"
+				"licenseListVersion": "x.x"
 			},
 			"dataLicense": "CC0-1.0",
-			"documentNamespace": "https://paketo.io/packit/unknown-source-type/unknown-88cfa225-65e0-5755-895f-c1c8f10fde76",
+			"documentNamespace": "https://paketo.io/unknown-source-type/unknown-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 			"name": "unknown",
+			"packages": [
+				{
+					"SPDXID": "SPDXRef-DocumentRoot-Unknown-",
+					"copyrightText": "NOASSERTION",
+					"downloadLocation": "NOASSERTION",
+					"filesAnalyzed": false,
+					"licenseConcluded": "NOASSERTION",
+					"licenseDeclared": "NOASSERTION",
+					"name": "",
+					"supplier": "NOASSERTION"
+				}
+			],
 			"relationships": [
 				{
-					"relatedSpdxElement": "SPDXRef-DOCUMENT",
+					"relatedSpdxElement": "SPDXRef-DocumentRoot-Unknown-",
 					"relationshipType": "DESCRIBES",
 					"spdxElementId": "SPDXRef-DOCUMENT"
 				}

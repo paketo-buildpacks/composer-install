@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -60,28 +61,29 @@ func TestIntegration(t *testing.T) {
 	Expect(err).NotTo(HaveOccurred())
 
 	buildpackStore := occam.NewBuildpackStore()
+	targetedBuildpackStore := buildpackStore.WithTarget("linux/" + runtime.GOARCH)
 
-	buildpacks.PhpDist, err = buildpackStore.Get.
+	buildpacks.PhpDist, err = targetedBuildpackStore.Get.
 		Execute(buildpacks.PhpDist)
 	Expect(err).NotTo(HaveOccurred())
 
-	buildpacks.Composer, err = buildpackStore.Get.
+	buildpacks.Composer, err = targetedBuildpackStore.Get.
 		Execute(buildpacks.Composer)
 	Expect(err).NotTo(HaveOccurred())
 
-	buildpacks.PhpStart, err = buildpackStore.Get.
+	buildpacks.PhpStart, err = targetedBuildpackStore.Get.
 		Execute(buildpacks.PhpStart)
 	Expect(err).NotTo(HaveOccurred())
 
-	buildpacks.PhpFpm, err = buildpackStore.Get.
+	buildpacks.PhpFpm, err = targetedBuildpackStore.Get.
 		Execute(buildpacks.PhpFpm)
 	Expect(err).NotTo(HaveOccurred())
 
-	buildpacks.Nginx, err = buildpackStore.Get.
+	buildpacks.Nginx, err = targetedBuildpackStore.Get.
 		Execute(buildpacks.Nginx)
 	Expect(err).NotTo(HaveOccurred())
 
-	buildpacks.PhpNginx, err = buildpackStore.Get.
+	buildpacks.PhpNginx, err = targetedBuildpackStore.Get.
 		Execute(buildpacks.PhpNginx)
 	Expect(err).NotTo(HaveOccurred())
 
