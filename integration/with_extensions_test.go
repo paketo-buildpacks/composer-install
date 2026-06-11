@@ -43,10 +43,18 @@ func testWithExtensions(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it.After(func() {
-			Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
-			Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
-			Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
-			Expect(os.RemoveAll(source)).To(Succeed())
+			if container.ID != "" {
+				Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
+			}
+			if image.ID != "" {
+				Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
+			}
+			if name != "" {
+				Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
+			}
+			if source != "" {
+				Expect(os.RemoveAll(source)).To(Succeed())
+			}
 		})
 
 		it("launches PHP with extensions", func() {

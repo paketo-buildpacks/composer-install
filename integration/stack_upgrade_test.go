@@ -40,9 +40,9 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 		containerIDs = map[string]struct{}{}
 
 		// pull images associated with the jammy builder incase they haven't been pulled yet
-		Expect(docker.Pull.Execute("paketobuildpacks/builder-jammy-buildpackless-full:latest")).To(Succeed())
+		Expect(docker.Pull.Execute("index.docker.io/paketobuildpacks/builder-jammy-buildpackless-full:latest")).To(Succeed())
 		Expect(docker.Pull.Execute("paketobuildpacks/run-jammy-full:latest")).To(Succeed())
-		jammyBuilder, err := pack.Builder.Inspect.Execute("paketobuildpacks/builder-jammy-buildpackless-full")
+		jammyBuilder, err := pack.Builder.Inspect.Execute("index.docker.io/paketobuildpacks/builder-jammy-buildpackless-full")
 		Expect(err).NotTo(HaveOccurred())
 		Expect(docker.Pull.Execute(
 			fmt.Sprintf("%s:%s", "buildpacksio/lifecycle", jammyBuilder.RemoteInfo.Lifecycle.Version),
@@ -58,7 +58,7 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 			Expect(docker.Image.Remove.Execute(id)).To(Succeed())
 		}
 
-		Expect(docker.Image.Remove.Execute("paketobuildpacks/builder-jammy-buildpackless-full:latest")).To(Succeed())
+		Expect(docker.Image.Remove.Execute("index.docker.io/paketobuildpacks/builder-jammy-buildpackless-full:latest")).To(Succeed())
 		Expect(docker.Image.Remove.Execute("paketobuildpacks/run-jammy-full:latest")).To(Succeed())
 
 		Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
@@ -103,7 +103,7 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 			Eventually(firstContainer).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
 
 			// Second pack build, upgrade stack image
-			secondImage, logs, err = build.WithBuilder("paketobuildpacks/builder-jammy-buildpackless-full").Execute(name, source)
+			secondImage, logs, err = build.WithBuilder("index.docker.io/paketobuildpacks/builder-jammy-buildpackless-full").Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[secondImage.ID] = struct{}{}
