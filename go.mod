@@ -317,4 +317,4 @@ require (
 	modernc.org/sqlite v1.47.0 // indirect
 )
 
-replace github.com/CycloneDX/cyclonedx-go => github.com/CycloneDX/cyclonedx-go v0.7.2
+replace github.com/CycloneDX/cyclonedx-go v0.8.0 => github.com/CycloneDX/cyclonedx-go v0.7.2
