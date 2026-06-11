@@ -1,8 +1,6 @@
 module github.com/paketo-buildpacks/composer
 
-go 1.21
-
-toolchain go1.22.5
+go 1.26.4
 
 require (
 	github.com/BurntSushi/toml v1.3.2
