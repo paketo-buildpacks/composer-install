@@ -1,6 +1,9 @@
 {
     "name": "paketo/composer_app",
     "require": {
+    },
+    "config": {
+        "preferred-install": "source"
     }
 }
 

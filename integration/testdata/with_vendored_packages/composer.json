@@ -3,5 +3,8 @@
     "require": {
         "vlucas/phpdotenv": "5.3.0",
         "php": "8.4.*"
+    },
+    "config": {
+        "preferred-install": "source"
     }
 }

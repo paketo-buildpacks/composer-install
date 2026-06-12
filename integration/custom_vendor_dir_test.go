@@ -25,6 +25,7 @@ func testCustomVendorDir(t *testing.T, context spec.G, it spec.S) {
 
 	it.Before(func() {
 		pack = occam.NewPack().WithVerbose().WithNoColor()
+		pack.Build = pack.Build.WithTrustBuilder()
 		docker = occam.NewDocker()
 	})
 
@@ -67,6 +68,7 @@ func testCustomVendorDir(t *testing.T, context spec.G, it spec.S) {
 
 			image, logs, err = pack.Build.
 				WithPullPolicy("never").
+				WithTrustBuilder().
 				WithBuildpacks(buildpacksArray...).
 				WithEnv(map[string]string{
 					"COMPOSER_VENDOR_DIR": "custom_vendor_dir",

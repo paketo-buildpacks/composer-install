@@ -36,6 +36,7 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 
 		docker = occam.NewDocker()
 		pack = occam.NewPack()
+		pack.Build = pack.Build.WithTrustBuilder()
 		imageIDs = map[string]struct{}{}
 		containerIDs = map[string]struct{}{}
 
@@ -47,6 +48,15 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 		Expect(docker.Pull.Execute(
 			fmt.Sprintf("%s:%s", "buildpacksio/lifecycle", jammyBuilder.RemoteInfo.Lifecycle.Version),
 		)).To(Succeed())
+
+		// pull images associated with the noble builder for the second build
+		Expect(docker.Pull.Execute("index.docker.io/paketobuildpacks/ubuntu-noble-builder-buildpackless:latest")).To(Succeed())
+		nobleBuilder, err := pack.Builder.Inspect.Execute("index.docker.io/paketobuildpacks/ubuntu-noble-builder-buildpackless")
+		Expect(err).NotTo(HaveOccurred())
+		Expect(docker.Pull.Execute(nobleBuilder.RemoteInfo.RunImages[0].Name)).To(Succeed())
+		Expect(docker.Pull.Execute(
+			fmt.Sprintf("%s:%s", "buildpacksio/lifecycle", nobleBuilder.RemoteInfo.Lifecycle.Version),
+		)).To(Succeed())
 	})
 
 	it.After(func() {
@@ -57,9 +67,6 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 		for id := range imageIDs {
 			Expect(docker.Image.Remove.Execute(id)).To(Succeed())
 		}
-
-		Expect(docker.Image.Remove.Execute("index.docker.io/paketobuildpacks/builder-jammy-buildpackless-full:latest")).To(Succeed())
-		Expect(docker.Image.Remove.Execute("paketobuildpacks/run-jammy-full:latest")).To(Succeed())
 
 		Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
 		Expect(os.RemoveAll(source)).To(Succeed())
@@ -102,8 +109,8 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 			containerIDs[firstContainer.ID] = struct{}{}
 			Eventually(firstContainer).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
 
-			// Second pack build, upgrade stack image
-			secondImage, logs, err = build.WithBuilder("index.docker.io/paketobuildpacks/builder-jammy-buildpackless-full").Execute(name, source)
+			// Second pack build, upgrade stack image from jammy to noble
+			secondImage, logs, err = build.WithBuilder("index.docker.io/paketobuildpacks/ubuntu-noble-builder-buildpackless").Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[secondImage.ID] = struct{}{}

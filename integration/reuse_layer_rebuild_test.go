@@ -34,6 +34,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 		docker = occam.NewDocker()
 		pack = occam.NewPack()
+		pack.Build = pack.Build.WithTrustBuilder()
 		imageIDs = map[string]struct{}{}
 	})
 

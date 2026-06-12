@@ -9,6 +9,9 @@
         "ext-mysqli": "*",
         "ext-mbstring": "*"
     },
+    "config": {
+        "preferred-install": "source"
+    },
     "scripts": {
         "post-install-cmd": [
             "php -r 'foreach (get_loaded_extensions() as $ext) { print(\"PostInstall [$ext]\\n\"); }'"

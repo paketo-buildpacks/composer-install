@@ -13,5 +13,10 @@
         [
             "classmap/ClassMap.php"
         ]
+    },
+    "config": {
+        "preferred-install": {
+            "*": "source"
+        }
     }
 }

@@ -61,7 +61,7 @@
             "php": "8.4.0"
         },
         "preferred-install": {
-            "*": "dist"
+            "*": "source"
         },
         "sort-packages": true,
         "allow-plugins": {
