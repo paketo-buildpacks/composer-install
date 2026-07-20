@@ -74,9 +74,10 @@ func testFrameworkApps(t *testing.T, context spec.G, it spec.S) {
 					WithPullPolicy("never").
 					WithBuildpacks(buildpacksArray...).
 					WithEnv(map[string]string{
-						"BP_PHP_SERVER":  "nginx",
-						"BP_PHP_WEB_DIR": "public",
-						"BP_LOG_LEVEL":   "DEBUG",
+						"BP_PHP_SERVER":     "nginx",
+						"BP_PHP_WEB_DIR":    "public",
+						"BP_LOG_LEVEL":      "DEBUG",
+						"BP_PHP_EXTENSIONS": "mbstring",
 					}).
 					Execute(name, source)
 
