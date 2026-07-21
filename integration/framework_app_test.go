@@ -84,7 +84,10 @@ func testFrameworkApps(t *testing.T, context spec.G, it spec.S) {
 				Expect(err).ToNot(HaveOccurred(), logs.String)
 
 				container, err = docker.Container.Run.
-					WithEnv(map[string]string{"PORT": "8080"}).
+					WithEnv(map[string]string{
+						"PORT":                 "8080",
+						"LARAVEL_STORAGE_PATH": "/tmp/laravel-storage",
+					}).
 					WithPublish("8080").
 					Execute(image.ID)
 				Expect(err).NotTo(HaveOccurred())
