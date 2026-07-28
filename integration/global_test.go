@@ -103,6 +103,7 @@ func testGlobal(t *testing.T, context spec.G, it spec.S) {
 					"BP_LOG_LEVEL":               "DEBUG",
 					"BP_PHP_SERVER":              "nginx",
 				}).
+				WithAdditionalBuildArgs("--creation-time", "1234567890").
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
