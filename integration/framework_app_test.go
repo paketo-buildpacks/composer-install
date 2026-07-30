@@ -85,8 +85,10 @@ func testFrameworkApps(t *testing.T, context spec.G, it spec.S) {
 
 				container, err = docker.Container.Run.
 					WithEnv(map[string]string{
-						"PORT":                 "8080",
+						"PORT": "8080",
+						// Route Laravel writable runtime paths to /tmp since /workspace is read-only in CNB containers.
 						"LARAVEL_STORAGE_PATH": "/tmp/laravel-storage",
+						"VIEW_COMPILED_PATH":   "/tmp/laravel-storage/framework/views",
 					}).
 					WithPublish("8080").
 					Execute(image.ID)
@@ -121,7 +123,12 @@ func testFrameworkApps(t *testing.T, context spec.G, it spec.S) {
 				Expect(err).ToNot(HaveOccurred(), logs.String)
 
 				container, err = docker.Container.Run.
-					WithEnv(map[string]string{"PORT": "8080"}).
+					WithEnv(map[string]string{
+						"PORT": "8080",
+						// Redirect Symfony cache/log to /tmp since /workspace is read-only in CNB containers.
+						"APP_CACHE_DIR": "/tmp/symfony-cache",
+						"APP_LOG_DIR":   "/tmp/symfony-log",
+					}).
 					WithPublish("8080").
 					Execute(image.ID)
 				Expect(err).NotTo(HaveOccurred())

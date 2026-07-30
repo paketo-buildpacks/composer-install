@@ -5,7 +5,7 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": ">=8.1,<8.5",
+        "php": ">=8.4.0",
         "ext-fileinfo": "*",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19|^10.0|^11.0",
@@ -50,7 +50,7 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": ["nunomaduro/collision", "spatie/laravel-ignition", "laravel/sail"]
         }
     },
     "config": {
