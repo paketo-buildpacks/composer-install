@@ -10,7 +10,7 @@
         "ext-mbstring": "*"
     },
     "config": {
-        "preferred-install": "source"
+        "preferred-install": "dist"
     },
     "scripts": {
         "post-install-cmd": [
