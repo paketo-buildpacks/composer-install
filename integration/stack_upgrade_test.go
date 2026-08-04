@@ -109,8 +109,14 @@ func testStackUpgrade(t *testing.T, context spec.G, it spec.S) {
 			containerIDs[firstContainer.ID] = struct{}{}
 			Eventually(firstContainer).Should(Serve(ContainSubstring("Powered By Paketo Buildpacks")).OnPort(8765))
 
-			// Second pack build, upgrade stack image from jammy to noble
-			secondImage, logs, err = build.WithBuilder("index.docker.io/paketobuildpacks/ubuntu-noble-builder-buildpackless").Execute(name, source)
+			// Second pack build: upgrade to the other stack.
+			// Detect whether the first build used a noble run image; if so, upgrade to jammy; otherwise upgrade to noble.
+			upgradeBuilder := "index.docker.io/paketobuildpacks/ubuntu-noble-builder-buildpackless"
+			if strings.Contains(firstImage.Labels["io.buildpacks.stack.id"], "noble") ||
+				strings.Contains(firstImage.Labels["io.buildpacks.run-image"], "noble") {
+				upgradeBuilder = "index.docker.io/paketobuildpacks/builder-jammy-buildpackless-full"
+			}
+			secondImage, logs, err = build.WithBuilder(upgradeBuilder).Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[secondImage.ID] = struct{}{}
