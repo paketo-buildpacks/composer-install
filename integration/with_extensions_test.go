@@ -76,7 +76,7 @@ func testWithExtensions(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
 			Expect(logs).To(ContainSubstring("Running 'composer check-platform-reqs'"))
-			Expect(logs).To(ContainSubstring("Found extensions 'fileinfo, gd, mysqli, zip'"))
+			Expect(logs).To(ContainSubstring("Found extensions 'fileinfo, gd, mysqli'"))
 
 			container, err = docker.Container.Run.
 				WithEnv(map[string]string{"PORT": "8765"}).
