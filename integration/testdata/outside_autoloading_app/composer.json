@@ -1,7 +1,7 @@
 {
     "require": {
         "vlucas/phpdotenv": "5.3.0",
-        "php": "8.*"
+        "php": "8.4.*"
     },
     "autoload" :
     {
@@ -13,5 +13,10 @@
         [
             "classmap/ClassMap.php"
         ]
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        }
     }
 }

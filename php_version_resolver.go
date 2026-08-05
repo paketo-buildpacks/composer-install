@@ -23,7 +23,7 @@ func NewPhpVersionResolver() PhpVersionResolver {
 // #3 composer.json "require.php-64bit"
 // #4 composer.json "require.php" (this is 32-bit)
 // Specifying the version for PHP is entirely optional, this function will return ("", "", nil) if no version is specified
-func (_ PhpVersionResolver) Resolve(composerJsonPath, composerLockPath string) (version, versionSource string, err error) {
+func (PhpVersionResolver) Resolve(composerJsonPath, composerLockPath string) (version, versionSource string, err error) {
 	if exists, err := fs.Exists(composerLockPath); err != nil {
 		return "", "", err
 	} else if exists {
@@ -32,7 +32,11 @@ func (_ PhpVersionResolver) Resolve(composerJsonPath, composerLockPath string) (
 			return "", "", err
 		}
 
-		defer file.Close()
+		defer func() {
+			if closeErr := file.Close(); err == nil && closeErr != nil {
+				err = closeErr
+			}
+		}()
 
 		var unknownJson map[string]interface{}
 
@@ -61,7 +65,11 @@ func (_ PhpVersionResolver) Resolve(composerJsonPath, composerLockPath string) (
 		if err != nil {
 			return "", "", err
 		}
-		defer file.Close()
+		defer func() {
+			if closeErr := file.Close(); err == nil && closeErr != nil {
+				err = closeErr
+			}
+		}()
 
 		var composerJson struct {
 			Require struct {

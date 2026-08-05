@@ -2,12 +2,15 @@
     "name": "paketo/composer_app",
     "require": {
         "vlucas/phpdotenv": "5.3.0",
-        "php": "8.*",
+        "php": "8.4.*",
         "ext-zip": "*",
         "ext-gd": "*",
         "ext-fileinfo": "*",
         "ext-mysqli": "*",
         "ext-mbstring": "*"
+    },
+    "config": {
+        "preferred-install": "dist"
     },
     "scripts": {
         "post-install-cmd": [

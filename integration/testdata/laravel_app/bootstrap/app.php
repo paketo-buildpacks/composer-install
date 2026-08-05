@@ -15,6 +15,23 @@ $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
+if ($laravelStoragePath = env('LARAVEL_STORAGE_PATH')) {
+    $app->useStoragePath($laravelStoragePath);
+    // Ensure writable subdirectories exist (e.g. when /workspace is read-only in CNB)
+    foreach ([
+        $laravelStoragePath . '/framework/views',
+        $laravelStoragePath . '/framework/cache/data',
+        $laravelStoragePath . '/framework/sessions',
+        $laravelStoragePath . '/framework/testing',
+        $laravelStoragePath . '/logs',
+        $laravelStoragePath . '/app/public',
+    ] as $dir) {
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+    }
+}
+
 /*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces

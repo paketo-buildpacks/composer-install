@@ -461,7 +461,7 @@ func runCheckAndEnablePlatformReqs(logger scribe.Emitter, checkPlatformReqsExec 
 	buf := bytes.Buffer{}
 
 	for _, extension := range extensions {
-		buf.WriteString(fmt.Sprintf("extension = %s.so\n", extension))
+		_, _ = fmt.Fprintf(&buf, "extension = %s.so\n", extension)
 	}
 
 	iniDir := filepath.Join(workingDir, ".php.ini.d")

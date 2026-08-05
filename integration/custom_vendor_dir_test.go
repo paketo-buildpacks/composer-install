@@ -25,6 +25,7 @@ func testCustomVendorDir(t *testing.T, context spec.G, it spec.S) {
 
 	it.Before(func() {
 		pack = occam.NewPack().WithVerbose().WithNoColor()
+		pack.Build = pack.Build.WithTrustBuilder()
 		docker = occam.NewDocker()
 	})
 
@@ -44,10 +45,18 @@ func testCustomVendorDir(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it.After(func() {
-			Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
-			Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
-			Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
-			Expect(os.RemoveAll(source)).To(Succeed())
+			if container.ID != "" {
+				Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
+			}
+			if image.ID != "" {
+				Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
+			}
+			if name != "" {
+				Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
+			}
+			if source != "" {
+				Expect(os.RemoveAll(source)).To(Succeed())
+			}
 		})
 
 		it("builds and runs", func() {
@@ -59,6 +68,7 @@ func testCustomVendorDir(t *testing.T, context spec.G, it spec.S) {
 
 			image, logs, err = pack.Build.
 				WithPullPolicy("never").
+				WithTrustBuilder().
 				WithBuildpacks(buildpacksArray...).
 				WithEnv(map[string]string{
 					"COMPOSER_VENDOR_DIR": "custom_vendor_dir",

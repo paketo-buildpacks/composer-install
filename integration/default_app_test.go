@@ -25,6 +25,7 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 
 	it.Before(func() {
 		pack = occam.NewPack().WithVerbose().WithNoColor()
+		pack.Build = pack.Build.WithTrustBuilder()
 		docker = occam.NewDocker()
 	})
 
@@ -46,10 +47,18 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it.After(func() {
-			Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
-			Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
-			Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
-			Expect(os.RemoveAll(source)).To(Succeed())
+			if container.ID != "" {
+				Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
+			}
+			if image.ID != "" {
+				Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
+			}
+			if name != "" {
+				Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
+			}
+			if source != "" {
+				Expect(os.RemoveAll(source)).To(Succeed())
+			}
 		})
 
 		it("builds and runs", func() {
@@ -62,6 +71,7 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 				WithEnv(map[string]string{
 					"BP_PHP_SERVER": "nginx",
 				}).
+				WithAdditionalBuildArgs("--creation-time", "1234567890").
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
@@ -87,6 +97,7 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 					WithEnv(map[string]string{
 						"BP_PHP_SERVER": "nginx",
 					}).
+					WithAdditionalBuildArgs("--creation-time", "1234567890").
 					Execute(name, source)
 				Expect(err).ToNot(HaveOccurred(), logs.String)
 
@@ -101,6 +112,7 @@ func testDefaultApp(t *testing.T, context spec.G, it spec.S) {
 						"BP_PHP_SERVER": "nginx",
 					}).
 					WithClearCache().
+					WithAdditionalBuildArgs("--creation-time", "1234567890").
 					Execute(name, source)
 				Expect(err).ToNot(HaveOccurred(), logs.String)
 

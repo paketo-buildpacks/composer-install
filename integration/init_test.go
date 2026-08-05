@@ -29,6 +29,7 @@ var buildpackInfo struct {
 }
 
 var buildpacks struct {
+	Builders        []string `json:"builders"`
 	PhpDist         string `json:"php-dist"`
 	Composer        string `json:"composer"`
 	ComposerInstall string

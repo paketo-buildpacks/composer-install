@@ -24,6 +24,7 @@ func testFrameworkApps(t *testing.T, context spec.G, it spec.S) {
 
 	it.Before(func() {
 		pack = occam.NewPack().WithVerbose().WithNoColor()
+		pack.Build = pack.Build.WithTrustBuilder()
 		docker = occam.NewDocker()
 	})
 
@@ -43,10 +44,18 @@ func testFrameworkApps(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it.After(func() {
-			Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
-			Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
-			Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
-			Expect(os.RemoveAll(source)).To(Succeed())
+			if container.ID != "" {
+				Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
+			}
+			if image.ID != "" {
+				Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
+			}
+			if name != "" {
+				Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
+			}
+			if source != "" {
+				Expect(os.RemoveAll(source)).To(Succeed())
+			}
 		})
 
 		context("building a laravel app", func() {
@@ -65,16 +74,22 @@ func testFrameworkApps(t *testing.T, context spec.G, it spec.S) {
 					WithPullPolicy("never").
 					WithBuildpacks(buildpacksArray...).
 					WithEnv(map[string]string{
-						"BP_PHP_SERVER":  "nginx",
-						"BP_PHP_WEB_DIR": "public",
-						"BP_LOG_LEVEL":   "DEBUG",
+						"BP_PHP_SERVER":     "nginx",
+						"BP_PHP_WEB_DIR":    "public",
+						"BP_LOG_LEVEL":      "DEBUG",
+						"BP_PHP_EXTENSIONS": "mbstring",
 					}).
 					Execute(name, source)
 
 				Expect(err).ToNot(HaveOccurred(), logs.String)
 
 				container, err = docker.Container.Run.
-					WithEnv(map[string]string{"PORT": "8080"}).
+					WithEnv(map[string]string{
+						"PORT": "8080",
+						// Route Laravel writable runtime paths to /tmp since /workspace is read-only in CNB containers.
+						"LARAVEL_STORAGE_PATH": "/tmp/laravel-storage",
+						"VIEW_COMPILED_PATH":   "/tmp/laravel-storage/framework/views",
+					}).
 					WithPublish("8080").
 					Execute(image.ID)
 				Expect(err).NotTo(HaveOccurred())
@@ -108,7 +123,12 @@ func testFrameworkApps(t *testing.T, context spec.G, it spec.S) {
 				Expect(err).ToNot(HaveOccurred(), logs.String)
 
 				container, err = docker.Container.Run.
-					WithEnv(map[string]string{"PORT": "8080"}).
+					WithEnv(map[string]string{
+						"PORT": "8080",
+						// Redirect Symfony cache/log to /tmp since /workspace is read-only in CNB containers.
+						"APP_CACHE_DIR": "/tmp/symfony-cache",
+						"APP_LOG_DIR":   "/tmp/symfony-log",
+					}).
 					WithPublish("8080").
 					Execute(image.ID)
 				Expect(err).NotTo(HaveOccurred())

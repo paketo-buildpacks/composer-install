@@ -24,6 +24,7 @@ func testGlobal(t *testing.T, context spec.G, it spec.S) {
 
 	it.Before(func() {
 		pack = occam.NewPack().WithVerbose().WithNoColor()
+		pack.Build = pack.Build.WithTrustBuilder()
 		docker = occam.NewDocker()
 	})
 
@@ -43,10 +44,18 @@ func testGlobal(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it.After(func() {
-			Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
-			Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
-			Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
-			Expect(os.RemoveAll(source)).To(Succeed())
+			if container.ID != "" {
+				Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
+			}
+			if image.ID != "" {
+				Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
+			}
+			if name != "" {
+				Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
+			}
+			if source != "" {
+				Expect(os.RemoveAll(source)).To(Succeed())
+			}
 		})
 
 		it("builds and runs", func() {
@@ -60,14 +69,15 @@ func testGlobal(t *testing.T, context spec.G, it spec.S) {
 				WithPullPolicy("never").
 				WithBuildpacks(buildpacksArray...).
 				WithEnv(map[string]string{
-					"BP_COMPOSER_INSTALL_GLOBAL": "friendsofphp/php-cs-fixer",
+					"BP_COMPOSER_INSTALL_GLOBAL": "friendsofphp/php-cs-fixer=^3.40.0",
 					"BP_LOG_LEVEL":               "DEBUG",
 					"BP_PHP_SERVER":              "nginx",
 				}).
+				WithAdditionalBuildArgs("--creation-time", "1234567890").
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
-			Expect(logs).To(ContainSubstring("Running 'composer global require --no-progress friendsofphp/php-cs-fixer'"))
+			Expect(logs).To(ContainSubstring("Running 'composer global require --no-progress friendsofphp/php-cs-fixer=^3.40.0'"))
 
 			container, err = docker.Container.Run.
 				WithEnv(map[string]string{"PORT": "8765"}).
@@ -89,10 +99,11 @@ func testGlobal(t *testing.T, context spec.G, it spec.S) {
 				WithPullPolicy("never").
 				WithBuildpacks(buildpacksArray...).
 				WithEnv(map[string]string{
-					"BP_COMPOSER_INSTALL_GLOBAL": "friendsofphp/php-cs-fixer",
+					"BP_COMPOSER_INSTALL_GLOBAL": "friendsofphp/php-cs-fixer=^3.40.0",
 					"BP_LOG_LEVEL":               "DEBUG",
 					"BP_PHP_SERVER":              "nginx",
 				}).
+				WithAdditionalBuildArgs("--creation-time", "1234567890").
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
@@ -102,17 +113,18 @@ func testGlobal(t *testing.T, context spec.G, it spec.S) {
 				WithPullPolicy("never").
 				WithBuildpacks(buildpacksArray...).
 				WithEnv(map[string]string{
-					"BP_COMPOSER_INSTALL_GLOBAL": "friendsofphp/php-cs-fixer",
+					"BP_COMPOSER_INSTALL_GLOBAL": "friendsofphp/php-cs-fixer=^3.40.0",
 					"BP_LOG_LEVEL":               "DEBUG",
 					"BP_PHP_SERVER":              "nginx",
 				}).
 				WithClearCache().
+				WithAdditionalBuildArgs("--creation-time", "1234567890").
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
 			Expect(firstID).To(Equal(image.ID))
 
-			Expect(logs).To(ContainSubstring("Running 'composer global require --no-progress friendsofphp/php-cs-fixer'"))
+			Expect(logs).To(ContainSubstring("Running 'composer global require --no-progress friendsofphp/php-cs-fixer=^3.40.0'"))
 
 			container, err = docker.Container.Run.
 				WithEnv(map[string]string{"PORT": "8765"}).
