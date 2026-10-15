@@ -2,12 +2,12 @@ package composer_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
-	"regexp"
 	"testing"
 
 	. "github.com/onsi/gomega"
@@ -16,12 +16,43 @@ import (
 	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/paketo-buildpacks/packit/v2/chronos"
 	"github.com/paketo-buildpacks/packit/v2/pexec"
+	"github.com/paketo-buildpacks/packit/v2/postal"
 	"github.com/paketo-buildpacks/packit/v2/sbom"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
 	"github.com/sclevine/spec"
 )
 
+func assertPackageSBOM(t *testing.T, layer packit.Layer, dependency postal.Dependency) {
+	t.Helper()
+	Expect := NewWithT(t).Expect
+
+	var extensions []string
+	for _, format := range layer.SBOM.Formats() {
+		extensions = append(extensions, format.Extension)
+		content, err := io.ReadAll(format.Content)
+		Expect(err).NotTo(HaveOccurred())
+		var document map[string]interface{}
+		Expect(json.Unmarshal(content, &document)).To(Succeed())
+
+		switch format.Extension {
+		case "cdx.json":
+			Expect(document).To(HaveKeyWithValue("components", ContainElement(And(
+				HaveKeyWithValue("name", dependency.Name),
+				HaveKeyWithValue("version", dependency.Version),
+			))))
+		case "spdx.json":
+			Expect(document).To(HaveKeyWithValue("packages", ContainElement(And(
+				HaveKeyWithValue("name", dependency.Name),
+				HaveKeyWithValue("versionInfo", dependency.Version),
+			))))
+		}
+	}
+	Expect(extensions).To(ConsistOf("cdx.json", "spdx.json"))
+}
+
 func testBuild(t *testing.T, context spec.G, it spec.S) {
+	fixtureDependency := postal.Dependency{Name: "sbom-fixture-composer-package", Version: "1.2.3"}
+
 	var (
 		Expect = NewWithT(t).Expect
 
@@ -100,7 +131,9 @@ php       8.1.4    success
 		}
 
 		sbomGenerator = &fakes.SBOMGenerator{}
-		sbomGenerator.GenerateCall.Returns.SBOM = sbom.SBOM{}
+		fixtureSBOM, err := sbom.GenerateFromDependency(fixtureDependency, workingDir)
+		Expect(err).NotTo(HaveOccurred())
+		sbomGenerator.GenerateCall.Returns.SBOM = fixtureSBOM
 		calculator = &fakes.Calculator{}
 		calculator.SumCall.Returns.String = "default-checksum"
 
@@ -178,71 +211,7 @@ php       8.1.4    success
 			Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("default-checksum"))
 			Expect(packagesLayer.Metadata["stack"]).To(Equal(""))
 
-			Expect(packagesLayer.SBOM.Formats()).To(HaveLen(2))
-			cdx := packagesLayer.SBOM.Formats()[0]
-			spdx := packagesLayer.SBOM.Formats()[1]
-
-			Expect(cdx.Extension).To(Equal("cdx.json"))
-			content, err := io.ReadAll(cdx.Content)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(string(content)).To(MatchJSON(`{
-				"$schema": "http://cyclonedx.org/schema/bom-1.3.schema.json",
-				"bomFormat": "CycloneDX",
-				"metadata": {
-					"tools": [
-						{
-							"name": "",
-							"vendor": "anchore"
-						}
-					]
-				},
-				"specVersion": "1.3",
-				"version": 1
-			}`))
-
-			Expect(spdx.Extension).To(Equal("spdx.json"))
-			content, err = io.ReadAll(spdx.Content)
-			Expect(err).NotTo(HaveOccurred())
-
-			versionPattern := regexp.MustCompile(`"licenseListVersion": "\d+\.\d+"`)
-			contentReplaced := versionPattern.ReplaceAllString(string(content), `"licenseListVersion": "x.x"`)
-			uuidRegex := regexp.MustCompile(`[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}`)
-			contentReplaced = uuidRegex.ReplaceAllString(contentReplaced, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
-
-			Expect(string(contentReplaced)).To(MatchJSON(`{
-				"SPDXID": "SPDXRef-DOCUMENT",
-				"creationInfo": {
-					"created": "0001-01-01T00:00:00Z",
-					"creators": [
-						"Organization: Anchore, Inc",
-						"Tool: -"
-					],
-					"licenseListVersion": "x.x"
-				},
-				"dataLicense": "CC0-1.0",
-				"documentNamespace": "https://paketo.io/unknown-source-type/unknown-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-				"name": "unknown",
-				"packages": [
-					{
-						"SPDXID": "SPDXRef-DocumentRoot-Unknown-",
-						"copyrightText": "NOASSERTION",
-						"downloadLocation": "NOASSERTION",
-						"filesAnalyzed": false,
-						"licenseConcluded": "NOASSERTION",
-						"licenseDeclared": "NOASSERTION",
-						"name": "",
-						"supplier": "NOASSERTION"
-					}
-				],
-				"relationships": [
-					{
-						"relatedSpdxElement": "SPDXRef-DocumentRoot-Unknown-",
-						"relationshipType": "DESCRIBES",
-						"spdxElementId": "SPDXRef-DOCUMENT"
-					}
-				],
-				"spdxVersion": "SPDX-2.2"
-			}`))
+			assertPackageSBOM(t, packagesLayer, fixtureDependency)
 
 			Expect(buffer.String()).To(ContainSubstring("Running 'composer install options from fake'"))
 
@@ -428,71 +397,7 @@ composer-lock-sha = "sha-from-composer-lock"
 			Expect(packagesLayer.Metadata["composer-lock-sha"]).To(Equal("sha-from-composer-lock"))
 			Expect(packagesLayer.Metadata["stack"]).To(Equal(""))
 
-			Expect(packagesLayer.SBOM.Formats()).To(HaveLen(2))
-			cdx := packagesLayer.SBOM.Formats()[0]
-			spdx := packagesLayer.SBOM.Formats()[1]
-
-			Expect(cdx.Extension).To(Equal("cdx.json"))
-			content, err := io.ReadAll(cdx.Content)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(string(content)).To(MatchJSON(`{
-				"$schema": "http://cyclonedx.org/schema/bom-1.3.schema.json",
-				"bomFormat": "CycloneDX",
-				"metadata": {
-					"tools": [
-						{
-							"name": "",
-							"vendor": "anchore"
-						}
-					]
-				},
-				"specVersion": "1.3",
-				"version": 1
-			}`))
-
-			Expect(spdx.Extension).To(Equal("spdx.json"))
-			content, err = io.ReadAll(spdx.Content)
-			Expect(err).NotTo(HaveOccurred())
-
-			versionPattern := regexp.MustCompile(`"licenseListVersion": "\d+\.\d+"`)
-			contentReplaced := versionPattern.ReplaceAllString(string(content), `"licenseListVersion": "x.x"`)
-			uuidRegex := regexp.MustCompile(`[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}`)
-			contentReplaced = uuidRegex.ReplaceAllString(contentReplaced, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
-
-			Expect(string(contentReplaced)).To(MatchJSON(`{
-				"SPDXID": "SPDXRef-DOCUMENT",
-				"creationInfo": {
-					"created": "0001-01-01T00:00:00Z",
-					"creators": [
-						"Organization: Anchore, Inc",
-						"Tool: -"
-					],
-					"licenseListVersion": "x.x"
-				},
-				"dataLicense": "CC0-1.0",
-				"documentNamespace": "https://paketo.io/unknown-source-type/unknown-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-				"name": "unknown",
-				"packages": [
-					{
-						"SPDXID": "SPDXRef-DocumentRoot-Unknown-",
-						"copyrightText": "NOASSERTION",
-						"downloadLocation": "NOASSERTION",
-						"filesAnalyzed": false,
-						"licenseConcluded": "NOASSERTION",
-						"licenseDeclared": "NOASSERTION",
-						"name": "",
-						"supplier": "NOASSERTION"
-					}
-				],
-				"relationships": [
-					{
-						"relatedSpdxElement": "SPDXRef-DocumentRoot-Unknown-",
-						"relationshipType": "DESCRIBES",
-						"spdxElementId": "SPDXRef-DOCUMENT"
-					}
-				],
-				"spdxVersion": "SPDX-2.2"
-			}`))
+			assertPackageSBOM(t, packagesLayer, fixtureDependency)
 
 			Expect(filepath.Join(workingDir, "vendor", "file.txt")).To(BeAnExistingFile())
 		})
